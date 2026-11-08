@@ -40,3 +40,5 @@ $RECYCLE.BIN/
 
 # User generated data / caches
 data/records.json
+*.db
+*.sqlite3

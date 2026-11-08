@@ -1,4 +1,4 @@
-# 🇻🇪 Memoria Venezuela: Juego de Memoria con Control Gestual y Programación Lineal
+# ⛰️ TepuyMatch 🇻🇪: Juego de Memoria de Paisajes de Venezuela con Control Gestual y Programación Lineal
 
 Proyecto integrador para la asignatura de **Investigación de Operaciones**, combinando visión artificial, diseño de interfaces interactivas y modelos matemáticos de optimización lineal.
 

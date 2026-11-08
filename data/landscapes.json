@@ -1,0 +1,128 @@
+[
+  {
+    "id": "salto_angel",
+    "name": "Salto Ángel (Kerepakupai Vená)",
+    "state": "Bolívar",
+    "region": "Guayana",
+    "difficulty": 1,
+    "cultural_value": 10,
+    "description": "La caída de agua ininterrumpida más alta del mundo (979 m), en el Parque Nacional Canaima."
+  },
+  {
+    "id": "roraima",
+    "name": "Monte Roraima",
+    "state": "Bolívar",
+    "region": "Guayana",
+    "difficulty": 2,
+    "cultural_value": 10,
+    "description": "El tepuy más famoso de la Gran Sabana, con paisajes prehistóricos y formaciones rocosas milenarias."
+  },
+  {
+    "id": "los_roques",
+    "name": "Archipiélago Los Roques",
+    "state": "Dependencias Federales",
+    "region": "Insular/Costera",
+    "difficulty": 1,
+    "cultural_value": 9,
+    "description": "Parque nacional marino con arrecifes de coral y playas de arena blanca y aguas cristalinas."
+  },
+  {
+    "id": "medanos_coro",
+    "name": "Médanos de Coro",
+    "state": "Falcón",
+    "region": "Occidente",
+    "difficulty": 1,
+    "cultural_value": 9,
+    "description": "Desierto de dunas móviles declarado patrimonio natural junto a la ciudad colonial de Coro."
+  },
+  {
+    "id": "pico_bolivar",
+    "name": "Pico Bolívar",
+    "state": "Mérida",
+    "region": "Andina",
+    "difficulty": 2,
+    "cultural_value": 9,
+    "description": "El punto más alto de Venezuela (4.978 msnm) en la Sierra Nevada de Mérida."
+  },
+  {
+    "id": "mucubaji",
+    "name": "Laguna de Mucubají",
+    "state": "Mérida",
+    "region": "Andina",
+    "difficulty": 2,
+    "cultural_value": 8,
+    "description": "Hermosa laguna de origen glaciar ubicada en el páramo andino merideño."
+  },
+  {
+    "id": "catatumbo",
+    "name": "Relámpago del Catatumbo",
+    "state": "Zulia",
+    "region": "Zuliana",
+    "difficulty": 2,
+    "cultural_value": 10,
+    "description": "Fenómeno meteorológico único en el mundo con récord Guinness de descargas eléctricas."
+  },
+  {
+    "id": "morrocoy",
+    "name": "Parque Nacional Morrocoy",
+    "state": "Falcón",
+    "region": "Costera",
+    "difficulty": 1,
+    "cultural_value": 9,
+    "description": "Famoso por sus cayos de aguas turquesas, manglares y rica fauna marina."
+  },
+  {
+    "id": "colonia_tovar",
+    "name": "Colonia Tovar",
+    "state": "Aragua",
+    "region": "Central",
+    "difficulty": 1,
+    "cultural_value": 8,
+    "description": "Pintoresca localidad de arquitectura tradicional alemana enclavada en la Cordillera de la Costa."
+  },
+  {
+    "id": "el_avila",
+    "name": "Waraira Repano (El Ávila)",
+    "state": "Distrito Capital / Miranda",
+    "region": "Central",
+    "difficulty": 1,
+    "cultural_value": 9,
+    "description": "El pulmón vegetal y símbolo visual de Caracas, con senderos y teleférico."
+  },
+  {
+    "id": "cueva_guacharo",
+    "name": "Cueva del Guácharo",
+    "state": "Monagas",
+    "region": "Oriente",
+    "difficulty": 2,
+    "cultural_value": 8,
+    "description": "Monumento natural con más de 10 km de cavernas habitadas por aves nocturnas (los guácharos)."
+  },
+  {
+    "id": "mochima",
+    "name": "Parque Nacional Mochima",
+    "state": "Sucre / Anzoátegui",
+    "region": "Oriente",
+    "difficulty": 1,
+    "cultural_value": 8,
+    "description": "Bahías, golfos y playas paradisíacas entre exuberantes montañas costeras."
+  },
+  {
+    "id": "llanos_apure",
+    "name": "Médanos y Sabanas de Apure",
+    "state": "Apure",
+    "region": "Llanos",
+    "difficulty": 2,
+    "cultural_value": 8,
+    "description": "Inmensas sabanas llaneras con abundante fauna: chigüires, caimanes y dunas de Capanaparo."
+  },
+  {
+    "id": "la_llovizna",
+    "name": "Salto La Llovizna",
+    "state": "Bolívar",
+    "region": "Guayana",
+    "difficulty": 1,
+    "cultural_value": 8,
+    "description": "Imponente cascada en el río Caroní, dentro del parque urbano La Llovizna en Puerto Ordaz."
+  }
+]

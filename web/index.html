@@ -5,142 +5,198 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>⛰️ TepuyMatch — Paisajes de Venezuela</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
     <style>
-        /* ─── RESET & VENEZUELAN LIGHT THEME TOKENS ─── */
+        /* ─── RESET & APPLE iOS INSPIRED TOKENS ─────── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            /* Colores de Fondo Blanco y Luminoso */
-            --bg-base: #f8fafc;
-            --bg-surface: #ffffff;
-            --bg-subtle: #f1f5f9;
-            --border-light: #e2e8f0;
-            --border-hover: #cbd5e1;
+            /* Superficies y Fondos Blancos Puros */
+            --bg-body: #f8fafc;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --bg-glass: rgba(255, 255, 255, 0.78);
+            --bg-glass-heavy: rgba(255, 255, 255, 0.92);
 
-            /* Paleta Nacional de Venezuela */
-            --vzla-yellow: #f59e0b;       /* Amarillo orquídea / sol */
-            --vzla-yellow-light: #fef3c7;
-            --vzla-blue: #1d4ed8;         /* Azul ultramar / Caribe */
-            --vzla-blue-light: #dbeafe;
-            --vzla-red: #dc2626;          /* Rojo granate */
-            --vzla-red-light: #fee2e2;
-            --vzla-green: #059669;        /* Verde selva tropical / aciertos */
-            --vzla-green-light: #d1fae5;
+            /* Paleta Nacional de Venezuela Intensa y Vibrante */
+            --vzla-yellow: #f59e0b;       /* Amarillo Sol del Orinoco */
+            --vzla-yellow-glow: rgba(245, 158, 11, 0.35);
+            --vzla-blue: #2563eb;         /* Azul Caribe Profundo */
+            --vzla-blue-glow: rgba(37, 99, 235, 0.3);
+            --vzla-red: #e11d48;          /* Rojo Guayana */
+            --vzla-red-glow: rgba(225, 29, 72, 0.28);
+            --vzla-emerald: #059669;      /* Verde Tepuy Canaima */
+            --vzla-emerald-glow: rgba(5, 150, 105, 0.3);
 
-            /* Tipografía y Contraste */
-            --text-title: #0f172a;        /* Azul pizarra oscuro */
+            /* Tipografía */
+            --text-title: #0f172a;
             --text-body: #334155;
             --text-muted: #64748b;
-            --text-light: #94a3b8;
+            --text-subtle: #94a3b8;
 
-            /* Sombras y Radios */
-            --radius-xl: 18px;
-            --radius-lg: 14px;
-            --radius-md: 10px;
-            --radius-sm: 6px;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
-            --shadow-lg: 0 10px 25px -5px rgba(15, 23, 42, 0.12);
-            --shadow-card: 0 6px 18px rgba(15, 23, 42, 0.1);
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Sombras estilo iOS (multi-capa con ambient occlusion) */
+            --ios-shadow-sm: 0 2px 8px -2px rgba(15, 23, 42, 0.08), 0 1px 4px -1px rgba(15, 23, 42, 0.04);
+            --ios-shadow-md: 0 10px 25px -4px rgba(15, 23, 42, 0.1), 0 4px 10px -3px rgba(15, 23, 42, 0.05);
+            --ios-shadow-lg: 0 20px 35px -6px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+            --ios-icon-shadow: 0 8px 20px -2px rgba(37, 99, 235, 0.35);
+
+            /* Bordes Squircle Apple */
+            --radius-squircle-lg: 26px;
+            --radius-squircle-md: 18px;
+            --radius-squircle-sm: 12px;
+            --radius-pill: 9999px;
+
+            --transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background: var(--bg-base);
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
             color: var(--text-body);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* ─── CINTA TRICOLOR SUPERIOR ────────────────── */
-        .venezuela-ribbon {
-            height: 4px;
-            width: 100%;
-            background: linear-gradient(90deg, 
-                #facc15 0%, #facc15 33.3%, 
-                #2563eb 33.3%, #2563eb 66.6%, 
-                #dc2626 66.6%, #dc2626 100%
-            );
-        }
-
-        /* ─── BARRA DE NAVEGACIÓN SUPERIOR ───────────── */
-        .top-navbar {
-            background: var(--bg-surface);
-            border-bottom: 1px solid var(--border-light);
-            padding: 14px 24px;
+        /* ─── DOCK FLOTANTE DINÁMICO (iOS Style Controls) ─── */
+        .floating-dock {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            box-shadow: var(--shadow-sm);
-        }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .brand-icon {
-            font-size: 1.8rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-        }
-        .brand-text h1 {
-            font-size: 1.35rem;
-            font-weight: 800;
-            color: var(--text-title);
-            letter-spacing: -0.5px;
-            line-height: 1.1;
-        }
-        .brand-text span {
-            font-size: 0.72rem;
-            color: var(--vzla-blue);
-            font-weight: 600;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-        }
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-action {
-            background: var(--bg-subtle);
-            border: 1px solid var(--border-light);
-            color: var(--text-body);
-            padding: 8px 14px;
-            border-radius: var(--radius-sm);
-            font-size: 0.82rem;
-            font-weight: 600;
-            cursor: pointer;
+            gap: 10px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(24px) saturate(190%);
+            -webkit-backdrop-filter: blur(24px) saturate(190%);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: var(--ios-shadow-md);
+            padding: 6px 10px;
+            border-radius: var(--radius-pill);
             transition: var(--transition);
+        }
+        .floating-dock:hover {
+            box-shadow: var(--ios-shadow-lg);
+            transform: translateY(-2px);
+        }
+        .dock-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-pill);
+            color: var(--text-title);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
+            transition: var(--transition);
+            font-family: inherit;
         }
-        .btn-action:hover {
-            background: #e2e8f0;
+        .dock-btn:hover {
+            background: rgba(37, 99, 235, 0.08);
+            color: var(--vzla-blue);
+        }
+        .dock-btn.active {
+            background: var(--vzla-blue);
+            color: #ffffff;
+            box-shadow: 0 4px 12px var(--vzla-blue-glow);
+        }
+
+        /* ─── HERO HEADER CON LOGO PROTAGÓNICO ──────── */
+        .hero-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px 20px;
+            text-align: center;
+        }
+
+        /* Ícono de App estilo iOS con efecto empañado y relieve */
+        .app-icon-squircle {
+            width: 88px;
+            height: 88px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e3a8a 100%);
+            box-shadow: 0 16px 32px -4px rgba(29, 78, 216, 0.4), inset 0 2px 2px rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .app-icon-squircle::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 22px;
+            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.4) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .app-icon-squircle:hover {
+            transform: scale(1.06) rotate(-2deg);
+            box-shadow: 0 22px 40px -4px rgba(29, 78, 216, 0.5);
+        }
+        .app-icon-symbol {
+            font-size: 3rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 6vw, 3.4rem);
+            font-weight: 700;
             color: var(--text-title);
-            border-color: var(--border-hover);
+            letter-spacing: -1px;
+            line-height: 1.1;
+            margin-bottom: 8px;
+        }
+        .brand-tag-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            padding: 6px 16px;
+            border-radius: var(--radius-pill);
+            box-shadow: var(--ios-shadow-sm);
+            border: 1px solid var(--border-light);
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--vzla-blue);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+        .flag-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #facc15 33%, #2563eb 33%, #2563eb 66%, #dc2626 66%);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
         }
 
         /* ─── HUD BAR (Partida Activa) ────────────────── */
         .hud-banner {
             display: none;
-            background: var(--bg-surface);
+            background: var(--bg-glass-heavy);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-bottom: 1px solid var(--border-light);
-            padding: 12px 20px;
+            padding: 12px 24px;
             gap: 16px;
             justify-content: space-around;
             align-items: center;
-            flex-wrap: wrap;
-            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 60;
+            box-shadow: var(--ios-shadow-sm);
         }
         .hud-banner.active { display: flex; }
         .hud-stat {
@@ -149,14 +205,14 @@
             align-items: center;
         }
         .hud-stat .lbl {
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
             color: var(--text-muted);
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: 0.5px;
         }
         .hud-stat .val {
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             font-weight: 800;
             font-feature-settings: "tnum";
             color: var(--text-title);
@@ -165,167 +221,156 @@
         .val.ai { color: var(--vzla-red); }
         .val.turn-indicator { color: var(--vzla-yellow); }
 
-        /* Botón rápido de reinicio en el HUD */
         .btn-hud-restart {
-            background: var(--vzla-red-light);
+            background: #fff;
             color: var(--vzla-red);
-            border: 1px solid #fca5a5;
-            padding: 7px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 0.8rem;
+            border: 1px solid rgba(225, 29, 72, 0.2);
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
+            box-shadow: var(--ios-shadow-sm);
             transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
         .btn-hud-restart:hover {
             background: var(--vzla-red);
             color: #ffffff;
+            box-shadow: 0 4px 14px var(--vzla-red-glow);
         }
 
-        /* ─── CONTENEDOR PRINCIPAL ────────────────────── */
+        /* ─── CONTENEDOR CENTRAL ──────────────────────── */
         .main-content {
             flex: 1;
             max-width: 1280px;
             width: 100%;
             margin: 0 auto;
-            padding: 24px 16px;
-            display: flex;
-            flex-direction: column;
+            padding: 10px 20px 40px;
         }
 
-        /* ─── VISTA DE MENÚ INICIAL ───────────────────── */
+        /* ─── CONFIG CARD (Menú con Glassmorphism) ────── */
         #menu-view {
-            max-width: 660px;
+            max-width: 620px;
             width: 100%;
-            margin: auto;
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
             gap: 24px;
             animation: fadeIn 0.35s ease;
         }
-        .hero-banner {
-            text-align: center;
-            padding: 10px 0 6px;
-        }
-        .hero-banner h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem, 5vw, 2.75rem);
-            font-weight: 700;
-            color: var(--text-title);
-            margin-bottom: 6px;
-        }
-        .hero-banner p {
-            color: var(--text-muted);
-            font-size: clamp(0.9rem, 2.5vw, 1.05rem);
-        }
 
         .config-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-xl);
-            padding: 26px;
+            background: var(--bg-card);
+            backdrop-filter: blur(28px) saturate(200%);
+            -webkit-backdrop-filter: blur(28px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-squircle-lg);
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            gap: 22px;
-            box-shadow: var(--shadow-lg);
+            gap: 24px;
+            box-shadow: var(--ios-shadow-lg);
         }
         .setting-box h3 {
             font-size: 0.78rem;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--text-title);
-            font-weight: 700;
-            margin-bottom: 10px;
+            font-weight: 800;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
         .chip-group {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
         }
         .chip-btn {
             flex: 1;
             min-width: 120px;
-            padding: 10px 14px;
-            border-radius: var(--radius-sm);
-            background: var(--bg-subtle);
+            padding: 12px 16px;
+            border-radius: var(--radius-squircle-sm);
+            background: #ffffff;
             border: 1.5px solid var(--border-light);
             color: var(--text-body);
             font-family: inherit;
-            font-size: 0.85rem;
-            font-weight: 600;
+            font-size: 0.88rem;
+            font-weight: 700;
             cursor: pointer;
+            box-shadow: var(--ios-shadow-sm);
             transition: var(--transition);
             text-align: center;
         }
         .chip-btn:hover {
             border-color: var(--vzla-blue);
             color: var(--vzla-blue);
-            background: var(--vzla-blue-light);
+            transform: translateY(-1px);
         }
         .chip-btn.selected {
-            background: var(--vzla-blue);
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
             border-color: var(--vzla-blue);
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
+            box-shadow: 0 8px 18px var(--vzla-blue-glow);
+            transform: translateY(-2px);
         }
 
         /* Selector de Estados */
         .state-select-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
-            gap: 6px;
+            gap: 8px;
             max-height: 140px;
             overflow-y: auto;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid var(--border-light);
-            border-radius: var(--radius-sm);
-            background: var(--bg-subtle);
+            border-radius: var(--radius-squircle-sm);
+            background: #ffffff;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
         .state-checkbox {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 0.76rem;
+            gap: 8px;
+            font-size: 0.8rem;
             color: var(--text-body);
+            font-weight: 600;
             cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 4px;
+            padding: 5px 8px;
+            border-radius: 6px;
         }
-        .state-checkbox:hover { background: #e2e8f0; }
+        .state-checkbox:hover { background: #f1f5f9; }
 
         .btn-launch {
             width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            padding: 18px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             border: none;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-squircle-md);
             color: white;
             font-family: inherit;
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1.15rem;
+            font-weight: 800;
             cursor: pointer;
             transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.3);
+            box-shadow: 0 10px 24px var(--vzla-blue-glow);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            letter-spacing: 0.5px;
         }
         .btn-launch:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(29, 78, 216, 0.45);
-            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 16px 30px var(--vzla-blue-glow);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
         }
 
-        /* ─── VISTA DE PARTIDA ACTIVA (GAMEPLAY) ──────── */
+        /* ─── VISTA DE PARTIDA ACTIVA ────────────────── */
         #game-view {
             display: none;
             width: 100%;
@@ -341,7 +386,7 @@
             .game-split { grid-template-columns: 1fr; }
         }
 
-        /* ─── TABLERO Y CARTAS RESPONSIVE ────────────── */
+        /* ─── TABLERO Y CARTAS CON RELIEVE Y SOMBRAS ─── */
         .board-wrapper {
             display: flex;
             justify-content: center;
@@ -350,11 +395,11 @@
         }
         .game-grid {
             display: grid;
-            gap: 12px;
+            gap: 14px;
             justify-content: center;
             perspective: 1200px;
             width: 100%;
-            max-width: 820px;
+            max-width: 840px;
         }
 
         .card-slot {
@@ -385,18 +430,18 @@
             height: 100%;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-squircle-md);
             overflow: hidden;
-            box-shadow: var(--shadow-card);
-            border: 2px solid var(--border-light);
+            box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.12), 0 4px 8px -2px rgba(15, 23, 42, 0.06);
+            border: 2px solid rgba(255, 255, 255, 0.9);
             background: #ffffff;
+            transition: var(--transition);
         }
         .side-back {
             background: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: var(--transition);
         }
         .side-back img {
             width: 100%;
@@ -405,14 +450,14 @@
         }
         .card-slot:hover .side-back {
             border-color: var(--vzla-blue);
-            transform: scale(1.02);
-            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 18px 30px -4px var(--vzla-blue-glow);
         }
 
         .side-front {
             transform: rotateY(180deg);
             background: #000;
-            border: 2px solid var(--vzla-yellow);
+            border: 2.5px solid var(--vzla-yellow);
         }
         .side-front img {
             width: 100%;
@@ -422,60 +467,62 @@
         .card-caption {
             position: absolute;
             bottom: 0; left: 0; right: 0;
-            padding: 6px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9) 70%);
-            font-size: clamp(0.6rem, 1.8vw, 0.74rem);
-            font-weight: 600;
+            padding: 8px 6px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.88) 70%);
+            font-size: clamp(0.65rem, 1.8vw, 0.78rem);
+            font-weight: 700;
             color: #ffffff;
             text-align: center;
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
 
-        /* Cartas emparejadas */
+        /* Cartas emparejadas con halo verde esmeralda */
         .card-slot.matched .side-front {
-            border: 2.5px solid var(--vzla-green);
-            box-shadow: 0 0 18px rgba(5, 150, 105, 0.35);
+            border: 3px solid var(--vzla-emerald);
+            box-shadow: 0 10px 25px var(--vzla-emerald-glow);
         }
         .card-slot.matched::after {
             content: '✓';
             position: absolute;
-            top: 6px; right: 8px;
-            background: var(--vzla-green);
+            top: 8px; right: 10px;
+            background: var(--vzla-emerald);
             color: #ffffff;
-            font-weight: 800;
-            font-size: 0.75rem;
-            width: 20px; height: 20px;
+            font-weight: 900;
+            font-size: 0.8rem;
+            width: 24px; height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 10px rgba(5, 150, 105, 0.4);
         }
 
-        /* ─── PANEL LATERAL BLANCO Y MODERNO ─────────── */
+        /* ─── PANELES LATERALES (Frosted Glass) ───────── */
         .side-control-panel {
             display: flex;
             flex-direction: column;
             gap: 16px;
         }
         .panel-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-lg);
-            padding: 18px;
-            box-shadow: var(--shadow-sm);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            border-radius: var(--radius-squircle-md);
+            padding: 20px;
+            box-shadow: var(--ios-shadow-md);
         }
         .panel-card h4 {
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.8px;
             color: var(--text-title);
-            font-weight: 700;
-            margin-bottom: 12px;
+            font-weight: 800;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         /* Monitor IA */
@@ -488,47 +535,48 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.82rem;
+            font-size: 0.84rem;
             color: var(--vzla-blue);
-            font-weight: 600;
+            font-weight: 700;
         }
         .think-dot {
-            width: 8px; height: 8px;
+            width: 10px; height: 10px;
             border-radius: 50%;
             background: var(--vzla-blue);
-            box-shadow: 0 0 8px var(--vzla-blue);
+            box-shadow: 0 0 10px var(--vzla-blue);
             animation: pulse 1s infinite alternate;
         }
         @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
 
-        /* Ajuste de dificultad dentro de la misma partida */
+        /* Ajuste de dificultad dentro de la partida */
         .live-diff-selector {
-            margin-top: 10px;
-            padding-top: 10px;
+            margin-top: 12px;
+            padding-top: 12px;
             border-top: 1px solid var(--border-light);
         }
         .live-diff-selector span {
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             text-transform: uppercase;
             color: var(--text-muted);
-            font-weight: 700;
+            font-weight: 800;
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .live-diff-chips {
             display: flex;
-            gap: 5px;
+            gap: 6px;
         }
         .chip-live-diff {
             flex: 1;
-            padding: 5px 8px;
-            font-size: 0.72rem;
-            font-weight: 700;
+            padding: 7px 10px;
+            font-size: 0.76rem;
+            font-weight: 800;
             border: 1px solid var(--border-light);
-            border-radius: var(--radius-sm);
-            background: var(--bg-subtle);
+            border-radius: var(--radius-pill);
+            background: #ffffff;
             color: var(--text-body);
             cursor: pointer;
+            box-shadow: var(--ios-shadow-sm);
             transition: var(--transition);
             text-align: center;
         }
@@ -537,68 +585,70 @@
             color: var(--vzla-blue);
         }
         .chip-live-diff.active {
-            background: var(--vzla-blue-light);
+            background: var(--vzla-blue);
             border-color: var(--vzla-blue);
-            color: var(--vzla-blue);
+            color: #ffffff;
+            box-shadow: 0 4px 10px var(--vzla-blue-glow);
         }
 
         .key-val-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.8rem;
-            padding: 3px 0;
+            font-size: 0.82rem;
+            padding: 4px 0;
         }
-        .key-val-row .k { color: var(--text-muted); }
-        .key-val-row .v { color: var(--text-title); font-weight: 600; }
+        .key-val-row .k { color: var(--text-muted); font-weight: 600; }
+        .key-val-row .v { color: var(--text-title); font-weight: 800; }
 
-        /* Toast educativo de paisaje */
+        /* Ficha Educativa de Paisaje */
         .landscape-toast {
-            border-left: 4px solid var(--vzla-green);
-            background: var(--vzla-green-light);
-            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-            padding: 12px 14px;
+            border-left: 4px solid var(--vzla-emerald);
+            background: #ffffff;
+            border-radius: 0 var(--radius-squircle-sm) var(--radius-squircle-sm) 0;
+            padding: 14px 16px;
             display: none;
+            box-shadow: var(--ios-shadow-md);
             animation: fadeIn 0.3s ease;
         }
         .landscape-toast.show { display: block; }
-        .landscape-toast h5 { color: #065f46; font-size: 0.86rem; margin-bottom: 3px; font-weight: 700; }
-        .landscape-toast p { font-size: 0.75rem; color: #047857; line-height: 1.4; }
+        .landscape-toast h5 { color: #065f46; font-size: 0.9rem; margin-bottom: 4px; font-weight: 800; }
+        .landscape-toast p { font-size: 0.78rem; color: #047857; line-height: 1.45; font-weight: 500; }
 
         /* Botones de acción lateral */
         .side-action-buttons {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         .btn-restart-action {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background: linear-gradient(135deg, #f59e0b, #d97706);
             border: none;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-squircle-md);
             color: #ffffff;
-            font-weight: 700;
+            font-weight: 800;
             font-family: inherit;
             cursor: pointer;
+            box-shadow: 0 6px 18px var(--vzla-yellow-glow);
             transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            font-size: 0.9rem;
-            box-shadow: 0 3px 12px rgba(217, 119, 6, 0.25);
+            font-size: 0.92rem;
         }
         .btn-restart-action:hover {
-            background: linear-gradient(135deg, #d97706, #b45309);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px var(--vzla-yellow-glow);
         }
 
-        /* ─── MODALES ─────────────────────────────────── */
+        /* ─── MODALES ESTILO iOS ──────────────────────── */
         .modal-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.5);
-            backdrop-filter: blur(6px);
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(12px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -607,26 +657,27 @@
         }
         .modal-backdrop.open { display: flex; }
         .modal-box {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-xl);
-            padding: 28px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-squircle-lg);
+            padding: 32px;
             max-width: 580px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-lg);
+            box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.25);
             animation: modalScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         @keyframes modalScale {
-            from { transform: scale(0.94); opacity: 0; }
+            from { transform: scale(0.92); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
 
         .modal-box h2 {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 800;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             color: var(--text-title);
             text-align: center;
         }
@@ -634,30 +685,31 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 16px 0;
+            margin: 18px 0;
         }
         @media (max-width: 500px) { .report-grid { grid-template-columns: 1fr; } }
         .report-tile {
-            background: var(--bg-subtle);
+            background: #ffffff;
             border: 1px solid var(--border-light);
-            border-radius: var(--radius-sm);
-            padding: 10px 12px;
+            border-radius: var(--radius-squircle-sm);
+            padding: 12px 14px;
+            box-shadow: var(--ios-shadow-sm);
         }
-        .report-tile .t-lbl { font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
-        .report-tile .t-val { font-size: 1.05rem; font-weight: 700; color: var(--vzla-blue); margin-top: 2px; }
+        .report-tile .t-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .report-tile .t-val { font-size: 1.15rem; font-weight: 800; color: var(--vzla-blue); margin-top: 3px; }
 
         .btn-full {
             width: 100%;
-            padding: 12px;
-            border-radius: var(--radius-sm);
+            padding: 14px;
+            border-radius: var(--radius-squircle-md);
             border: none;
-            font-weight: 700;
+            font-weight: 800;
             font-family: inherit;
             cursor: pointer;
             transition: var(--transition);
+            box-shadow: var(--ios-shadow-sm);
         }
 
-        /* Canvas de Confetti */
         #confetti-canvas {
             position: fixed;
             inset: 0;
@@ -670,23 +722,20 @@
 </head>
 <body>
 
-    <div class="venezuela-ribbon"></div>
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- BARRA SUPERIOR BLANCA -->
-    <header class="top-navbar">
-        <div class="brand" onclick="location.reload();">
-            <span class="brand-icon">⛰️</span>
-            <div class="brand-text">
-                <h1>TepuyMatch</h1>
-                <span>Paisajes de Venezuela</span>
-            </div>
-        </div>
-        <div class="nav-actions">
-            <button class="btn-action" id="btn-sound-toggle" title="Silenciar / Activar sonido">🔊 Sonido</button>
-            <button class="btn-action" id="btn-open-leaderboard">🏆 Récords</button>
-        </div>
-    </header>
+    <!-- DOCK FLOTANTE DINÁMICO (Controles Rápidos) -->
+    <aside class="floating-dock">
+        <button class="dock-btn" id="btn-music-toggle" title="Música Criolla de Fondo">
+            <span id="music-icon">🎵</span> Música
+        </button>
+        <button class="dock-btn" id="btn-sound-toggle" title="Efectos de Sonido">
+            <span id="sound-icon">🔊</span> Efectos
+        </button>
+        <button class="dock-btn" id="btn-open-leaderboard">
+            🏆 Récords
+        </button>
+    </aside>
 
     <!-- HUD SUPERIOR EN PARTIDA ACTIVA -->
     <section class="hud-banner" id="game-hud">
@@ -700,15 +749,15 @@
         </div>
         <div class="hud-stat">
             <span class="lbl">Turno Activo</span>
-            <span class="val turn-indicator" id="val-current-turn" style="font-size: 0.95rem;">Tú</span>
+            <span class="val turn-indicator" id="val-current-turn" style="font-size: 1rem;">Tú</span>
         </div>
         <div class="hud-stat">
             <span class="lbl">Tiempo</span>
-            <span class="val" id="val-timer" style="font-size: 1.1rem;">00:00</span>
+            <span class="val" id="val-timer" style="font-size: 1.15rem;">00:00</span>
         </div>
         <div class="hud-stat">
             <span class="lbl">Progreso</span>
-            <span class="val" id="val-progress" style="font-size: 1rem;">0/8</span>
+            <span class="val" id="val-progress" style="font-size: 1.05rem;">0/8</span>
         </div>
         <div>
             <button class="btn-hud-restart" id="btn-quick-restart" title="Reiniciar partida actual">
@@ -717,16 +766,23 @@
         </div>
     </section>
 
+    <!-- HERO HEADER CON LOGO PROTAGÓNICO -->
+    <header class="hero-header" id="hero-header-section">
+        <div class="app-icon-squircle" onclick="location.reload();" title="TepuyMatch Venezuela">
+            <span class="app-icon-symbol">⛰️</span>
+        </div>
+        <h1 class="brand-title">TepuyMatch</h1>
+        <div class="brand-tag-pill">
+            <div class="flag-dot"></div>
+            <span>Paisajes de Venezuela</span>
+        </div>
+    </header>
+
     <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
 
-        <!-- 1. VISTA DE MENÚ / CONFIGURADOR -->
+        <!-- 1. VISTA DE MENÚ INICIAL -->
         <section id="menu-view">
-            <div class="hero-banner">
-                <h2>Descubre las Maravillas de Venezuela</h2>
-                <p>Encuentra las parejas de paisajes nacionales. Elige tu modo y desafía a la Inteligencia Artificial.</p>
-            </div>
-
             <div class="config-card">
                 <!-- Modo -->
                 <div class="setting-box">
@@ -739,7 +795,7 @@
 
                 <!-- Dificultad IA Inicial -->
                 <div class="setting-box" id="box-difficulty">
-                    <h3>Dificultad de la Inteligencia Artificial</h3>
+                    <h3>Nivel del Oponente Inteligente</h3>
                     <div class="chip-group" id="group-diff">
                         <button class="chip-btn" data-diff="Facil">🟢 Turista Novato</button>
                         <button class="chip-btn selected" data-diff="Medio">🟡 Guía Turístico</button>
@@ -759,7 +815,7 @@
 
                 <!-- Selector de Estados -->
                 <div class="setting-box">
-                    <h3>Filtrar por Estados Venezolanos (Opcional)</h3>
+                    <h3>Filtrar Estados Venezolanos (Opcional)</h3>
                     <div class="state-select-container" id="state-checkboxes">
                         <span style="font-size:0.75rem; color:var(--text-muted);">Cargando estados...</span>
                     </div>
@@ -772,7 +828,7 @@
             </div>
         </section>
 
-        <!-- 2. VISTA DE JUEGO (GAMEPLAY) -->
+        <!-- 2. VISTA DE PARTIDA ACTIVA (GAMEPLAY) -->
         <section id="game-view">
             <div class="game-split">
                 <!-- Tablero -->
@@ -805,7 +861,7 @@
                                 <span class="v" id="ai-strategy-label">Observando</span>
                             </div>
 
-                            <!-- Selector en vivo para subir/bajar dificultad sin reiniciar -->
+                            <!-- Selector en vivo de dificultad -->
                             <div class="live-diff-selector">
                                 <span>Ajustar Dificultad en Vivo:</span>
                                 <div class="live-diff-chips" id="live-diff-group">
@@ -817,9 +873,9 @@
                         </div>
                     </div>
 
-                    <!-- Panel de Optimización de Tablero -->
+                    <!-- Panel de Optimización Matemática -->
                     <div class="panel-card">
-                        <h4>📐 Optimización Matemática</h4>
+                        <h4>📐 Optimización de Tablero</h4>
                         <div class="key-val-row">
                             <span class="k">Solver:</span>
                             <span class="v" id="lp-solver-label">SciPy HiGHS</span>
@@ -832,7 +888,7 @@
                             <span class="k">Tiempo de cómputo:</span>
                             <span class="v" id="lp-time-label">0.005s</span>
                         </div>
-                        <button class="btn-action" style="width:100%; margin-top:10px; justify-content:center;" id="btn-view-lp-modal">
+                        <button class="chip-btn" style="width:100%; margin-top:10px;" id="btn-view-lp-modal">
                             🔍 Inspeccionar Formulación
                         </button>
                     </div>
@@ -842,7 +898,7 @@
                         <button class="btn-restart-action" id="btn-restart-game">
                             🔄 Reiniciar Partida
                         </button>
-                        <button class="btn-action" style="padding:10px; justify-content:center; border-color:#cbd5e1;" id="btn-quit-game">
+                        <button class="chip-btn" style="padding:14px; border-radius:var(--radius-squircle-md);" id="btn-quit-game">
                             🚪 Volver al Menú Principal
                         </button>
                     </div>
@@ -855,44 +911,149 @@
     <!-- MODAL DE FORMULACIÓN MATEMÁTICA -->
     <div class="modal-backdrop" id="modal-lp">
         <div class="modal-box">
-            <h2 style="color:var(--vzla-blue); font-size:1.35rem;">📐 Formulación de Optimización de Tablero</h2>
-            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
-                El tablero se resolvió en tiempo real mediante <strong>SciPy MILP (HiGHS)</strong> garantizando tamaño exacto, cuotas regionales de Venezuela y equilibrio de dificultad.
+            <h2 style="color:var(--vzla-blue);">📐 Formulación de Optimización</h2>
+            <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:14px; text-align:center;">
+                El tablero se generó resolviendo un modelo de <strong>Programación Lineal Entera (HiGHS)</strong> que maximiza la diversidad cultural sujeto a cotas de dificultad y balance regional.
             </p>
             <div class="report-grid" id="lp-metrics-grid"></div>
-            <h4 style="font-size:0.8rem; text-transform:uppercase; color:var(--text-title); margin:14px 0 6px;">Paisajes Seleccionados por el Solver:</h4>
-            <div id="lp-selected-list" style="font-size:0.8rem; line-height:1.6; max-height:140px; overflow-y:auto; padding:8px; background:var(--bg-subtle); border-radius:var(--radius-sm); border:1px solid var(--border-light);"></div>
-            <button class="btn-full" style="margin-top:16px; background:var(--bg-subtle); border:1px solid var(--border-light); color:var(--text-title);" id="btn-close-lp">Cerrar</button>
+            <h4 style="font-size:0.8rem; text-transform:uppercase; color:var(--text-title); margin:16px 0 8px; font-weight:800;">Paisajes Seleccionados:</h4>
+            <div id="lp-selected-list" style="font-size:0.82rem; line-height:1.7; max-height:140px; overflow-y:auto; padding:12px; background:#f8fafc; border-radius:var(--radius-squircle-sm); border:1px solid var(--border-light);"></div>
+            <button class="btn-full" style="margin-top:18px; background:#f1f5f9; color:var(--text-title);" id="btn-close-lp">Cerrar</button>
         </div>
     </div>
 
-    <!-- MODAL DE VICTORIA / FIN DE PARTIDA -->
+    <!-- MODAL DE VICTORIA -->
     <div class="modal-backdrop" id="modal-victory">
         <div class="modal-box" style="text-align:center;">
             <h2 id="victory-title" style="color:var(--vzla-yellow);">🏆 ¡PARTIDA COMPLETADA!</h2>
-            <div id="victory-stats" style="margin: 16px 0; font-size: 0.95rem; line-height: 1.8;"></div>
+            <div id="victory-stats" style="margin: 18px 0; font-size: 1rem; line-height: 1.9; font-weight:600;"></div>
             <div style="margin: 16px 0; text-align: left;">
-                <label style="font-size:0.8rem; color:var(--text-muted);">Registra tu nombre para el Salón de la Fama:</label>
-                <input type="text" id="victory-player-name" placeholder="Tu nombre..." maxlength="20" style="width:100%; padding:10px; margin-top:6px; background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:var(--radius-sm); color:var(--text-title); font-family:inherit;">
+                <label style="font-size:0.82rem; color:var(--text-muted); font-weight:700;">Registra tu nombre para el Salón de la Fama:</label>
+                <input type="text" id="victory-player-name" placeholder="Tu nombre..." maxlength="20" style="width:100%; padding:12px; margin-top:8px; background:#ffffff; border:1.5px solid var(--border-light); border-radius:var(--radius-squircle-sm); color:var(--text-title); font-family:inherit; font-weight:600; box-shadow:var(--ios-shadow-sm);">
             </div>
-            <button class="btn-full" style="background:var(--vzla-blue); color:#ffffff; font-weight:800; font-size:1rem;" id="btn-save-victory">💾 Guardar y Volver al Menú</button>
+            <button class="btn-full" style="background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-size:1.05rem;" id="btn-save-victory">💾 Guardar y Volver al Menú</button>
         </div>
     </div>
 
     <!-- MODAL DE SALÓN DE LA FAMA (RÉCORDS) -->
     <div class="modal-backdrop" id="modal-records">
         <div class="modal-box">
-            <h2 style="color:var(--vzla-blue); font-size:1.35rem;">🏆 Salón de la Fama</h2>
-            <div id="records-table-container" style="max-height:260px; overflow-y:auto; font-size:0.85rem; margin:14px 0;">
-                <span style="color:var(--text-light);">Cargando récords...</span>
+            <h2 style="color:var(--vzla-blue);">🏆 Salón de la Fama</h2>
+            <div id="records-table-container" style="max-height:280px; overflow-y:auto; font-size:0.88rem; margin:16px 0;">
+                <span style="color:var(--text-subtle);">Cargando récords...</span>
             </div>
-            <button class="btn-full" style="background:var(--bg-subtle); border:1px solid var(--border-light); color:var(--text-title);" id="btn-close-records">Cerrar</button>
+            <button class="btn-full" style="background:#f1f5f9; color:var(--text-title);" id="btn-close-records">Cerrar</button>
         </div>
     </div>
 
-    <!-- SCRIPT DE JUEGO, AUDIO Y LÓGICA -->
+    <!-- SCRIPT DE JUEGO, MÚSICA VENEZOLANA Y AUDIO -->
     <script>
-    // ─── AUDIO SINTETIZADO (Web Audio API nativo) ──────
+    // ─── GENERADOR DE MÚSICA TRADICIONAL VENEZOLANA (CUATRO EN 6/8) ─
+    class VenezuelanMusicEngine {
+        constructor() {
+            this.ctx = null;
+            this.isPlaying = false;
+            this.timer = null;
+            this.step = 0;
+            // Acordes tradicionales en Re Mayor (D - G - A7 - D)
+            // Frecuencias simulando las 4 cuerdas del Cuatro: La(A3), Re(D4), Fa#(F#4), Si(B3)
+            this.chordProgression = [
+                // D Mayor (Re Mayor)
+                [220.00, 293.66, 369.99, 493.88],
+                [220.00, 293.66, 369.99, 493.88],
+                // G Mayor (Sol Mayor)
+                [196.00, 293.66, 392.00, 493.88],
+                [196.00, 293.66, 392.00, 493.88],
+                // A7 (La 7ma)
+                [220.00, 277.18, 329.63, 493.88],
+                [220.00, 277.18, 329.63, 493.88],
+                // D Mayor resolución
+                [220.00, 293.66, 369.99, 493.88],
+                [220.00, 293.66, 369.99, 493.88]
+            ];
+        }
+
+        initContext() {
+            if (!this.ctx) {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (this.ctx.state === 'suspended') {
+                this.ctx.resume();
+            }
+        }
+
+        // Simula el rasgueo cálido de madera del cuatro venezolano
+        strum(chord, isFrenado = false) {
+            if (!this.ctx || !this.isPlaying) return;
+            const now = this.ctx.currentTime;
+            
+            chord.forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+
+                osc.type = isFrenado ? 'sawtooth' : 'triangle';
+                osc.frequency.setValueAtTime(freq, now + idx * 0.012);
+
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(isFrenado ? 1400 : 2800, now);
+
+                const volume = isFrenado ? 0.04 : 0.07;
+                const decay = isFrenado ? 0.06 : 0.45;
+
+                gain.gain.setValueAtTime(volume, now + idx * 0.012);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.012 + decay);
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now + idx * 0.012);
+                osc.stop(now + idx * 0.012 + decay);
+            });
+        }
+
+        start() {
+            this.initContext();
+            this.isPlaying = true;
+            this.step = 0;
+            // Compás tradicional de 6/8 llanero (Joropo / Tonada suave a 130 BPM)
+            const intervalMs = (60 / 130 / 3) * 1000;
+            this.timer = setInterval(() => {
+                if (!this.isPlaying) return;
+                const chordIdx = Math.floor(this.step / 6) % this.chordProgression.length;
+                const chord = this.chordProgression[chordIdx];
+                const beatInBar = this.step % 6;
+
+                // Patrón rítmico: 1 (rasgueo), 2 (arriba), 3 (chasquido/frenado), 4 (rasgueo), 5 (arriba), 6 (frenado)
+                if (beatInBar === 0 || beatInBar === 3) {
+                    this.strum(chord, false);
+                } else if (beatInBar === 2 || beatInBar === 5) {
+                    this.strum(chord, true); // Golpe apagado
+                } else {
+                    this.strum(chord.slice(1), false);
+                }
+                this.step++;
+            }, intervalMs);
+        }
+
+        stop() {
+            this.isPlaying = false;
+            if (this.timer) {
+                clearInterval(this.timer);
+                this.timer = null;
+            }
+        }
+
+        toggle() {
+            if (this.isPlaying) this.stop();
+            else this.start();
+            return this.isPlaying;
+        }
+    }
+    const musicEngine = new VenezuelanMusicEngine();
+
+    // ─── EFECTOS DE SONIDO NATIVOS (Web Audio API) ──────
     class SoundFX {
         constructor() {
             this.ctx = null;
@@ -1001,10 +1162,19 @@
 
         setupLiveDifficultyChips();
 
+        // Controles de Audio Flotantes
+        const musicBtn = document.getElementById('btn-music-toggle');
+        musicBtn.addEventListener('click', () => {
+            const isPlaying = musicEngine.toggle();
+            musicBtn.classList.toggle('active', isPlaying);
+            document.getElementById('music-icon').textContent = isPlaying ? '🎶' : '🎵';
+        });
+
         const soundBtn = document.getElementById('btn-sound-toggle');
         soundBtn.addEventListener('click', () => {
             audio.enabled = !audio.enabled;
-            soundBtn.textContent = audio.enabled ? '🔊 Sonido' : '🔇 Silencio';
+            soundBtn.classList.toggle('active', audio.enabled);
+            document.getElementById('sound-icon').textContent = audio.enabled ? '🔊' : '🔇';
         });
     });
 
@@ -1101,7 +1271,7 @@
     async function startNewGame() {
         const btn = document.getElementById('btn-start-game');
         btn.disabled = true;
-        btn.innerHTML = '<span>⚡ Generando Tablero...</span>';
+        btn.innerHTML = '<span>⚡ Generando Tablero Óptimo...</span>';
 
         try {
             const res = await fetch('/api/new-game', {
@@ -1115,7 +1285,8 @@
             activeMatch = data;
             isLocked = false;
 
-            // Transición a vista de juego
+            // Ocultar cabecera hero y menú para dar todo el protagonismo al juego
+            document.getElementById('hero-header-section').style.display = 'none';
             document.getElementById('menu-view').style.display = 'none';
             document.getElementById('game-view').style.display = 'block';
             document.getElementById('game-hud').classList.add('active');
@@ -1427,7 +1598,7 @@
     // ─── SALÓN DE LA FAMA ──────────────────────────────
     async function openRecordsModal() {
         const container = document.getElementById('records-table-container');
-        container.innerHTML = '<span style="color:var(--text-light);">Cargando mejores récords...</span>';
+        container.innerHTML = '<span style="color:var(--text-subtle);">Cargando mejores récords...</span>';
         openModal('modal-records');
 
         try {
@@ -1441,9 +1612,9 @@
             list.forEach((r, idx) => {
                 const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '•';
                 html += `
-                    <div style="display:flex; justify-content:space-between; padding:8px 12px; background:var(--bg-subtle); border-radius:6px; border:1px solid var(--border-light);">
+                    <div style="display:flex; justify-content:space-between; padding:10px 14px; background:#ffffff; border-radius:10px; border:1px solid var(--border-light); box-shadow:var(--ios-shadow-sm);">
                         <span>${medal} <strong>${r.player_name}</strong> (${r.mode})</span>
-                        <span style="color:var(--vzla-blue); font-weight:700;">${r.score} pts • ${r.time_seconds}s</span>
+                        <span style="color:var(--vzla-blue); font-weight:800;">${r.score} pts • ${r.time_seconds}s</span>
                     </div>
                 `;
             });
@@ -1457,6 +1628,7 @@
     function returnToMenu() {
         stopTimer();
         stopConfetti();
+        document.getElementById('hero-header-section').style.display = 'flex';
         document.getElementById('menu-view').style.display = 'flex';
         document.getElementById('game-view').style.display = 'none';
         document.getElementById('game-hud').classList.remove('active');

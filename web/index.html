@@ -2,420 +2,353 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>⛰️ TepuyMatch — Paisajes de Venezuela</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
     <style>
-        /* ─── RESET & APPLE iOS INSPIRED TOKENS ─────── */
+        /* ─── RESET & NO-SCROLL SINGLE-VIEWPORT SYSTEM ─── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            /* Superficies y Fondos Blancos Puros */
-            --bg-body: #f8fafc;
-            --bg-card: rgba(255, 255, 255, 0.85);
-            --bg-glass: rgba(255, 255, 255, 0.78);
-            --bg-glass-heavy: rgba(255, 255, 255, 0.92);
+            /* Superficies Blancas Puras y Limpias */
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --border-light: #e2e8f0;
 
-            /* Paleta Nacional de Venezuela Intensa y Vibrante */
-            --vzla-yellow: #f59e0b;       /* Amarillo Sol del Orinoco */
-            --vzla-yellow-glow: rgba(245, 158, 11, 0.35);
-            --vzla-blue: #2563eb;         /* Azul Caribe Profundo */
-            --vzla-blue-glow: rgba(37, 99, 235, 0.3);
-            --vzla-red: #e11d48;          /* Rojo Guayana */
-            --vzla-red-glow: rgba(225, 29, 72, 0.28);
-            --vzla-emerald: #059669;      /* Verde Tepuy Canaima */
-            --vzla-emerald-glow: rgba(5, 150, 105, 0.3);
+            /* Paleta Nacional de Venezuela */
+            --vzla-blue: #1d4ed8;         /* Azul Caribe */
+            --vzla-blue-glow: rgba(29, 78, 216, 0.25);
+            --vzla-yellow: #f59e0b;       /* Amarillo Sol */
+            --vzla-yellow-glow: rgba(245, 158, 11, 0.25);
+            --vzla-red: #dc2626;          /* Rojo Granate */
+            --vzla-emerald: #059669;      /* Verde Tepuy */
 
-            /* Tipografía */
             --text-title: #0f172a;
             --text-body: #334155;
             --text-muted: #64748b;
-            --text-subtle: #94a3b8;
 
-            /* Sombras estilo iOS (multi-capa con ambient occlusion) */
-            --ios-shadow-sm: 0 2px 8px -2px rgba(15, 23, 42, 0.08), 0 1px 4px -1px rgba(15, 23, 42, 0.04);
-            --ios-shadow-md: 0 10px 25px -4px rgba(15, 23, 42, 0.1), 0 4px 10px -3px rgba(15, 23, 42, 0.05);
-            --ios-shadow-lg: 0 20px 35px -6px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
-            --ios-icon-shadow: 0 8px 20px -2px rgba(37, 99, 235, 0.35);
+            /* Sombras iOS Suaves */
+            --ios-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06);
+            --ios-shadow-md: 0 8px 20px -3px rgba(15, 23, 42, 0.08);
+            --ios-shadow-lg: 0 16px 30px -4px rgba(15, 23, 42, 0.1);
 
-            /* Bordes Squircle Apple */
-            --radius-squircle-lg: 26px;
-            --radius-squircle-md: 18px;
-            --radius-squircle-sm: 12px;
+            --radius-squircle: 18px;
             --radius-pill: 9999px;
-
-            --transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+        /* Bloqueo estricto de scroll: todo cabe en el 100% de la pantalla */
+        html, body {
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            background: #ffffff;
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
             color: var(--text-body);
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
-        /* ─── DOCK FLOTANTE DINÁMICO (iOS Style Controls) ─── */
-        .floating-dock {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--bg-glass);
-            backdrop-filter: blur(24px) saturate(190%);
-            -webkit-backdrop-filter: blur(24px) saturate(190%);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: var(--ios-shadow-md);
-            padding: 6px 10px;
-            border-radius: var(--radius-pill);
-            transition: var(--transition);
-        }
-        .floating-dock:hover {
-            box-shadow: var(--ios-shadow-lg);
-            transform: translateY(-2px);
-        }
-        .dock-btn {
-            background: transparent;
-            border: none;
-            padding: 8px 14px;
-            border-radius: var(--radius-pill);
-            color: var(--text-title);
-            font-size: 0.82rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: var(--transition);
-            font-family: inherit;
-        }
-        .dock-btn:hover {
-            background: rgba(37, 99, 235, 0.08);
-            color: var(--vzla-blue);
-        }
-        .dock-btn.active {
-            background: var(--vzla-blue);
-            color: #ffffff;
-            box-shadow: 0 4px 12px var(--vzla-blue-glow);
+        /* ─── CINTA TRICOLOR SUPERIOR ────────────────── */
+        .venezuela-ribbon {
+            height: 3px;
+            width: 100%;
+            flex-shrink: 0;
+            background: linear-gradient(90deg, 
+                #facc15 0%, #facc15 33.3%, 
+                #2563eb 33.3%, #2563eb 66.6%, 
+                #dc2626 66.6%, #dc2626 100%
+            );
         }
 
-        /* ─── HERO HEADER CON LOGO PROTAGÓNICO ──────── */
-        .hero-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px 20px;
-            text-align: center;
-        }
-
-        /* Ícono de App estilo iOS con efecto empañado y relieve */
-        .app-icon-squircle {
-            width: 88px;
-            height: 88px;
-            border-radius: 22px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 50%, #1e3a8a 100%);
-            box-shadow: 0 16px 32px -4px rgba(29, 78, 216, 0.4), inset 0 2px 2px rgba(255, 255, 255, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            margin-bottom: 16px;
-            cursor: pointer;
-            transition: var(--transition);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .app-icon-squircle::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 22px;
-            background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.4) 0%, transparent 60%);
-            pointer-events: none;
-        }
-        .app-icon-squircle:hover {
-            transform: scale(1.06) rotate(-2deg);
-            box-shadow: 0 22px 40px -4px rgba(29, 78, 216, 0.5);
-        }
-        .app-icon-symbol {
-            font-size: 3rem;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
-        }
-
-        .brand-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.4rem, 6vw, 3.4rem);
-            font-weight: 700;
-            color: var(--text-title);
-            letter-spacing: -1px;
-            line-height: 1.1;
-            margin-bottom: 8px;
-        }
-        .brand-tag-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg-card);
-            backdrop-filter: blur(16px);
-            padding: 6px 16px;
-            border-radius: var(--radius-pill);
-            box-shadow: var(--ios-shadow-sm);
-            border: 1px solid var(--border-light);
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--vzla-blue);
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-        }
-        .flag-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: linear-gradient(180deg, #facc15 33%, #2563eb 33%, #2563eb 66%, #dc2626 66%);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-
-        /* ─── HUD BAR (Partida Activa) ────────────────── */
-        .hud-banner {
-            display: none;
-            background: var(--bg-glass-heavy);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        /* ─── BARRA SUPERIOR COMPACTA ────────────────── */
+        .app-bar {
+            height: 52px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-light);
-            padding: 12px 24px;
-            gap: 16px;
-            justify-content: space-around;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 60;
-            box-shadow: var(--ios-shadow-sm);
-        }
-        .hud-banner.active { display: flex; }
-        .hud-stat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .hud-stat .lbl {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-        .hud-stat .val {
-            font-size: 1.35rem;
-            font-weight: 800;
-            font-feature-settings: "tnum";
-            color: var(--text-title);
-        }
-        .val.player { color: var(--vzla-blue); }
-        .val.ai { color: var(--vzla-red); }
-        .val.turn-indicator { color: var(--vzla-yellow); }
-
-        .btn-hud-restart {
-            background: #fff;
-            color: var(--vzla-red);
-            border: 1px solid rgba(225, 29, 72, 0.2);
-            padding: 8px 16px;
-            border-radius: var(--radius-pill);
-            font-size: 0.82rem;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: var(--ios-shadow-sm);
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .btn-hud-restart:hover {
-            background: var(--vzla-red);
-            color: #ffffff;
-            box-shadow: 0 4px 14px var(--vzla-red-glow);
-        }
-
-        /* ─── CONTENEDOR CENTRAL ──────────────────────── */
-        .main-content {
-            flex: 1;
-            max-width: 1280px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 10px 20px 40px;
-        }
-
-        /* ─── CONFIG CARD (Menú con Glassmorphism) ────── */
-        #menu-view {
-            max-width: 620px;
-            width: 100%;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            animation: fadeIn 0.35s ease;
-        }
-
-        .config-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(28px) saturate(200%);
-            -webkit-backdrop-filter: blur(28px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            border-radius: var(--radius-squircle-lg);
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            box-shadow: var(--ios-shadow-lg);
-        }
-        .setting-box h3 {
-            font-size: 0.78rem;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: var(--text-title);
-            font-weight: 800;
-            margin-bottom: 12px;
+            padding: 0 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            z-index: 50;
+        }
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .app-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 10px var(--vzla-blue-glow);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        .brand-text h1 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-title);
+            line-height: 1;
+        }
+        .brand-text span {
+            font-size: 0.65rem;
+            color: var(--vzla-blue);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .dock-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .pill-btn {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            padding: 6px 12px;
+            border-radius: var(--radius-pill);
+            color: var(--text-title);
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: inherit;
+        }
+        .pill-btn:hover {
+            border-color: var(--vzla-blue);
+            color: var(--vzla-blue);
+        }
+        .pill-btn.active {
+            background: var(--vzla-blue);
+            color: #ffffff;
+            border-color: var(--vzla-blue);
+            box-shadow: 0 3px 8px var(--vzla-blue-glow);
+        }
+
+        /* ─── CONTENEDOR DE PANTALLA PRINCIPAL ───────── */
+        .stage {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 8px 12px;
+        }
+
+        /* ─── VISTA 1: MENÚ INICIAL COMPACTO (NO SCROLL) ─ */
+        #menu-view {
+            width: 100%;
+            max-width: 540px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: calc(100dvh - 72px);
+            justify-content: center;
+        }
+
+        .menu-hero {
+            text-align: center;
+        }
+        .menu-hero h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.4rem, 4vw, 1.85rem);
+            font-weight: 700;
+            color: var(--text-title);
+        }
+        .menu-hero p {
+            color: var(--text-muted);
+            font-size: clamp(0.78rem, 2vw, 0.88rem);
+        }
+
+        .config-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-squircle);
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: var(--ios-shadow-md);
+        }
+        .setting-box h3 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-title);
+            font-weight: 800;
+            margin-bottom: 6px;
         }
         .chip-group {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 6px;
         }
         .chip-btn {
             flex: 1;
-            min-width: 120px;
-            padding: 12px 16px;
-            border-radius: var(--radius-squircle-sm);
-            background: #ffffff;
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: var(--bg-subtle);
             border: 1.5px solid var(--border-light);
             color: var(--text-body);
             font-family: inherit;
-            font-size: 0.88rem;
+            font-size: 0.78rem;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: var(--ios-shadow-sm);
             transition: var(--transition);
             text-align: center;
         }
-        .chip-btn:hover {
-            border-color: var(--vzla-blue);
-            color: var(--vzla-blue);
-            transform: translateY(-1px);
-        }
+        .chip-btn:hover { border-color: var(--vzla-blue); color: var(--vzla-blue); }
         .chip-btn.selected {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            background: var(--vzla-blue);
             border-color: var(--vzla-blue);
             color: #ffffff;
-            box-shadow: 0 8px 18px var(--vzla-blue-glow);
-            transform: translateY(-2px);
+            box-shadow: 0 4px 10px var(--vzla-blue-glow);
         }
 
-        /* Selector de Estados */
+        /* Selector de Estados compacto */
         .state-select-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
-            gap: 8px;
-            max-height: 140px;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 4px;
+            max-height: 80px;
             overflow-y: auto;
-            padding: 10px;
+            padding: 6px;
             border: 1px solid var(--border-light);
-            border-radius: var(--radius-squircle-sm);
-            background: #ffffff;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            border-radius: 8px;
+            background: var(--bg-subtle);
         }
         .state-checkbox {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.8rem;
+            gap: 5px;
+            font-size: 0.72rem;
             color: var(--text-body);
             font-weight: 600;
             cursor: pointer;
-            padding: 5px 8px;
-            border-radius: 6px;
+            padding: 2px 4px;
         }
-        .state-checkbox:hover { background: #f1f5f9; }
 
         .btn-launch {
             width: 100%;
-            padding: 18px;
-            background: linear-gradient(135deg, #2563eb, #1e40af);
+            padding: 14px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
             border: none;
-            border-radius: var(--radius-squircle-md);
+            border-radius: 12px;
             color: white;
             font-family: inherit;
-            font-size: 1.15rem;
+            font-size: 0.98rem;
             font-weight: 800;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 10px 24px var(--vzla-blue-glow);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            letter-spacing: 0.5px;
+            box-shadow: 0 6px 16px var(--vzla-blue-glow);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
         }
-        .btn-launch:hover {
-            transform: translateY(-3px) scale(1.01);
-            box-shadow: 0 16px 30px var(--vzla-blue-glow);
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        }
+        .btn-launch:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--vzla-blue-glow); }
 
-        /* ─── VISTA DE PARTIDA ACTIVA ────────────────── */
+        /* ─── VISTA 2: PARTIDA ACTIVA (NO SCROLL TOTAL) ── */
         #game-view {
             display: none;
             width: 100%;
-            animation: fadeIn 0.3s ease;
-        }
-        .game-split {
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 24px;
-            align-items: start;
-        }
-        @media (max-width: 950px) {
-            .game-split { grid-template-columns: 1fr; }
+            height: 100%;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        /* ─── TABLERO Y CARTAS CON RELIEVE Y SOMBRAS ─── */
-        .board-wrapper {
+        /* HUD Compacto */
+        .game-top-hud {
+            height: 44px;
+            flex-shrink: 0;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 0 16px;
             display: flex;
-            justify-content: center;
             align-items: center;
-            min-height: 480px;
+            justify-content: space-between;
+            box-shadow: var(--ios-shadow-sm);
+        }
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+        .stat-pill .num {
+            font-weight: 800;
+            font-size: 1rem;
+        }
+        .stat-pill.p-score { color: var(--vzla-blue); }
+        .stat-pill.ai-score { color: var(--vzla-red); }
+        .stat-pill.turn-val { color: var(--vzla-yellow); }
+
+        /* Contenedor Split Tablero + Controles */
+        .game-main-split {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 260px;
+            gap: 12px;
+            height: calc(100% - 52px);
+            min-height: 0;
+        }
+        @media (max-width: 820px) {
+            .game-main-split { grid-template-columns: 1fr; }
+            .side-bar-controls { display: none !important; }
+        }
+
+        /* ─── TABLERO ADAPTATIVO (NUNCA DESBORDA) ──────── */
+        .board-stage {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+            padding: 4px;
         }
         .game-grid {
             display: grid;
-            gap: 14px;
-            justify-content: center;
-            perspective: 1200px;
+            gap: 8px;
             width: 100%;
-            max-width: 840px;
+            height: 100%;
+            max-width: 760px;
+            max-height: 100%;
+            justify-content: center;
+            align-content: center;
         }
 
+        /* Cartas: Tamaño calculado dinámicamente para que quepan todas */
         .card-slot {
             aspect-ratio: 3 / 4;
+            max-height: calc((100dvh - 130px) / var(--grid-rows, 4));
+            width: auto;
             perspective: 1000px;
             cursor: pointer;
             touch-action: manipulation;
-            user-select: none;
-            -webkit-user-select: none;
             position: relative;
         }
         .card-flipper {
             position: relative;
             width: 100%;
             height: 100%;
-            transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform-style: preserve-3d;
         }
         .card-slot.flipped .card-flipper,
@@ -430,15 +363,17 @@
             height: 100%;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            border-radius: var(--radius-squircle-md);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.12), 0 4px 8px -2px rgba(15, 23, 42, 0.06);
-            border: 2px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
+            border: 2px solid #ffffff;
             background: #ffffff;
             transition: var(--transition);
         }
+
+        /* Reverso Azul Real de Venezuela con Oro */
         .side-back {
-            background: #ffffff;
+            background: #1e3a8a;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -450,205 +385,153 @@
         }
         .card-slot:hover .side-back {
             border-color: var(--vzla-blue);
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 18px 30px -4px var(--vzla-blue-glow);
+            transform: scale(1.03);
+            box-shadow: 0 8px 18px var(--vzla-blue-glow);
         }
 
+        /* Frente con imagen limpia (SIN texto duplicado) */
         .side-front {
             transform: rotateY(180deg);
-            background: #000;
-            border: 2.5px solid var(--vzla-yellow);
+            background: #000000;
+            border: 2px solid var(--vzla-yellow);
         }
         .side-front img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .card-caption {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            padding: 8px 6px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.88) 70%);
-            font-size: clamp(0.65rem, 1.8vw, 0.78rem);
-            font-weight: 700;
-            color: #ffffff;
-            text-align: center;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-        }
 
-        /* Cartas emparejadas con halo verde esmeralda */
+        /* Emparejadas */
         .card-slot.matched .side-front {
-            border: 3px solid var(--vzla-emerald);
-            box-shadow: 0 10px 25px var(--vzla-emerald-glow);
+            border: 2.5px solid var(--vzla-emerald);
+            box-shadow: 0 0 16px rgba(5, 150, 105, 0.4);
         }
         .card-slot.matched::after {
             content: '✓';
             position: absolute;
-            top: 8px; right: 10px;
+            top: 4px; right: 6px;
             background: var(--vzla-emerald);
             color: #ffffff;
             font-weight: 900;
-            font-size: 0.8rem;
-            width: 24px; height: 24px;
+            font-size: 0.72rem;
+            width: 18px; height: 18px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 10;
-            box-shadow: 0 4px 10px rgba(5, 150, 105, 0.4);
         }
 
-        /* ─── PANELES LATERALES (Frosted Glass) ───────── */
-        .side-control-panel {
+        /* ─── BARRA LATERAL COMPACTA (UN SOLO BOTÓN REINICIO) ── */
+        .side-bar-controls {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 8px;
+            height: 100%;
+            justify-content: space-between;
         }
-        .panel-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            border-radius: var(--radius-squircle-md);
-            padding: 20px;
-            box-shadow: var(--ios-shadow-md);
+
+        .side-panel-box {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 10px 12px;
+            box-shadow: var(--ios-shadow-sm);
         }
-        .panel-card h4 {
-            font-size: 0.82rem;
+        .side-panel-box h4 {
+            font-size: 0.74rem;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.5px;
             color: var(--text-title);
             font-weight: 800;
-            margin-bottom: 14px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
         }
 
-        /* Monitor IA */
-        .ai-think-box {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .think-pulse {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.84rem;
-            color: var(--vzla-blue);
-            font-weight: 700;
-        }
-        .think-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: var(--vzla-blue);
-            box-shadow: 0 0 10px var(--vzla-blue);
-            animation: pulse 1s infinite alternate;
-        }
-        @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
-
-        /* Ajuste de dificultad dentro de la partida */
-        .live-diff-selector {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-light);
-        }
-        .live-diff-selector span {
-            font-size: 0.72rem;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            font-weight: 800;
-            display: block;
-            margin-bottom: 8px;
-        }
+        /* Dificultad en vivo */
         .live-diff-chips {
             display: flex;
-            gap: 6px;
+            gap: 4px;
+            margin-top: 6px;
         }
         .chip-live-diff {
             flex: 1;
-            padding: 7px 10px;
-            font-size: 0.76rem;
-            font-weight: 800;
+            padding: 5px 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
             border: 1px solid var(--border-light);
-            border-radius: var(--radius-pill);
-            background: #ffffff;
+            border-radius: 6px;
+            background: var(--bg-subtle);
             color: var(--text-body);
             cursor: pointer;
-            box-shadow: var(--ios-shadow-sm);
-            transition: var(--transition);
             text-align: center;
-        }
-        .chip-live-diff:hover {
-            border-color: var(--vzla-blue);
-            color: var(--vzla-blue);
         }
         .chip-live-diff.active {
             background: var(--vzla-blue);
-            border-color: var(--vzla-blue);
             color: #ffffff;
-            box-shadow: 0 4px 10px var(--vzla-blue-glow);
+            border-color: var(--vzla-blue);
         }
 
-        .key-val-row {
+        .kv-row {
             display: flex;
             justify-content: space-between;
-            font-size: 0.82rem;
-            padding: 4px 0;
+            font-size: 0.74rem;
+            padding: 2px 0;
         }
-        .key-val-row .k { color: var(--text-muted); font-weight: 600; }
-        .key-val-row .v { color: var(--text-title); font-weight: 800; }
+        .kv-row .k { color: var(--text-muted); }
+        .kv-row .v { color: var(--text-title); font-weight: 700; }
 
-        /* Ficha Educativa de Paisaje */
-        .landscape-toast {
-            border-left: 4px solid var(--vzla-emerald);
-            background: #ffffff;
-            border-radius: 0 var(--radius-squircle-sm) var(--radius-squircle-sm) 0;
-            padding: 14px 16px;
+        /* Ficha educativa breve */
+        .toast-bubble {
+            border-left: 3px solid var(--vzla-emerald);
+            background: #f0fdf4;
+            padding: 8px 10px;
+            border-radius: 0 8px 8px 0;
             display: none;
-            box-shadow: var(--ios-shadow-md);
-            animation: fadeIn 0.3s ease;
         }
-        .landscape-toast.show { display: block; }
-        .landscape-toast h5 { color: #065f46; font-size: 0.9rem; margin-bottom: 4px; font-weight: 800; }
-        .landscape-toast p { font-size: 0.78rem; color: #047857; line-height: 1.45; font-weight: 500; }
+        .toast-bubble.show { display: block; }
+        .toast-bubble h5 { font-size: 0.78rem; color: #065f46; font-weight: 800; }
+        .toast-bubble p { font-size: 0.68rem; color: #047857; line-height: 1.3; margin-top: 2px; }
 
-        /* Botones de acción lateral */
-        .side-action-buttons {
+        /* UN SOLO BOTÓN REINICIAR Y VOLVER */
+        .bottom-actions {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 6px;
         }
-        .btn-restart-action {
+        .btn-game-action {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            border: none;
-            border-radius: var(--radius-squircle-md);
-            color: #ffffff;
-            font-weight: 800;
-            font-family: inherit;
+            padding: 9px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 6px 18px var(--vzla-yellow-glow);
-            transition: var(--transition);
+            border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            font-size: 0.92rem;
+            gap: 6px;
+            font-family: inherit;
         }
-        .btn-restart-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 24px var(--vzla-yellow-glow);
+        .btn-game-restart {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #ffffff;
+            box-shadow: 0 3px 10px var(--vzla-yellow-glow);
+        }
+        .btn-game-quit {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            color: var(--text-title);
         }
 
-        /* ─── MODALES ESTILO iOS ──────────────────────── */
+        /* ─── MODALES ─────────────────────────────────── */
         .modal-backdrop {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.45);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(8px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -657,57 +540,19 @@
         }
         .modal-backdrop.open { display: flex; }
         .modal-box {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: var(--radius-squircle-lg);
-            padding: 32px;
-            max-width: 580px;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 24px;
+            max-width: 500px;
             width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.25);
-            animation: modalScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: var(--ios-shadow-lg);
         }
-        @keyframes modalScale {
-            from { transform: scale(0.92); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
         .modal-box h2 {
-            font-size: 1.6rem;
+            font-size: 1.3rem;
             font-weight: 800;
-            margin-bottom: 16px;
             color: var(--text-title);
             text-align: center;
-        }
-        .report-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 18px 0;
-        }
-        @media (max-width: 500px) { .report-grid { grid-template-columns: 1fr; } }
-        .report-tile {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-squircle-sm);
-            padding: 12px 14px;
-            box-shadow: var(--ios-shadow-sm);
-        }
-        .report-tile .t-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-        .report-tile .t-val { font-size: 1.15rem; font-weight: 800; color: var(--vzla-blue); margin-top: 3px; }
-
-        .btn-full {
-            width: 100%;
-            padding: 14px;
-            border-radius: var(--radius-squircle-md);
-            border: none;
-            font-weight: 800;
-            font-family: inherit;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--ios-shadow-sm);
+            margin-bottom: 12px;
         }
 
         #confetti-canvas {
@@ -722,67 +567,42 @@
 </head>
 <body>
 
+    <div class="venezuela-ribbon"></div>
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- DOCK FLOTANTE DINÁMICO (Controles Rápidos) -->
-    <aside class="floating-dock">
-        <button class="dock-btn" id="btn-music-toggle" title="Música Criolla de Fondo">
-            <span id="music-icon">🎵</span> Música
-        </button>
-        <button class="dock-btn" id="btn-sound-toggle" title="Efectos de Sonido">
-            <span id="sound-icon">🔊</span> Efectos
-        </button>
-        <button class="dock-btn" id="btn-open-leaderboard">
-            🏆 Récords
-        </button>
-    </aside>
+    <!-- BARRA SUPERIOR COMPACTA -->
+    <header class="app-bar">
+        <div class="brand-badge" onclick="returnToMenu();" title="Volver al Inicio">
+            <div class="app-icon">⛰️</div>
+            <div class="brand-text">
+                <h1>TepuyMatch</h1>
+                <span>Paisajes de Venezuela</span>
+            </div>
+        </div>
 
-    <!-- HUD SUPERIOR EN PARTIDA ACTIVA -->
-    <section class="hud-banner" id="game-hud">
-        <div class="hud-stat">
-            <span class="lbl">Tú 👤</span>
-            <span class="val player" id="val-player-score">0</span>
-        </div>
-        <div class="hud-stat" id="hud-ai-box">
-            <span class="lbl">IA 🤖</span>
-            <span class="val ai" id="val-ai-score">0</span>
-        </div>
-        <div class="hud-stat">
-            <span class="lbl">Turno Activo</span>
-            <span class="val turn-indicator" id="val-current-turn" style="font-size: 1rem;">Tú</span>
-        </div>
-        <div class="hud-stat">
-            <span class="lbl">Tiempo</span>
-            <span class="val" id="val-timer" style="font-size: 1.15rem;">00:00</span>
-        </div>
-        <div class="hud-stat">
-            <span class="lbl">Progreso</span>
-            <span class="val" id="val-progress" style="font-size: 1.05rem;">0/8</span>
-        </div>
-        <div>
-            <button class="btn-hud-restart" id="btn-quick-restart" title="Reiniciar partida actual">
-                🔄 Reiniciar
+        <div class="dock-controls">
+            <button class="pill-btn" id="btn-music-toggle" title="Música Criolla de Fondo">
+                <span id="music-icon">🎵</span> Música
             </button>
-        </div>
-    </section>
-
-    <!-- HERO HEADER CON LOGO PROTAGÓNICO -->
-    <header class="hero-header" id="hero-header-section">
-        <div class="app-icon-squircle" onclick="location.reload();" title="TepuyMatch Venezuela">
-            <span class="app-icon-symbol">⛰️</span>
-        </div>
-        <h1 class="brand-title">TepuyMatch</h1>
-        <div class="brand-tag-pill">
-            <div class="flag-dot"></div>
-            <span>Paisajes de Venezuela</span>
+            <button class="pill-btn" id="btn-sound-toggle" title="Efectos de Sonido">
+                <span id="sound-icon">🔊</span> FX
+            </button>
+            <button class="pill-btn" id="btn-open-leaderboard">
+                🏆 Récords
+            </button>
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="main-content">
+    <!-- ÁREA DE JUEGO PRINCIPAL (NO SCROLL) -->
+    <main class="stage">
 
         <!-- 1. VISTA DE MENÚ INICIAL -->
         <section id="menu-view">
+            <div class="menu-hero">
+                <h2>El Juego de Memoria Nacional</h2>
+                <p>Encuentra las parejas de paisajes venezolanos. Elige tu modo y desafía a la IA.</p>
+            </div>
+
             <div class="config-card">
                 <!-- Modo -->
                 <div class="setting-box">
@@ -793,9 +613,9 @@
                     </div>
                 </div>
 
-                <!-- Dificultad IA Inicial -->
+                <!-- Dificultad IA -->
                 <div class="setting-box" id="box-difficulty">
-                    <h3>Nivel del Oponente Inteligente</h3>
+                    <h3>Dificultad de la IA</h3>
                     <div class="chip-group" id="group-diff">
                         <button class="chip-btn" data-diff="Facil">🟢 Turista Novato</button>
                         <button class="chip-btn selected" data-diff="Medio">🟡 Guía Turístico</button>
@@ -803,103 +623,115 @@
                     </div>
                 </div>
 
-                <!-- Tamaño de Tablero -->
+                <!-- Dimensiones -->
                 <div class="setting-box">
                     <h3>Tamaño del Tablero</h3>
                     <div class="chip-group" id="group-board">
-                        <button class="chip-btn" data-rows="3" data-cols="4">3×4 (6 parejas)</button>
-                        <button class="chip-btn selected" data-rows="4" data-cols="4">4×4 (8 parejas)</button>
-                        <button class="chip-btn" data-rows="4" data-cols="6">4×6 (12 parejas)</button>
+                        <button class="chip-btn" data-rows="3" data-cols="4">3×4 (6 pares)</button>
+                        <button class="chip-btn selected" data-rows="4" data-cols="4">4×4 (8 pares)</button>
+                        <button class="chip-btn" data-rows="4" data-cols="6">4×6 (12 pares)</button>
                     </div>
                 </div>
 
-                <!-- Selector de Estados -->
+                <!-- Estados -->
                 <div class="setting-box">
-                    <h3>Filtrar Estados Venezolanos (Opcional)</h3>
+                    <h3>Filtrar Estados (Opcional)</h3>
                     <div class="state-select-container" id="state-checkboxes">
                         <span style="font-size:0.75rem; color:var(--text-muted);">Cargando estados...</span>
                     </div>
                 </div>
 
-                <!-- Botón Lanzar -->
                 <button class="btn-launch" id="btn-start-game">
-                    <span>▶ Iniciar Partida</span>
+                    ▶ Iniciar Partida
                 </button>
             </div>
         </section>
 
-        <!-- 2. VISTA DE PARTIDA ACTIVA (GAMEPLAY) -->
+        <!-- 2. VISTA DE PARTIDA ACTIVA (TODO VISIBLE EN 1 SOLA PANTALLA) -->
         <section id="game-view">
-            <div class="game-split">
-                <!-- Tablero -->
-                <div class="board-wrapper">
+            <!-- HUD Superior Compacto -->
+            <div class="game-top-hud">
+                <div class="stat-pill p-score">
+                    <span>Tú:</span>
+                    <span class="num" id="val-player-score">0</span>
+                </div>
+                <div class="stat-pill ai-score" id="hud-ai-box">
+                    <span>IA:</span>
+                    <span class="num" id="val-ai-score">0</span>
+                </div>
+                <div class="stat-pill turn-val">
+                    <span>Turno:</span>
+                    <span id="val-current-turn">Tú</span>
+                </div>
+                <div class="stat-pill" style="color:var(--text-title);">
+                    <span id="val-timer">00:00</span>
+                </div>
+                <div class="stat-pill" style="color:var(--text-muted);">
+                    <span id="val-progress">0/8</span>
+                </div>
+            </div>
+
+            <!-- Tablero y Lateral -->
+            <div class="game-main-split">
+                <!-- Tablero Adaptativo -->
+                <div class="board-stage">
                     <div class="game-grid" id="board-grid"></div>
                 </div>
 
-                <!-- Panel Lateral -->
-                <div class="side-control-panel">
+                <!-- Lateral Compacto (Sin duplicación de botones) -->
+                <div class="side-bar-controls">
                     <!-- Ficha Educativa -->
-                    <div class="landscape-toast" id="landscape-toast">
+                    <div class="toast-bubble" id="landscape-toast">
                         <h5 id="toast-title">¡Pareja descubierta!</h5>
-                        <p id="toast-body">Detalles del paisaje...</p>
+                        <p id="toast-body">Descripción del paisaje...</p>
                     </div>
 
-                    <!-- Monitor IA con selector de dificultad en vivo -->
-                    <div class="panel-card" id="ai-monitor-card">
-                        <h4>🤖 Agente IA (Turno & Memoria)</h4>
-                        <div class="ai-think-box">
-                            <div class="think-pulse">
-                                <div class="think-dot"></div>
-                                <span id="ai-status-label">En espera de tu jugada</span>
-                            </div>
-                            <div class="key-val-row">
-                                <span class="k">Memoria activa:</span>
-                                <span class="v" id="ai-memory-count">0 cartas</span>
-                            </div>
-                            <div class="key-val-row">
-                                <span class="k">Estrategia:</span>
-                                <span class="v" id="ai-strategy-label">Observando</span>
-                            </div>
+                    <!-- Monitor IA con ajuste en vivo -->
+                    <div class="side-panel-box" id="ai-monitor-card">
+                        <h4>🤖 Agente IA</h4>
+                        <div class="kv-row">
+                            <span class="k">Estado:</span>
+                            <span class="v" id="ai-status-label" style="color:var(--vzla-blue);">Observando</span>
+                        </div>
+                        <div class="kv-row">
+                            <span class="k">Memoria:</span>
+                            <span class="v" id="ai-memory-count">0 cartas</span>
+                        </div>
 
-                            <!-- Selector en vivo de dificultad -->
-                            <div class="live-diff-selector">
-                                <span>Ajustar Dificultad en Vivo:</span>
-                                <div class="live-diff-chips" id="live-diff-group">
-                                    <button class="chip-live-diff" data-level="Facil">🟢 Novato</button>
-                                    <button class="chip-live-diff active" data-level="Medio">🟡 Guía</button>
-                                    <button class="chip-live-diff" data-level="Experto">🔴 Experto</button>
-                                </div>
+                        <!-- Ajustar Dificultad en Vivo -->
+                        <div style="margin-top:6px;">
+                            <span style="font-size:0.65rem; color:var(--text-muted); font-weight:700; text-transform:uppercase;">Ajustar Dificultad:</span>
+                            <div class="live-diff-chips" id="live-diff-group">
+                                <button class="chip-live-diff" data-level="Facil">Novato</button>
+                                <button class="chip-live-diff active" data-level="Medio">Guía</button>
+                                <button class="chip-live-diff" data-level="Experto">Experto</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Panel de Optimización Matemática -->
-                    <div class="panel-card">
-                        <h4>📐 Optimización de Tablero</h4>
-                        <div class="key-val-row">
+                    <!-- Optimización de Tablero -->
+                    <div class="side-panel-box">
+                        <h4>📐 Optimización</h4>
+                        <div class="kv-row">
                             <span class="k">Solver:</span>
-                            <span class="v" id="lp-solver-label">SciPy HiGHS</span>
+                            <span class="v">SciPy HiGHS</span>
                         </div>
-                        <div class="key-val-row">
-                            <span class="k">Valor Óptimo Z*:</span>
+                        <div class="kv-row">
+                            <span class="k">Valor Z*:</span>
                             <span class="v" style="color:var(--vzla-yellow);" id="lp-z-label">0.0</span>
                         </div>
-                        <div class="key-val-row">
-                            <span class="k">Tiempo de cómputo:</span>
-                            <span class="v" id="lp-time-label">0.005s</span>
-                        </div>
-                        <button class="chip-btn" style="width:100%; margin-top:10px;" id="btn-view-lp-modal">
-                            🔍 Inspeccionar Formulación
+                        <button class="pill-btn" style="width:100%; margin-top:6px; justify-content:center;" id="btn-view-lp-modal">
+                            🔍 Formulación PL
                         </button>
                     </div>
 
-                    <!-- Botones de Acción de Partida -->
-                    <div class="side-action-buttons">
-                        <button class="btn-restart-action" id="btn-restart-game">
+                    <!-- UN SOLO BOTÓN DE REINICIAR Y UN BOTÓN PARA SALIR -->
+                    <div class="bottom-actions">
+                        <button class="btn-game-action btn-game-restart" id="btn-restart-game">
                             🔄 Reiniciar Partida
                         </button>
-                        <button class="chip-btn" style="padding:14px; border-radius:var(--radius-squircle-md);" id="btn-quit-game">
-                            🚪 Volver al Menú Principal
+                        <button class="btn-game-action btn-game-quit" id="btn-quit-game">
+                            🚪 Menú Principal
                         </button>
                     </div>
                 </div>
@@ -911,14 +743,12 @@
     <!-- MODAL DE FORMULACIÓN MATEMÁTICA -->
     <div class="modal-backdrop" id="modal-lp">
         <div class="modal-box">
-            <h2 style="color:var(--vzla-blue);">📐 Formulación de Optimización</h2>
-            <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:14px; text-align:center;">
-                El tablero se generó resolviendo un modelo de <strong>Programación Lineal Entera (HiGHS)</strong> que maximiza la diversidad cultural sujeto a cotas de dificultad y balance regional.
+            <h2 style="color:var(--vzla-blue);">📐 Optimización de Tablero</h2>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px; text-align:center;">
+                El tablero se generó resolviendo un modelo de <strong>Programación Lineal Entera (HiGHS)</strong> garantizando equilibrio de dificultad y diversidad regional.
             </p>
-            <div class="report-grid" id="lp-metrics-grid"></div>
-            <h4 style="font-size:0.8rem; text-transform:uppercase; color:var(--text-title); margin:16px 0 8px; font-weight:800;">Paisajes Seleccionados:</h4>
-            <div id="lp-selected-list" style="font-size:0.82rem; line-height:1.7; max-height:140px; overflow-y:auto; padding:12px; background:#f8fafc; border-radius:var(--radius-squircle-sm); border:1px solid var(--border-light);"></div>
-            <button class="btn-full" style="margin-top:18px; background:#f1f5f9; color:var(--text-title);" id="btn-close-lp">Cerrar</button>
+            <div id="lp-metrics-content" style="font-size:0.8rem; line-height:1.6;"></div>
+            <button class="btn-launch" style="margin-top:14px; padding:10px; font-size:0.85rem;" id="btn-close-lp">Cerrar</button>
         </div>
     </div>
 
@@ -926,12 +756,9 @@
     <div class="modal-backdrop" id="modal-victory">
         <div class="modal-box" style="text-align:center;">
             <h2 id="victory-title" style="color:var(--vzla-yellow);">🏆 ¡PARTIDA COMPLETADA!</h2>
-            <div id="victory-stats" style="margin: 18px 0; font-size: 1rem; line-height: 1.9; font-weight:600;"></div>
-            <div style="margin: 16px 0; text-align: left;">
-                <label style="font-size:0.82rem; color:var(--text-muted); font-weight:700;">Registra tu nombre para el Salón de la Fama:</label>
-                <input type="text" id="victory-player-name" placeholder="Tu nombre..." maxlength="20" style="width:100%; padding:12px; margin-top:8px; background:#ffffff; border:1.5px solid var(--border-light); border-radius:var(--radius-squircle-sm); color:var(--text-title); font-family:inherit; font-weight:600; box-shadow:var(--ios-shadow-sm);">
-            </div>
-            <button class="btn-full" style="background:linear-gradient(135deg, #2563eb, #1d4ed8); color:#ffffff; font-size:1.05rem;" id="btn-save-victory">💾 Guardar y Volver al Menú</button>
+            <div id="victory-stats" style="margin:14px 0; font-size:0.92rem; line-height:1.8;"></div>
+            <input type="text" id="victory-player-name" placeholder="Tu nombre..." maxlength="20" style="width:100%; padding:10px; border:1px solid var(--border-light); border-radius:10px; font-family:inherit; margin-bottom:12px;">
+            <button class="btn-launch" style="padding:12px;" id="btn-save-victory">💾 Guardar Récord</button>
         </div>
     </div>
 
@@ -939,10 +766,10 @@
     <div class="modal-backdrop" id="modal-records">
         <div class="modal-box">
             <h2 style="color:var(--vzla-blue);">🏆 Salón de la Fama</h2>
-            <div id="records-table-container" style="max-height:280px; overflow-y:auto; font-size:0.88rem; margin:16px 0;">
-                <span style="color:var(--text-subtle);">Cargando récords...</span>
+            <div id="records-table-container" style="max-height:240px; overflow-y:auto; font-size:0.82rem; margin:12px 0;">
+                <span style="color:var(--text-muted);">Cargando récords...</span>
             </div>
-            <button class="btn-full" style="background:#f1f5f9; color:var(--text-title);" id="btn-close-records">Cerrar</button>
+            <button class="btn-launch" style="padding:10px; font-size:0.85rem;" id="btn-close-records">Cerrar</button>
         </div>
     </div>
 
@@ -955,20 +782,14 @@
             this.isPlaying = false;
             this.timer = null;
             this.step = 0;
-            // Acordes tradicionales en Re Mayor (D - G - A7 - D)
-            // Frecuencias simulando las 4 cuerdas del Cuatro: La(A3), Re(D4), Fa#(F#4), Si(B3)
             this.chordProgression = [
-                // D Mayor (Re Mayor)
+                [220.00, 293.66, 369.99, 493.88], // D Mayor
                 [220.00, 293.66, 369.99, 493.88],
-                [220.00, 293.66, 369.99, 493.88],
-                // G Mayor (Sol Mayor)
+                [196.00, 293.66, 392.00, 493.88], // G Mayor
                 [196.00, 293.66, 392.00, 493.88],
-                [196.00, 293.66, 392.00, 493.88],
-                // A7 (La 7ma)
+                [220.00, 277.18, 329.63, 493.88], // A7
                 [220.00, 277.18, 329.63, 493.88],
-                [220.00, 277.18, 329.63, 493.88],
-                // D Mayor resolución
-                [220.00, 293.66, 369.99, 493.88],
+                [220.00, 293.66, 369.99, 493.88], // D Mayor
                 [220.00, 293.66, 369.99, 493.88]
             ];
         }
@@ -982,11 +803,9 @@
             }
         }
 
-        // Simula el rasgueo cálido de madera del cuatro venezolano
         strum(chord, isFrenado = false) {
             if (!this.ctx || !this.isPlaying) return;
             const now = this.ctx.currentTime;
-            
             chord.forEach((freq, idx) => {
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
@@ -998,8 +817,8 @@
                 filter.type = 'lowpass';
                 filter.frequency.setValueAtTime(isFrenado ? 1400 : 2800, now);
 
-                const volume = isFrenado ? 0.04 : 0.07;
-                const decay = isFrenado ? 0.06 : 0.45;
+                const volume = isFrenado ? 0.035 : 0.06;
+                const decay = isFrenado ? 0.06 : 0.42;
 
                 gain.gain.setValueAtTime(volume, now + idx * 0.012);
                 gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.012 + decay);
@@ -1017,19 +836,17 @@
             this.initContext();
             this.isPlaying = true;
             this.step = 0;
-            // Compás tradicional de 6/8 llanero (Joropo / Tonada suave a 130 BPM)
-            const intervalMs = (60 / 130 / 3) * 1000;
+            const intervalMs = (60 / 128 / 3) * 1000;
             this.timer = setInterval(() => {
                 if (!this.isPlaying) return;
                 const chordIdx = Math.floor(this.step / 6) % this.chordProgression.length;
                 const chord = this.chordProgression[chordIdx];
-                const beatInBar = this.step % 6;
+                const beat = this.step % 6;
 
-                // Patrón rítmico: 1 (rasgueo), 2 (arriba), 3 (chasquido/frenado), 4 (rasgueo), 5 (arriba), 6 (frenado)
-                if (beatInBar === 0 || beatInBar === 3) {
+                if (beat === 0 || beat === 3) {
                     this.strum(chord, false);
-                } else if (beatInBar === 2 || beatInBar === 5) {
-                    this.strum(chord, true); // Golpe apagado
+                } else if (beat === 2 || beat === 5) {
+                    this.strum(chord, true); // Apagado
                 } else {
                     this.strum(chord.slice(1), false);
                 }
@@ -1053,7 +870,7 @@
     }
     const musicEngine = new VenezuelanMusicEngine();
 
-    // ─── EFECTOS DE SONIDO NATIVOS (Web Audio API) ──────
+    // ─── EFECTOS DE SONIDO NATIVOS ─────────────────────
     class SoundFX {
         constructor() {
             this.ctx = null;
@@ -1087,7 +904,7 @@
                 const gain = this.ctx.createGain();
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.07);
-                gain.gain.setValueAtTime(0.18, this.ctx.currentTime + idx * 0.07);
+                gain.gain.setValueAtTime(0.16, this.ctx.currentTime + idx * 0.07);
                 gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.07 + 0.3);
                 osc.connect(gain);
                 gain.connect(this.ctx.destination);
@@ -1103,7 +920,7 @@
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(220, this.ctx.currentTime);
             osc.frequency.linearRampToValueAtTime(150, this.ctx.currentTime + 0.2);
-            gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.07, this.ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
             osc.connect(gain);
             gain.connect(this.ctx.destination);
@@ -1125,7 +942,7 @@
                     gain.connect(this.ctx.destination);
                     osc.start();
                     osc.stop(this.ctx.currentTime + 0.5);
-                }, i * 140);
+                }, i * 130);
             });
         }
     }
@@ -1152,7 +969,6 @@
         document.getElementById('btn-start-game').addEventListener('click', startNewGame);
         document.getElementById('btn-quit-game').addEventListener('click', returnToMenu);
         document.getElementById('btn-restart-game').addEventListener('click', restartCurrentGame);
-        document.getElementById('btn-quick-restart').addEventListener('click', restartCurrentGame);
 
         document.getElementById('btn-view-lp-modal').addEventListener('click', openLPModal);
         document.getElementById('btn-close-lp').addEventListener('click', () => closeModal('modal-lp'));
@@ -1162,24 +978,20 @@
 
         setupLiveDifficultyChips();
 
-        // Controles de Audio Flotantes
         const musicBtn = document.getElementById('btn-music-toggle');
         musicBtn.addEventListener('click', () => {
             const isPlaying = musicEngine.toggle();
             musicBtn.classList.toggle('active', isPlaying);
-            document.getElementById('music-icon').textContent = isPlaying ? '🎶' : '🎵';
         });
 
         const soundBtn = document.getElementById('btn-sound-toggle');
         soundBtn.addEventListener('click', () => {
             audio.enabled = !audio.enabled;
             soundBtn.classList.toggle('active', audio.enabled);
-            document.getElementById('sound-icon').textContent = audio.enabled ? '🔊' : '🔇';
         });
     });
 
     function setupChips() {
-        // Modo
         document.querySelectorAll('#group-mode .chip-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('#group-mode .chip-btn').forEach(b => b.classList.remove('selected'));
@@ -1188,7 +1000,6 @@
                 document.getElementById('box-difficulty').style.display = currentConfig.mode === 'Vs_IA' ? 'block' : 'none';
             });
         });
-        // Dificultad Inicial
         document.querySelectorAll('#group-diff .chip-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('#group-diff .chip-btn').forEach(b => b.classList.remove('selected'));
@@ -1197,7 +1008,6 @@
                 syncLiveDiffChips(btn.dataset.diff);
             });
         });
-        // Tablero
         document.querySelectorAll('#group-board .chip-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('#group-board .chip-btn').forEach(b => b.classList.remove('selected'));
@@ -1208,7 +1018,6 @@
         });
     }
 
-    // Selector en vivo de dificultad (dentro de la partida)
     function setupLiveDifficultyChips() {
         document.querySelectorAll('#live-diff-group .chip-live-diff').forEach(chip => {
             chip.addEventListener('click', async () => {
@@ -1227,10 +1036,10 @@
                         document.getElementById('ai-memory-count').textContent = 
                             `${data.ai_stats.cards_memorized} cartas (${data.ai_stats.retention_rate})`;
                         document.getElementById('ai-status-label').textContent = 
-                            `Dificultad ajustada a: ${data.ai_stats.display_name}`;
+                            `Modo: ${data.ai_stats.display_name}`;
                     }
                 } catch (e) {
-                    console.error('Error cambiando dificultad:', e);
+                    console.error('Error dificultad:', e);
                 }
             });
         });
@@ -1252,10 +1061,7 @@
             states.forEach(st => {
                 const label = document.createElement('label');
                 label.className = 'state-checkbox';
-                label.innerHTML = `
-                    <input type="checkbox" value="${st}">
-                    <span>${st}</span>
-                `;
+                label.innerHTML = `<input type="checkbox" value="${st}"><span>${st}</span>`;
                 label.querySelector('input').addEventListener('change', (e) => {
                     if (e.target.checked) currentConfig.selected_states.push(st);
                     else currentConfig.selected_states = currentConfig.selected_states.filter(s => s !== st);
@@ -1271,7 +1077,7 @@
     async function startNewGame() {
         const btn = document.getElementById('btn-start-game');
         btn.disabled = true;
-        btn.innerHTML = '<span>⚡ Generando Tablero Óptimo...</span>';
+        btn.innerHTML = '<span>⚡ Cargando Tablero...</span>';
 
         try {
             const res = await fetch('/api/new-game', {
@@ -1285,11 +1091,8 @@
             activeMatch = data;
             isLocked = false;
 
-            // Ocultar cabecera hero y menú para dar todo el protagonismo al juego
-            document.getElementById('hero-header-section').style.display = 'none';
             document.getElementById('menu-view').style.display = 'none';
-            document.getElementById('game-view').style.display = 'block';
-            document.getElementById('game-hud').classList.add('active');
+            document.getElementById('game-view').style.display = 'flex';
 
             document.getElementById('hud-ai-box').style.display = currentConfig.mode === 'Vs_IA' ? 'flex' : 'none';
             document.getElementById('ai-monitor-card').style.display = currentConfig.mode === 'Vs_IA' ? 'block' : 'none';
@@ -1301,10 +1104,10 @@
             updateLPSummary(data.lp_report);
             startTimer();
         } catch (err) {
-            alert('Error al iniciar partida: ' + err.message);
+            alert('Error al iniciar: ' + err.message);
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<span>▶ Iniciar Partida</span>';
+            btn.innerHTML = '▶ Iniciar Partida';
         }
     }
 
@@ -1319,6 +1122,7 @@
         const grid = document.getElementById('board-grid');
         grid.innerHTML = '';
         grid.style.gridTemplateColumns = `repeat(${data.cols}, minmax(0, 1fr))`;
+        grid.style.setProperty('--grid-rows', data.rows);
 
         data.board.forEach(card => {
             const slot = document.createElement('div');
@@ -1326,15 +1130,15 @@
             slot.dataset.pos = card.position;
             slot.dataset.id = card.landscape_id;
 
+            // Carta limpia con reverso azul y frente sin subtítulo duplicado
             slot.innerHTML = `
                 <div class="card-flipper">
                     <div class="side side-back">
-                        <img src="/assets/images/card_back.png" alt="Reverso" loading="lazy">
+                        <img src="/assets/images/card_back.png?v=3.0" alt="Reverso" loading="lazy">
                     </div>
                     <div class="side side-front">
                         <img src="/assets/images/${card.landscape_id}.png" alt="${card.name}"
                              onerror="this.src='/assets/images/card_back.png'">
-                        <div class="card-caption">${card.name}</div>
                     </div>
                 </div>
             `;
@@ -1377,7 +1181,7 @@
                     showLandscapeToast(data.turn_result);
 
                     if (data.game_over) {
-                        setTimeout(() => triggerVictory(data), 700);
+                        setTimeout(() => triggerVictory(data), 600);
                     }
                 } else {
                     audio.playMismatch();
@@ -1387,11 +1191,10 @@
                         document.querySelectorAll('.card-slot.flipped:not(.matched)').forEach(s => s.classList.remove('flipped'));
                         isLocked = false;
 
-                        // Si es turno de la IA
                         if (data.current_player === 'IA') {
                             triggerAITurn();
                         }
-                    }, 900);
+                    }, 850);
                 }
             }
         } catch (e) {
@@ -1400,17 +1203,15 @@
         }
     }
 
-    // ─── TURNO DE LA INTELIGENCIA ARTIFICIAL ───────────
+    // ─── TURNO IA ──────────────────────────────────────
     async function triggerAITurn() {
         if (!activeMatch || activeMatch.game_over) return;
         isLocked = true;
 
         const monitor = document.getElementById('ai-status-label');
-        const strat = document.getElementById('ai-strategy-label');
-        monitor.textContent = 'Analizando tablero...';
-        strat.textContent = 'Consultando memoria';
+        monitor.textContent = 'Analizando...';
 
-        await wait(700);
+        await wait(650);
 
         try {
             const res = await fetch('/api/ai-turn', { method: 'POST' });
@@ -1418,47 +1219,36 @@
             if (data.error) { isLocked = false; return; }
             activeMatch = { ...activeMatch, ...data };
 
-            // Voltear primera carta
             const s1 = document.querySelector(`.card-slot[data-pos="${data.ai_move.pos1}"]`);
-            if (s1) {
-                audio.playFlip();
-                s1.classList.add('flipped');
-            }
-            monitor.textContent = `Descubriendo carta #${data.ai_move.pos1}`;
+            if (s1) { audio.playFlip(); s1.classList.add('flipped'); }
 
-            await wait(600);
+            await wait(550);
 
-            // Voltear segunda carta
             const s2 = document.querySelector(`.card-slot[data-pos="${data.ai_move.pos2}"]`);
-            if (s2) {
-                audio.playFlip();
-                s2.classList.add('flipped');
-            }
+            if (s2) { audio.playFlip(); s2.classList.add('flipped'); }
 
             updateHUD(data);
-            await wait(800);
+            await wait(750);
 
             if (data.turn_result) {
                 if (data.turn_result.is_match) {
                     audio.playMatch();
                     markMatched(data.turn_result.card1, data.turn_result.card2);
                     showLandscapeToast(data.turn_result);
-                    monitor.textContent = '¡Acierto por memoria!';
-                    strat.textContent = 'Repitiendo turno';
+                    monitor.textContent = '¡Pareja encontrada!';
 
                     if (data.game_over) {
                         isLocked = false;
-                        setTimeout(() => triggerVictory(data), 700);
+                        setTimeout(() => triggerVictory(data), 600);
                         return;
                     }
 
-                    setTimeout(() => triggerAITurn(), 800);
+                    setTimeout(() => triggerAITurn(), 750);
                 } else {
                     audio.playMismatch();
                     await fetch('/api/hide-unmatched', { method: 'POST' });
                     document.querySelectorAll('.card-slot.flipped:not(.matched)').forEach(s => s.classList.remove('flipped'));
-                    monitor.textContent = 'Falló. Tu turno.';
-                    strat.textContent = 'Esperando';
+                    monitor.textContent = 'Tu turno';
                     isLocked = false;
                     updateHUD(data);
                 }
@@ -1478,7 +1268,6 @@
         if (s2) s2.classList.add('matched');
     }
 
-    // ─── ACTUALIZADORES DE INTERFAZ ────────────────────
     function updateHUD(data) {
         if (data.scores) {
             document.getElementById('val-player-score').textContent = data.scores.Jugador || 0;
@@ -1487,7 +1276,7 @@
         if (data.current_player) {
             const isMe = data.current_player === 'Jugador';
             const el = document.getElementById('val-current-turn');
-            el.textContent = isMe ? 'Tú 👤' : 'IA 🤖';
+            el.textContent = isMe ? 'Tú' : 'IA';
             el.style.color = isMe ? 'var(--vzla-blue)' : 'var(--vzla-red)';
         }
         if (data.matched_pairs !== undefined) {
@@ -1501,9 +1290,7 @@
 
     function updateLPSummary(meta) {
         if (!meta) return;
-        document.getElementById('lp-solver-label').textContent = meta.solver;
         document.getElementById('lp-z-label').textContent = meta.objective_value?.toFixed(1) || '0.0';
-        document.getElementById('lp-time-label').textContent = `${meta.solve_time_seconds?.toFixed(4)}s`;
     }
 
     function showLandscapeToast(res) {
@@ -1511,10 +1298,9 @@
         document.getElementById('toast-title').textContent = `✅ ${res.landscape_name} (${res.landscape_state})`;
         document.getElementById('toast-body').textContent = res.landscape_description;
         toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 4500);
+        setTimeout(() => toast.classList.remove('show'), 4000);
     }
 
-    // ─── CRONÓMETRO ────────────────────────────────────
     function startTimer() {
         stopTimer();
         timerStart = Date.now();
@@ -1529,36 +1315,21 @@
         if (timerRef) clearInterval(timerRef);
     }
 
-    // ─── MODAL DE OPTIMIZACIÓN MATEMÁTICA ──────────────
     function openLPModal() {
         if (!activeMatch || !activeMatch.lp_report) return;
         const m = activeMatch.lp_report;
-        const grid = document.getElementById('lp-metrics-grid');
-        grid.innerHTML = `
-            <div class="report-tile"><div class="t-lbl">Solver</div><div class="t-val">${m.solver}</div></div>
-            <div class="report-tile"><div class="t-lbl">Estado de Solución</div><div class="t-val">${m.status}</div></div>
-            <div class="report-tile"><div class="t-lbl">Valor Óptimo Z*</div><div class="t-val" style="color:var(--vzla-yellow);">${m.objective_value?.toFixed(2)}</div></div>
-            <div class="report-tile"><div class="t-lbl">Tiempo de Cómputo</div><div class="t-val">${m.solve_time_seconds?.toFixed(4)}s</div></div>
-            <div class="report-tile"><div class="t-lbl">Variables Binarias</div><div class="t-val">${m.variables_count}</div></div>
-            <div class="report-tile"><div class="t-lbl">Restricciones Lineales</div><div class="t-val">${m.constraints_count}</div></div>
-            <div class="report-tile"><div class="t-lbl">Dificultad Acumulada</div><div class="t-val">${m.total_difficulty}</div></div>
-            <div class="report-tile"><div class="t-lbl">Cotas Dificultad</div><div class="t-val">[${m.difficulty_bounds?.[0]?.toFixed(1)}, ${m.difficulty_bounds?.[1]?.toFixed(1)}]</div></div>
+        document.getElementById('lp-metrics-content').innerHTML = `
+            <div style="background:#f8fafc; padding:10px; border-radius:10px; border:1px solid #e2e8f0;">
+                <div><strong>Solver:</strong> ${m.solver}</div>
+                <div><strong>Valor Óptimo Z*:</strong> <span style="color:var(--vzla-blue); font-weight:800;">${m.objective_value}</span></div>
+                <div><strong>Variables Binarias:</strong> ${m.variables_count}</div>
+                <div><strong>Restricciones:</strong> ${m.constraints_count}</div>
+                <div><strong>Tiempo de Solución:</strong> ${m.solve_time_seconds}s</div>
+            </div>
         `;
-
-        const list = document.getElementById('lp-selected-list');
-        const seen = new Set();
-        list.innerHTML = '';
-        activeMatch.board.forEach(c => {
-            if (!seen.has(c.landscape_id)) {
-                seen.add(c.landscape_id);
-                list.innerHTML += `<div>▸ <strong>${c.name}</strong> (${c.state_name})</div>`;
-            }
-        });
-
         openModal('modal-lp');
     }
 
-    // ─── VICTORIA & CONFETTI ───────────────────────────
     function triggerVictory(data) {
         stopTimer();
         audio.playFanfare();
@@ -1566,7 +1337,7 @@
 
         let title = '🏆 ¡VICTORIA!';
         let color = 'var(--vzla-yellow)';
-        if (data.winner === 'IA') { title = '🤖 La IA se llevó la victoria'; color = 'var(--vzla-red)'; }
+        if (data.winner === 'IA') { title = '🤖 Ganó la IA'; color = 'var(--vzla-red)'; }
         else if (data.winner === 'Empate') { title = '🤝 ¡Empate!'; color = 'var(--vzla-blue)'; }
 
         const titleEl = document.getElementById('victory-title');
@@ -1574,17 +1345,15 @@
         titleEl.style.color = color;
 
         document.getElementById('victory-stats').innerHTML = `
-            <div>👤 Tus parejas: <strong>${data.scores.Jugador}</strong></div>
-            ${currentConfig.mode === 'Vs_IA' ? `<div>🤖 Parejas de la IA: <strong>${data.scores.IA}</strong></div>` : ''}
-            <div>🔄 Turnos totales: <strong>${data.turn_number}</strong></div>
-            <div>⏱️ Tiempo final: <strong>${data.elapsed_time?.toFixed(1)} segundos</strong></div>
+            <div>Tus parejas: <strong>${data.scores.Jugador}</strong> | IA: <strong>${data.scores.IA || 0}</strong></div>
+            <div>Turnos: <strong>${data.turn_number}</strong> | Tiempo: <strong>${data.elapsed_time?.toFixed(1)}s</strong></div>
         `;
 
         openModal('modal-victory');
     }
 
     async function saveVictoryScore() {
-        const name = document.getElementById('victory-player-name').value.trim() || 'Viajero de Venezuela';
+        const name = document.getElementById('victory-player-name').value.trim() || 'Jugador';
         await fetch('/api/save-score', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1595,25 +1364,24 @@
         returnToMenu();
     }
 
-    // ─── SALÓN DE LA FAMA ──────────────────────────────
     async function openRecordsModal() {
         const container = document.getElementById('records-table-container');
-        container.innerHTML = '<span style="color:var(--text-subtle);">Cargando mejores récords...</span>';
+        container.innerHTML = '<span style="color:var(--text-muted);">Cargando récords...</span>';
         openModal('modal-records');
 
         try {
             const res = await fetch('/api/leaderboard');
             const list = await res.json();
             if (list.length === 0) {
-                container.innerHTML = '<span style="color:var(--text-muted);">Aún no hay partidas registradas. ¡Sé el primero!</span>';
+                container.innerHTML = '<span>No hay partidas registradas aún.</span>';
                 return;
             }
-            let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
+            let html = '<div style="display:flex; flex-direction:column; gap:6px;">';
             list.forEach((r, idx) => {
                 const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '•';
                 html += `
-                    <div style="display:flex; justify-content:space-between; padding:10px 14px; background:#ffffff; border-radius:10px; border:1px solid var(--border-light); box-shadow:var(--ios-shadow-sm);">
-                        <span>${medal} <strong>${r.player_name}</strong> (${r.mode})</span>
+                    <div style="display:flex; justify-content:space-between; padding:8px 12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0;">
+                        <span>${medal} <strong>${r.player_name}</strong></span>
                         <span style="color:var(--vzla-blue); font-weight:800;">${r.score} pts • ${r.time_seconds}s</span>
                     </div>
                 `;
@@ -1628,10 +1396,8 @@
     function returnToMenu() {
         stopTimer();
         stopConfetti();
-        document.getElementById('hero-header-section').style.display = 'flex';
         document.getElementById('menu-view').style.display = 'flex';
         document.getElementById('game-view').style.display = 'none';
-        document.getElementById('game-hud').classList.remove('active');
     }
 
     function openModal(id) { document.getElementById(id).classList.add('open'); }
@@ -1645,7 +1411,7 @@
         const ctx = c.getContext('2d');
         c.width = window.innerWidth;
         c.height = window.innerHeight;
-        const pieces = Array.from({ length: 90 }, () => ({
+        const pieces = Array.from({ length: 80 }, () => ({
             x: Math.random() * c.width,
             y: Math.random() * c.height - c.height,
             size: Math.random() * 8 + 4,

@@ -2,995 +2,1326 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>⛰️ TepuyMatch — Paisajes de Venezuela</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <style>
-        /* ─── RESET & BASE ───────────────────────────── */
+        /* ─── RESET & LUXURY TOKENS ───────────────────── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg-primary: #0a1a12;
-            --bg-secondary: #0f2218;
-            --bg-card: #132e1f;
-            --bg-panel: #152a1c;
-            --accent: #2ea650;
-            --accent-light: #3cc964;
-            --gold: #d4a520;
-            --gold-light: #f0c040;
-            --text-primary: #e8e8e0;
-            --text-secondary: #a0a098;
-            --text-dim: #6a6a60;
-            --danger: #e04040;
-            --info: #4090d0;
-            --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            --radius: 12px;
+            --bg-deep: #06110a;
+            --bg-surface: #0c1c12;
+            --bg-glass: rgba(16, 36, 24, 0.75);
+            --bg-glass-card: rgba(22, 50, 33, 0.6);
+            --border-glass: rgba(46, 204, 113, 0.2);
+            --border-gold: rgba(212, 175, 55, 0.4);
+            
+            --accent-green: #2ecc71;
+            --accent-emerald: #10b981;
+            --accent-gold: #f59e0b;
+            --gold-gradient: linear-gradient(135deg, #f59e0b, #d97706, #fbbf24);
+            --vzla-gradient: linear-gradient(135deg, #facc15, #2563eb, #dc2626);
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            
+            --danger: #ef4444;
+            --radius-lg: 16px;
+            --radius-md: 12px;
             --radius-sm: 8px;
-            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 20px rgba(46, 204, 113, 0.25);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
-            font-family: 'Poppins', 'Segoe UI', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at 50% 0%, #112a1a 0%, var(--bg-deep) 75%);
+            color: var(--text-main);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* ─── HEADER ─────────────────────────────────── */
-        .header {
-            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
-            border-bottom: 2px solid var(--accent);
-            padding: 16px 32px;
+        /* ─── HEADER BAR ──────────────────────────────── */
+        .top-navbar {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: sticky;
             top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            z-index: 50;
         }
-        .header-logo {
+        .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-        .header-logo h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--gold), var(--gold-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .header-logo .subtitle {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* ─── HUD (game header) ──────────────────────── */
-        .hud {
-            display: none;
-            background: var(--bg-secondary);
-            padding: 12px 32px;
-            border-bottom: 1px solid rgba(46,166,79,0.2);
-            gap: 24px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .hud.visible { display: flex; }
-        .hud-item {
-            text-align: center;
-            min-width: 100px;
-        }
-        .hud-item .label {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .hud-item .value {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        .hud-item .value.player { color: var(--accent-light); }
-        .hud-item .value.ai { color: var(--danger); }
-        .hud-item .value.turn { color: var(--gold); font-size: 1rem; }
-        .hud-divider {
-            width: 1px;
-            height: 40px;
-            background: rgba(255,255,255,0.1);
-        }
-
-        /* ─── MAIN CONTAINERS ────────────────────────── */
-        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
-
-        /* ─── MENU SCREEN ────────────────────────────── */
-        #menu-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 32px;
-            padding-top: 40px;
-        }
-        .menu-hero {
-            text-align: center;
-        }
-        .menu-hero h2 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--gold), var(--accent-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
-        }
-        .menu-hero p {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        .menu-options {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-            width: 100%;
-            max-width: 600px;
-        }
-        .option-group {
-            background: var(--bg-panel);
-            border: 1px solid rgba(46,166,79,0.15);
-            border-radius: var(--radius);
-            padding: 20px 24px;
-        }
-        .option-group h3 {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-        }
-        .option-buttons {
-            display: flex;
             gap: 10px;
-            flex-wrap: wrap;
+            text-decoration: none;
         }
-        .opt-btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 12px 16px;
-            border: 2px solid rgba(255,255,255,0.08);
-            border-radius: var(--radius-sm);
-            background: rgba(255,255,255,0.03);
-            color: var(--text-secondary);
-            font-family: inherit;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            text-align: center;
+        .brand-icon {
+            font-size: 1.6rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
         }
-        .opt-btn:hover {
-            border-color: var(--accent);
-            color: var(--text-primary);
-            background: rgba(46,166,79,0.08);
+        .brand-text h1 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
         }
-        .opt-btn.active {
-            border-color: var(--accent);
-            background: rgba(46,166,79,0.15);
-            color: var(--accent-light);
-            font-weight: 600;
-        }
-
-        .btn-play {
-            width: 100%;
-            max-width: 600px;
-            padding: 18px 32px;
-            border: none;
-            border-radius: var(--radius);
-            background: linear-gradient(135deg, var(--accent), #1a8a3f);
-            color: white;
-            font-family: inherit;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 4px 24px rgba(46,166,79,0.3);
-        }
-        .btn-play:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 32px rgba(46,166,79,0.5);
-        }
-
-        /* ─── GAME SCREEN ────────────────────────────── */
-        #game-screen { display: none; }
-        .game-layout {
-            display: flex;
-            gap: 24px;
-            align-items: flex-start;
-        }
-
-        /* ─── BOARD ──────────────────────────────────── */
-        .board-container { flex: 1; }
-        .board {
-            display: grid;
-            gap: 12px;
-            justify-content: center;
-            perspective: 1000px;
-        }
-
-        /* ─── CARDS ──────────────────────────────────── */
-        .card {
-            width: 120px;
-            height: 160px;
-            cursor: pointer;
-            perspective: 800px;
-            position: relative;
-        }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-        }
-        .card.flipped .card-inner,
-        .card.matched .card-inner {
-            transform: rotateY(180deg);
-        }
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: var(--radius-sm);
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-        }
-        .card-front {
-            transform: rotateY(180deg);
-        }
-        .card-front img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .card-front .card-label {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 6px 8px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+        .brand-text span {
             font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
             font-weight: 500;
-            color: white;
-            text-align: center;
         }
-        .card-back {
-            background: var(--bg-card);
-            border: 2px solid rgba(46,166,79,0.2);
+        .nav-actions {
             display: flex;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            gap: 8px;
         }
-        .card-back img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.9;
-        }
-        .card:hover .card-back {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(46,166,79,0.2);
-        }
-        .card.matched .card-face {
-            border: 2px solid var(--accent-light);
-        }
-        .card.matched .card-front::after {
-            content: '✓';
-            position: absolute;
-            top: 6px;
-            right: 8px;
-            font-size: 1.2rem;
-            color: var(--accent-light);
-            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
-        }
-        .card.disabled { pointer-events: none; opacity: 0.7; }
-
-        /* ─── SIDEBAR ────────────────────────────────── */
-        .sidebar {
-            width: 300px;
-            min-width: 280px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .sidebar-panel {
-            background: var(--bg-panel);
-            border: 1px solid rgba(46,166,79,0.12);
-            border-radius: var(--radius);
-            padding: 16px 20px;
-        }
-        .sidebar-panel h3 {
+        .btn-icon {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
             font-size: 0.8rem;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             gap: 6px;
         }
-        .sidebar-panel .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 0;
-            font-size: 0.8rem;
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--accent-green);
         }
-        .sidebar-panel .info-row .label { color: var(--text-secondary); }
-        .sidebar-panel .info-row .val { color: var(--text-primary); font-weight: 500; }
 
-        .match-toast {
-            background: rgba(46,166,79,0.12);
-            border: 1px solid var(--accent);
-            border-radius: var(--radius-sm);
-            padding: 12px;
+        /* ─── HUD BAR (Partida Activa) ────────────────── */
+        .hud-banner {
             display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        .match-toast.visible { display: block; }
-        .match-toast h4 { color: var(--accent-light); font-size: 0.85rem; margin-bottom: 4px; }
-        .match-toast p { color: var(--text-secondary); font-size: 0.75rem; line-height: 1.4; }
-
-        /* ─── MODAL (Results / LP Report) ────────────── */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px);
-            display: none;
+            background: rgba(12, 28, 18, 0.95);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 10px 16px;
+            gap: 16px;
+            justify-content: space-around;
             align-items: center;
-            justify-content: center;
-            z-index: 200;
+            flex-wrap: wrap;
         }
-        .modal-overlay.visible { display: flex; }
-        .modal {
-            background: var(--bg-secondary);
-            border: 1px solid var(--gold);
-            border-radius: var(--radius);
-            padding: 32px;
-            max-width: 550px;
-            width: 90%;
-            max-height: 85vh;
-            overflow-y: auto;
-            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .modal h2 {
-            font-size: 1.8rem;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .modal .stats { margin-bottom: 20px; }
-        .modal .stat-row {
+        .hud-banner.active { display: flex; }
+        .hud-stat {
             display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.9rem;
+            flex-direction: column;
+            align-items: center;
         }
-        .modal input[type="text"] {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--bg-card);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-family: inherit;
-            font-size: 1rem;
-            margin: 12px 0;
-            transition: var(--transition);
-        }
-        .modal input[type="text"]:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        .modal-buttons button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: var(--radius-sm);
-            font-family: inherit;
+        .hud-stat .lbl {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
             font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
+            letter-spacing: 0.5px;
         }
-        .btn-primary {
-            background: var(--accent);
-            color: white;
+        .hud-stat .val {
+            font-size: 1.25rem;
+            font-weight: 800;
+            font-feature-settings: "tnum";
         }
-        .btn-secondary {
-            background: rgba(255,255,255,0.08);
-            color: var(--text-primary);
-            border: 1px solid rgba(255,255,255,0.1) !important;
+        .val.player { color: var(--accent-green); }
+        .val.ai { color: var(--danger); }
+        .val.gold { color: var(--accent-gold); }
+
+        /* ─── LAYOUT CONTAINER ────────────────────────── */
+        .main-content {
+            flex: 1;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* LP Report Modal */
-        .lp-section { margin: 16px 0; }
-        .lp-section h4 {
-            color: var(--gold);
+        /* ─── HERO & MENU SCREEN ──────────────────────── */
+        #menu-view {
+            max-width: 680px;
+            width: 100%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            animation: fadeIn 0.4s ease;
+        }
+        .hero-banner {
+            text-align: center;
+            padding: 20px 0 10px;
+        }
+        .hero-banner h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .hero-banner p {
+            color: var(--text-muted);
+            font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+        }
+
+        .config-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: var(--shadow-card);
+        }
+        .setting-box h3 {
             font-size: 0.8rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 8px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .lp-row {
+        .chip-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .chip-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .chip-btn:hover {
+            border-color: var(--accent-green);
+            color: var(--text-main);
+            background: rgba(46, 204, 113, 0.08);
+        }
+        .chip-btn.selected {
+            background: rgba(46, 204, 113, 0.16);
+            border-color: var(--accent-green);
+            color: #4ade80;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+        }
+
+        /* Selector de Estados */
+        .state-select-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 6px;
+            max-height: 140px;
+            overflow-y: auto;
+            padding: 4px;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: var(--radius-sm);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .state-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+        }
+        .state-checkbox:hover { background: rgba(255,255,255,0.05); }
+
+        .btn-launch {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: var(--radius-md);
+            color: white;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-launch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5);
+            background: linear-gradient(135deg, #34d399, #059669);
+        }
+
+        /* ─── GAMEPLAY VIEW ──────────────────────────── */
+        #game-view {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.3s ease;
+        }
+        .game-split {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+            align-items: start;
+        }
+        @media (max-width: 950px) {
+            .game-split { grid-template-columns: 1fr; }
+        }
+
+        /* ─── BOARD & RESPONSIVE CARDS ───────────────── */
+        .board-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 480px;
+        }
+        .game-grid {
+            display: grid;
+            gap: 10px;
+            justify-content: center;
+            perspective: 1200px;
+            width: 100%;
+            max-width: 820px;
+        }
+
+        /* Cartas con tamaño adaptativo en móvil y PC */
+        .card-slot {
+            aspect-ratio: 3 / 4;
+            perspective: 1000px;
+            cursor: pointer;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            position: relative;
+        }
+        .card-flipper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform-style: preserve-3d;
+        }
+        .card-slot.flipped .card-flipper,
+        .card-slot.matched .card-flipper {
+            transform: rotateY(180deg);
+        }
+
+        .side {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+        }
+        .side-back {
+            background: #0f2417;
+            border: 2px solid rgba(46, 204, 113, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .side-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-slot:hover .side-back {
+            border-color: var(--accent-green);
+            transform: scale(1.02);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .side-front {
+            transform: rotateY(180deg);
+            background: #000;
+            border: 2px solid var(--accent-gold);
+        }
+        .side-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-caption {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 6px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9) 70%);
+            font-size: clamp(0.6rem, 1.8vw, 0.75rem);
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        /* Cartas emparejadas */
+        .card-slot.matched .side-front {
+            border: 2.5px solid var(--accent-green);
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.4);
+        }
+        .card-slot.matched::after {
+            content: '✓';
+            position: absolute;
+            top: 6px; right: 8px;
+            background: var(--accent-green);
+            color: #062410;
+            font-weight: 800;
+            font-size: 0.75rem;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+
+        /* ─── SIDE PANEL (INFO, IO, IA MONITOR) ───────── */
+        .side-control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .panel-card {
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-card);
+        }
+        .panel-card h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent-gold);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Monitor de Razonamiento IA */
+        .ai-think-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .think-pulse {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: #38bdf8;
+            font-weight: 500;
+        }
+        .think-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 8px #38bdf8;
+            animation: pulse 1s infinite alternate;
+        }
+        @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
+
+        .key-val-row {
             display: flex;
             justify-content: space-between;
-            padding: 3px 0;
-            font-size: 0.82rem;
-        }
-        .lp-row .lbl { color: var(--text-secondary); }
-        .lp-row .val { color: var(--accent-light); font-weight: 500; }
-        .lp-landscapes {
-            list-style: none;
-            padding: 0;
-        }
-        .lp-landscapes li {
-            padding: 4px 0;
             font-size: 0.8rem;
-            color: var(--text-secondary);
+            padding: 3px 0;
         }
-        .lp-landscapes li::before {
-            content: '▸ ';
-            color: var(--accent);
-        }
+        .key-val-row .k { color: var(--text-muted); }
+        .key-val-row .v { color: var(--text-main); font-weight: 600; }
 
-        /* ─── ANIMATIONS ─────────────────────────────── */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ─── GESTURE INDICATOR ──────────────────────── */
-        .gesture-dot {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid var(--gold);
-            pointer-events: none;
-            z-index: 9999;
+        /* Toast educativo de paisaje */
+        .landscape-toast {
+            border-left: 3px solid var(--accent-green);
+            background: rgba(46, 204, 113, 0.08);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            padding: 10px 12px;
             display: none;
-            transition: 0.05s linear;
+            animation: fadeIn 0.3s ease;
         }
-        .gesture-dot.active { display: block; }
-        .gesture-dot.pinch { background: var(--gold); }
+        .landscape-toast.show { display: block; }
+        .landscape-toast h5 { color: #4ade80; font-size: 0.85rem; margin-bottom: 3px; }
+        .landscape-toast p { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
 
-        /* ─── RESPONSIVE ─────────────────────────────── */
-        @media (max-width: 900px) {
-            .game-layout { flex-direction: column; }
-            .sidebar { width: 100%; }
-            .card { width: 90px; height: 120px; }
+        /* ─── MODALS ──────────────────────────────────── */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 16px;
         }
+        .modal-backdrop.open { display: flex; }
+        .modal-box {
+            background: var(--bg-surface);
+            border: 1.5px solid var(--border-gold);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            max-width: 580px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            animation: modalScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalScale {
+            from { transform: scale(0.92); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-box h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .report-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 16px 0;
+        }
+        @media (max-width: 500px) { .report-grid { grid-template-columns: 1fr; } }
+        .report-tile {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+        }
+        .report-tile .t-lbl { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+        .report-tile .t-val { font-size: 1.05rem; font-weight: 700; color: #4ade80; margin-top: 2px; }
+
+        .btn-full {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            border: none;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* Canvas de Confetti */
+        #confetti-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-logo">
-            <div>
-                <h1>⛰️ TepuyMatch</h1>
-                <div class="subtitle">Paisajes de Venezuela • Investigación de Operaciones</div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- NAVEGACIÓN SUPERIOR -->
+    <header class="top-navbar">
+        <a href="#" class="brand" onclick="location.reload();">
+            <span class="brand-icon">⛰️</span>
+            <div class="brand-text">
+                <h1>TepuyMatch</h1>
+                <span>Paisajes de Venezuela • Investigación de Operaciones</span>
             </div>
+        </a>
+        <div class="nav-actions">
+            <button class="btn-icon" id="btn-sound-toggle" title="Silenciar / Activar sonido">🔊</button>
+            <button class="btn-icon" id="btn-open-leaderboard">🏆 Récords</button>
         </div>
-        <div id="header-actions"></div>
     </header>
 
-    <!-- HUD -->
-    <div class="hud" id="game-hud">
-        <div class="hud-item">
-            <div class="label">Jugador 👤</div>
-            <div class="value player" id="hud-player-score">0</div>
+    <!-- HUD ACTIVO DE PARTIDA -->
+    <section class="hud-banner" id="game-hud">
+        <div class="hud-stat">
+            <span class="lbl">Tú 👤</span>
+            <span class="val player" id="val-player-score">0</span>
         </div>
-        <div class="hud-divider"></div>
-        <div class="hud-item">
-            <div class="label">IA 🤖</div>
-            <div class="value ai" id="hud-ai-score">0</div>
+        <div class="hud-stat" id="hud-ai-box">
+            <span class="lbl">IA 🤖</span>
+            <span class="val ai" id="val-ai-score">0</span>
         </div>
-        <div class="hud-divider"></div>
-        <div class="hud-item">
-            <div class="label">Turno</div>
-            <div class="value turn" id="hud-turn">Jugador</div>
+        <div class="hud-stat">
+            <span class="lbl">Turno Activo</span>
+            <span class="val gold" id="val-current-turn" style="font-size: 0.95rem;">Tú</span>
         </div>
-        <div class="hud-divider"></div>
-        <div class="hud-item">
-            <div class="label">Tiempo</div>
-            <div class="value" id="hud-time" style="color: var(--text-primary)">00:00</div>
+        <div class="hud-stat">
+            <span class="lbl">Tiempo</span>
+            <span class="val" id="val-timer" style="font-size: 1.1rem;">00:00</span>
         </div>
-        <div class="hud-divider"></div>
-        <div class="hud-item">
-            <div class="label">Parejas</div>
-            <div class="value" id="hud-pairs" style="color: var(--text-primary)">0/0</div>
+        <div class="hud-stat">
+            <span class="lbl">Progreso</span>
+            <span class="val" id="val-progress" style="font-size: 1rem;">0/8</span>
         </div>
-    </div>
+    </section>
 
-    <div class="container">
-        <!-- MENU -->
-        <div id="menu-screen">
-            <div class="menu-hero">
-                <h2>🇻🇪 Juego de Memoria</h2>
-                <p>Encuentra las parejas de los paisajes más emblemáticos de Venezuela</p>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- 1. VISTA DE MENÚ / CONFIGURADOR -->
+        <section id="menu-view">
+            <div class="hero-banner">
+                <h2>El Juego de Memoria Nacional</h2>
+                <p>Generación de tableros mediante <strong>Programación Lineal Entera</strong> (SciPy HiGHS) y modo Desafío contra <strong>Inteligencia Artificial</strong> con memoria observacional.</p>
             </div>
-            <div class="menu-options">
-                <div class="option-group">
+
+            <div class="config-card">
+                <!-- Modo -->
+                <div class="setting-box">
                     <h3>Modo de Juego</h3>
-                    <div class="option-buttons" id="mode-options">
-                        <button class="opt-btn" data-value="Solitario">🧩 Solitario</button>
-                        <button class="opt-btn active" data-value="Vs_IA">🤖 Jugador vs IA</button>
+                    <div class="chip-group" id="group-mode">
+                        <button class="chip-btn" data-mode="Solitario">🧩 Solitario</button>
+                        <button class="chip-btn selected" data-mode="Vs_IA">🤖 Jugador vs IA</button>
                     </div>
                 </div>
-                <div class="option-group" id="ai-diff-group">
-                    <h3>Dificultad de la IA</h3>
-                    <div class="option-buttons" id="diff-options">
-                        <button class="opt-btn" data-value="Facil">🟢 Turista Novato</button>
-                        <button class="opt-btn active" data-value="Medio">🟡 Guía Turístico</button>
-                        <button class="opt-btn" data-value="Experto">🔴 Experto Nacional</button>
-                    </div>
-                </div>
-                <div class="option-group">
-                    <h3>Tamaño del Tablero</h3>
-                    <div class="option-buttons" id="board-options">
-                        <button class="opt-btn" data-rows="3" data-cols="4">3×4 (6 parejas)</button>
-                        <button class="opt-btn active" data-rows="4" data-cols="4">4×4 (8 parejas)</button>
-                        <button class="opt-btn" data-rows="4" data-cols="6">4×6 (12 parejas)</button>
-                    </div>
-                </div>
-            </div>
-            <button class="btn-play" id="btn-start">▶ INICIAR PARTIDA</button>
-        </div>
 
-        <!-- GAME -->
-        <div id="game-screen">
-            <div class="game-layout">
-                <div class="board-container">
-                    <div class="board" id="board"></div>
+                <!-- Dificultad IA -->
+                <div class="setting-box" id="box-difficulty">
+                    <h3>Nivel de la Inteligencia Artificial</h3>
+                    <div class="chip-group" id="group-diff">
+                        <button class="chip-btn" data-diff="Facil">🟢 Turista Novato (30%)</button>
+                        <button class="chip-btn selected" data-diff="Medio">🟡 Guía Turístico (70%)</button>
+                        <button class="chip-btn" data-diff="Experto">🔴 Experto Nacional (100%)</button>
+                    </div>
                 </div>
-                <div class="sidebar">
-                    <div class="sidebar-panel" id="match-toast-panel">
-                        <div class="match-toast" id="match-toast">
-                            <h4 id="toast-title">✅ ¡Pareja encontrada!</h4>
-                            <p id="toast-text"></p>
+
+                <!-- Tamaño de Tablero -->
+                <div class="setting-box">
+                    <h3>Dimensiones del Tablero</h3>
+                    <div class="chip-group" id="group-board">
+                        <button class="chip-btn" data-rows="3" data-cols="4">3×4 (6 parejas)</button>
+                        <button class="chip-btn selected" data-rows="4" data-cols="4">4×4 (8 parejas)</button>
+                        <button class="chip-btn" data-rows="4" data-cols="6">4×6 (12 parejas)</button>
+                    </div>
+                </div>
+
+                <!-- Selector de Estados -->
+                <div class="setting-box">
+                    <h3>Filtrar por Estados Venezolanos (Opcional)</h3>
+                    <div class="state-select-container" id="state-checkboxes">
+                        <span style="font-size:0.75rem; color:var(--text-dim);">Cargando estados...</span>
+                    </div>
+                </div>
+
+                <!-- Botón Lanzar -->
+                <button class="btn-launch" id="btn-start-game">
+                    <span>▶ Generar Tablero Óptimo</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 2. VISTA DE JUEGO (GAMEPLAY) -->
+        <section id="game-view">
+            <div class="game-split">
+                <!-- Tablero -->
+                <div class="board-wrapper">
+                    <div class="game-grid" id="board-grid"></div>
+                </div>
+
+                <!-- Panel Lateral -->
+                <div class="side-control-panel">
+                    <!-- Ficha Educativa -->
+                    <div class="landscape-toast" id="landscape-toast">
+                        <h5 id="toast-title">¡Pareja descubierta!</h5>
+                        <p id="toast-body">Detalles del paisaje...</p>
+                    </div>
+
+                    <!-- Monitor IA -->
+                    <div class="panel-card" id="ai-monitor-card">
+                        <h4>🤖 Razonamiento de la IA</h4>
+                        <div class="ai-think-box">
+                            <div class="think-pulse">
+                                <div class="think-dot"></div>
+                                <span id="ai-status-label">En espera de tu jugada</span>
+                            </div>
+                            <div class="key-val-row">
+                                <span class="k">Memoria activa:</span>
+                                <span class="v" id="ai-memory-count">0 cartas</span>
+                            </div>
+                            <div class="key-val-row">
+                                <span class="k">Estrategia:</span>
+                                <span class="v" id="ai-strategy-label">Observando</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="sidebar-panel">
-                        <h3>📐 Programación Lineal</h3>
-                        <div id="lp-summary"></div>
-                        <button class="btn-secondary" style="width:100%; margin-top:10px; padding:8px; font-size:0.8rem; cursor:pointer; border-radius:6px;" id="btn-lp-detail">
-                            Ver Reporte Completo
+
+                    <!-- Investigación de Operaciones -->
+                    <div class="panel-card">
+                        <h4>📐 Investigación de Operaciones</h4>
+                        <div class="key-val-row">
+                            <span class="k">Modelo:</span>
+                            <span class="v">PLB (Mochila)</span>
+                        </div>
+                        <div class="key-val-row">
+                            <span class="k">Solver:</span>
+                            <span class="v" id="lp-solver-label">HiGHS</span>
+                        </div>
+                        <div class="key-val-row">
+                            <span class="k">Valor Óptimo Z*:</span>
+                            <span class="v" style="color:var(--accent-gold);" id="lp-z-label">0.0</span>
+                        </div>
+                        <div class="key-val-row">
+                            <span class="k">Tiempo de cómputo:</span>
+                            <span class="v" id="lp-time-label">0.005s</span>
+                        </div>
+                        <button class="btn-icon" style="width:100%; margin-top:10px; justify-content:center;" id="btn-view-lp-modal">
+                            🔍 Inspeccionar Formulación
                         </button>
                     </div>
-                    <div class="sidebar-panel" id="ai-panel" style="display:none;">
-                        <h3>🤖 Agente IA</h3>
-                        <div id="ai-info"></div>
-                    </div>
-                    <button class="btn-secondary" style="padding:10px; cursor:pointer; border-radius:8px; font-size:0.85rem;" id="btn-back-menu">
-                        ← Volver al Menú
+
+                    <button class="btn-icon" style="padding:10px; justify-content:center; border-color: rgba(239,68,68,0.3);" id="btn-quit-game">
+                        🚪 Abandonar Partida
                     </button>
                 </div>
             </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE FORMULACIÓN MATEMÁTICA PARA EL PROFESOR -->
+    <div class="modal-backdrop" id="modal-lp">
+        <div class="modal-box">
+            <h2 style="color:var(--accent-gold); font-size:1.35rem;">📐 Formulación de Programación Lineal</h2>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+                El tablero fue resuelto en tiempo real mediante <strong>SciPy MILP</strong> garantizando tamaño exacto, cuotas regionales de Venezuela y equilibrio de dificultad.
+            </p>
+            <div class="report-grid" id="lp-metrics-grid"></div>
+            <h4 style="font-size:0.8rem; text-transform:uppercase; color:var(--text-muted); margin:14px 0 6px;">Paisajes Seleccionados por el Solver:</h4>
+            <div id="lp-selected-list" style="font-size:0.8rem; line-height:1.6; max-height:140px; overflow-y:auto; padding:8px; background:rgba(0,0,0,0.25); border-radius:var(--radius-sm);"></div>
+            <button class="btn-full" style="margin-top:16px; background:rgba(255,255,255,0.08); color:#fff;" id="btn-close-lp">Cerrar</button>
         </div>
     </div>
 
-    <!-- RESULT MODAL -->
-    <div class="modal-overlay" id="result-modal">
-        <div class="modal">
-            <h2 id="result-title">🏆</h2>
-            <div class="stats" id="result-stats"></div>
-            <label style="font-size:0.85rem; color: var(--text-secondary);">Tu nombre para el récord:</label>
-            <input type="text" id="player-name" placeholder="Escribe tu nombre..." maxlength="20">
-            <div class="modal-buttons">
-                <button class="btn-primary" id="btn-save-score">Guardar Récord</button>
-                <button class="btn-secondary" id="btn-result-lp">Ver Reporte PL</button>
+    <!-- MODAL DE VICTORIA / FIN DE PARTIDA -->
+    <div class="modal-backdrop" id="modal-victory">
+        <div class="modal-box" style="text-align:center;">
+            <h2 id="victory-title" style="color:var(--accent-gold);">🏆 ¡PARTIDA COMPLETADA!</h2>
+            <div id="victory-stats" style="margin: 16px 0; font-size: 0.95rem; line-height: 1.8;"></div>
+            <div style="margin: 16px 0; text-align: left;">
+                <label style="font-size:0.8rem; color:var(--text-muted);">Registra tu nombre para el Salón de la Fama:</label>
+                <input type="text" id="victory-player-name" placeholder="Tu nombre..." maxlength="20" style="width:100%; padding:10px; margin-top:6px; background:rgba(0,0,0,0.3); border:1px solid var(--border-glass); border-radius:var(--radius-sm); color:#fff; font-family:inherit;">
             </div>
+            <button class="btn-full" style="background:var(--accent-green); color:#062410; font-weight:800; font-size:1rem;" id="btn-save-victory">💾 Guardar y Volver al Menú</button>
         </div>
     </div>
 
-    <!-- LP REPORT MODAL -->
-    <div class="modal-overlay" id="lp-modal">
-        <div class="modal" style="max-width: 620px;">
-            <h2 style="font-size:1.3rem;">📐 Reporte de Programación Lineal</h2>
-            <div id="lp-full-report"></div>
-            <div class="modal-buttons">
-                <button class="btn-secondary" id="btn-close-lp">← Cerrar</button>
+    <!-- MODAL DE SALÓN DE LA FAMA (RÉCORDS) -->
+    <div class="modal-backdrop" id="modal-records">
+        <div class="modal-box">
+            <h2 style="color:var(--accent-gold); font-size:1.35rem;">🏆 Salón de la Fama</h2>
+            <div id="records-table-container" style="max-height:260px; overflow-y:auto; font-size:0.85rem; margin:14px 0;">
+                <span style="color:var(--text-dim);">Cargando récords...</span>
             </div>
+            <button class="btn-full" style="background:rgba(255,255,255,0.08); color:#fff;" id="btn-close-records">Cerrar</button>
         </div>
     </div>
 
-    <!-- GESTURE DOT -->
-    <div class="gesture-dot" id="gesture-dot"></div>
-
+    <!-- SCRIPT DE JUEGO, AUDIO Y LÓGICA -->
     <script>
-    // ─── STATE ──────────────────────────────────────────
-    let config = {
+    // ─── AUDIO SINTETIZADO (Web Audio API nativo) ──────
+    class SoundFX {
+        constructor() {
+            this.ctx = null;
+            this.enabled = true;
+        }
+        init() {
+            if (!this.ctx) {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+        playFlip() {
+            if (!this.enabled) return;
+            this.init();
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(580, this.ctx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.08);
+        }
+        playMatch() {
+            if (!this.enabled) return;
+            this.init();
+            const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 (Acorde mayor)
+            notes.forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.07);
+                gain.gain.setValueAtTime(0.18, this.ctx.currentTime + idx * 0.07);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.07 + 0.3);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(this.ctx.currentTime + idx * 0.07);
+                osc.stop(this.ctx.currentTime + idx * 0.07 + 0.3);
+            });
+        }
+        playMismatch() {
+            if (!this.enabled) return;
+            this.init();
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+            osc.frequency.linearRampToValueAtTime(150, this.ctx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.2);
+        }
+        playFanfare() {
+            if (!this.enabled) return;
+            this.init();
+            [440, 554.37, 659.25, 880].forEach((freq, i) => {
+                setTimeout(() => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.5);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.5);
+                }, i * 140);
+            });
+        }
+    }
+    const audio = new SoundFX();
+
+    // ─── ESTADO GLOBAL ─────────────────────────────────
+    let currentConfig = {
         mode: 'Vs_IA',
         ai_difficulty: 'Medio',
         rows: 4,
         cols: 4,
+        selected_states: []
     };
-    let gameData = null;
-    let lpReport = null;
-    let flippedCards = [];
-    let isProcessing = false;
-    let timerInterval = null;
-    let gameStartTime = null;
+    let activeMatch = null;
+    let isLocked = false;
+    let timerRef = null;
+    let timerStart = null;
 
-    // ─── MENU SETUP ─────────────────────────────────────
-    function setupOptionButtons(containerId, callback) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-        container.querySelectorAll('.opt-btn').forEach(btn => {
+    // ─── INICIALIZACIÓN DE LA UI ───────────────────────
+    document.addEventListener('DOMContentLoaded', async () => {
+        setupChips();
+        loadStates();
+
+        document.getElementById('btn-start-game').addEventListener('click', startNewGame);
+        document.getElementById('btn-quit-game').addEventListener('click', returnToMenu);
+        document.getElementById('btn-view-lp-modal').addEventListener('click', openLPModal);
+        document.getElementById('btn-close-lp').addEventListener('click', () => closeModal('modal-lp'));
+        document.getElementById('btn-open-leaderboard').addEventListener('click', openRecordsModal);
+        document.getElementById('btn-close-records').addEventListener('click', () => closeModal('modal-records'));
+        document.getElementById('btn-save-victory').addEventListener('click', saveVictoryScore);
+
+        const soundBtn = document.getElementById('btn-sound-toggle');
+        soundBtn.addEventListener('click', () => {
+            audio.enabled = !audio.enabled;
+            soundBtn.textContent = audio.enabled ? '🔊' : '🔇';
+        });
+    });
+
+    function setupChips() {
+        // Modo
+        document.querySelectorAll('#group-mode .chip-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                container.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                callback(btn);
+                document.querySelectorAll('#group-mode .chip-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                currentConfig.mode = btn.dataset.mode;
+                document.getElementById('box-difficulty').style.display = currentConfig.mode === 'Vs_IA' ? 'block' : 'none';
+            });
+        });
+        // Dificultad
+        document.querySelectorAll('#group-diff .chip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#group-diff .chip-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                currentConfig.ai_difficulty = btn.dataset.diff;
+            });
+        });
+        // Tablero
+        document.querySelectorAll('#group-board .chip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#group-board .chip-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                currentConfig.rows = parseInt(btn.dataset.rows);
+                currentConfig.cols = parseInt(btn.dataset.cols);
             });
         });
     }
 
-    setupOptionButtons('mode-options', btn => {
-        config.mode = btn.dataset.value;
-        document.getElementById('ai-diff-group').style.display = config.mode === 'Vs_IA' ? 'block' : 'none';
-    });
-    setupOptionButtons('diff-options', btn => { config.ai_difficulty = btn.dataset.value; });
-    setupOptionButtons('board-options', btn => {
-        config.rows = parseInt(btn.dataset.rows);
-        config.cols = parseInt(btn.dataset.cols);
-    });
-
-    document.getElementById('btn-start').addEventListener('click', startGame);
-    document.getElementById('btn-back-menu').addEventListener('click', backToMenu);
-    document.getElementById('btn-lp-detail').addEventListener('click', () => showLPModal());
-    document.getElementById('btn-result-lp').addEventListener('click', () => showLPModal());
-    document.getElementById('btn-close-lp').addEventListener('click', () =>
-        document.getElementById('lp-modal').classList.remove('visible'));
-    document.getElementById('btn-save-score').addEventListener('click', saveScore);
-
-    // ─── API HELPERS ────────────────────────────────────
-    async function api(endpoint, method = 'GET', body = null) {
-        const opts = { method, headers: { 'Content-Type': 'application/json' } };
-        if (body) opts.body = JSON.stringify(body);
-        const res = await fetch('/api/' + endpoint, opts);
-        return res.json();
+    async function loadStates() {
+        try {
+            const res = await fetch('/api/states');
+            const states = await res.json();
+            const container = document.getElementById('state-checkboxes');
+            container.innerHTML = '';
+            states.forEach(st => {
+                const label = document.createElement('label');
+                label.className = 'state-checkbox';
+                label.innerHTML = `
+                    <input type="checkbox" value="${st}">
+                    <span>${st}</span>
+                `;
+                label.querySelector('input').addEventListener('change', (e) => {
+                    if (e.target.checked) currentConfig.selected_states.push(st);
+                    else currentConfig.selected_states = currentConfig.selected_states.filter(s => s !== st);
+                });
+                container.appendChild(label);
+            });
+        } catch (e) {
+            console.error('Error cargando estados:', e);
+        }
     }
 
-    // ─── START GAME ─────────────────────────────────────
-    async function startGame() {
-        document.getElementById('btn-start').textContent = '⏳ Generando tablero óptimo...';
+    // ─── INICIAR PARTIDA CON OPTIMIZACIÓN ──────────────
+    async function startNewGame() {
+        const btn = document.getElementById('btn-start-game');
+        btn.disabled = true;
+        btn.innerHTML = '<span>⚡ Resolviendo Modelo HiGHS...</span>';
 
-        const data = await api('new-game', 'POST', {
-            mode: config.mode,
-            ai_difficulty: config.ai_difficulty,
-            rows: config.rows,
-            cols: config.cols,
-        });
+        try {
+            const res = await fetch('/api/new-game', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(currentConfig)
+            });
+            const data = await res.json();
+            if (data.error) throw new Error(data.error);
 
-        gameData = data;
-        lpReport = data.lp_report;
-        flippedCards = [];
-        isProcessing = false;
+            activeMatch = data;
+            isLocked = false;
 
-        document.getElementById('menu-screen').style.display = 'none';
-        document.getElementById('game-screen').style.display = 'block';
-        document.getElementById('game-hud').classList.add('visible');
-        document.getElementById('btn-start').textContent = '▶ INICIAR PARTIDA';
+            // Transición de vistas
+            document.getElementById('menu-view').style.display = 'none';
+            document.getElementById('game-view').style.display = 'block';
+            document.getElementById('game-hud').classList.add('active');
 
-        document.getElementById('ai-panel').style.display = config.mode === 'Vs_IA' ? 'block' : 'none';
+            document.getElementById('hud-ai-box').style.display = currentConfig.mode === 'Vs_IA' ? 'flex' : 'none';
+            document.getElementById('ai-monitor-card').style.display = currentConfig.mode === 'Vs_IA' ? 'block' : 'none';
 
-        renderBoard(data);
-        renderLPSummary(data.lp_report);
-        updateHUD(data);
-        startTimer();
+            renderBoard(data);
+            updateHUD(data);
+            updateLPSummary(data.lp_report);
+            startTimer();
+        } catch (err) {
+            alert('Error al iniciar partida: ' + err.message);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<span>▶ Generar Tablero Óptimo</span>';
+        }
     }
 
-    function backToMenu() {
-        stopTimer();
-        document.getElementById('menu-screen').style.display = 'flex';
-        document.getElementById('game-screen').style.display = 'none';
-        document.getElementById('game-hud').classList.remove('visible');
-    }
-
-    // ─── RENDER BOARD ───────────────────────────────────
     function renderBoard(data) {
-        const board = document.getElementById('board');
-        board.innerHTML = '';
-        board.style.gridTemplateColumns = `repeat(${data.cols}, 120px)`;
+        const grid = document.getElementById('board-grid');
+        grid.innerHTML = '';
+        grid.style.gridTemplateColumns = `repeat(${data.cols}, minmax(0, 1fr))`;
 
         data.board.forEach(card => {
-            const div = document.createElement('div');
-            div.className = 'card';
-            div.dataset.position = card.position;
-            div.dataset.landscapeId = card.landscape_id;
+            const slot = document.createElement('div');
+            slot.className = 'card-slot';
+            slot.dataset.pos = card.position;
+            slot.dataset.id = card.landscape_id;
 
-            if (card.status === 'matched') {
-                div.classList.add('matched');
-            } else if (card.status === 'face_up') {
-                div.classList.add('flipped');
-            }
-
-            div.innerHTML = `
-                <div class="card-inner">
-                    <div class="card-face card-back">
-                        <img src="/assets/images/card_back.png" alt="Carta">
+            slot.innerHTML = `
+                <div class="card-flipper">
+                    <div class="side side-back">
+                        <img src="/assets/images/card_back.png" alt="Reverso" loading="lazy">
                     </div>
-                    <div class="card-face card-front">
+                    <div class="side side-front">
                         <img src="/assets/images/${card.landscape_id}.png" alt="${card.name}"
                              onerror="this.src='/assets/images/card_back.png'">
-                        <div class="card-label">${card.name}</div>
+                        <div class="card-caption">${card.name}</div>
                     </div>
                 </div>
             `;
 
-            div.addEventListener('click', () => onCardClick(card.position));
-            board.appendChild(div);
+            slot.addEventListener('click', () => handleCardClick(card.position));
+            grid.appendChild(slot);
         });
     }
 
-    // ─── CARD CLICK ─────────────────────────────────────
-    async function onCardClick(position) {
-        if (isProcessing) return;
-        if (gameData && gameData.current_player !== 'Jugador') return;
+    // ─── CLIC EN CARTA ─────────────────────────────────
+    async function handleCardClick(position) {
+        if (isLocked) return;
+        if (activeMatch && activeMatch.current_player !== 'Jugador') return;
 
-        const cardEl = document.querySelector(`.card[data-position="${position}"]`);
-        if (!cardEl || cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+        const slot = document.querySelector(`.card-slot[data-pos="${position}"]`);
+        if (!slot || slot.classList.contains('flipped') || slot.classList.contains('matched')) return;
 
-        isProcessing = true;
-        cardEl.classList.add('flipped');
+        audio.playFlip();
+        slot.classList.add('flipped');
 
-        const data = await api('flip', 'POST', { position });
-        if (data.error) {
-            cardEl.classList.remove('flipped');
-            isProcessing = false;
-            return;
-        }
+        try {
+            const res = await fetch('/api/flip', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ position })
+            });
+            const data = await res.json();
+            if (data.error) {
+                slot.classList.remove('flipped');
+                return;
+            }
 
-        gameData = { ...gameData, ...data };
-        updateHUD(data);
+            activeMatch = { ...activeMatch, ...data };
+            updateHUD(data);
 
-        if (data.turn_result) {
-            if (data.turn_result.is_match) {
-                // Match!
-                const c1 = document.querySelector(`.card[data-position="${data.turn_result.card1}"]`);
-                const c2 = document.querySelector(`.card[data-position="${data.turn_result.card2}"]`);
-                setTimeout(() => {
-                    if (c1) c1.classList.add('matched');
-                    if (c2) c2.classList.add('matched');
-                }, 300);
-                showMatchToast(data.turn_result);
-                isProcessing = false;
+            if (data.turn_result) {
+                if (data.turn_result.is_match) {
+                    audio.playMatch();
+                    markMatched(data.turn_result.card1, data.turn_result.card2);
+                    showLandscapeToast(data.turn_result);
 
-                if (data.game_over) {
-                    setTimeout(() => showResult(data), 1200);
-                }
-            } else {
-                // No match — show for a moment, then flip back
-                setTimeout(async () => {
-                    await api('hide-unmatched', 'POST');
-                    document.querySelectorAll('.card.flipped:not(.matched)').forEach(c => c.classList.remove('flipped'));
-                    isProcessing = false;
-
-                    // AI turn
-                    if (data.current_player === 'IA') {
-                        setTimeout(() => doAITurn(), 600);
+                    if (data.game_over) {
+                        setTimeout(() => triggerVictory(data), 700);
                     }
-                }, 1000);
-            }
-        } else {
-            // First card of the turn — wait for second
-            isProcessing = false;
-        }
-    }
+                } else {
+                    audio.playMismatch();
+                    isLocked = true;
+                    setTimeout(async () => {
+                        await fetch('/api/hide-unmatched', { method: 'POST' });
+                        document.querySelectorAll('.card-slot.flipped:not(.matched)').forEach(s => s.classList.remove('flipped'));
+                        isLocked = false;
 
-    // ─── AI TURN ────────────────────────────────────────
-    async function doAITurn() {
-        if (!gameData || gameData.game_over) return;
-        isProcessing = true;
-
-        document.getElementById('hud-turn').textContent = '🤖 IA pensando...';
-
-        await sleep(800);
-
-        const data = await api('ai-turn', 'POST');
-        if (data.error) { isProcessing = false; return; }
-        gameData = { ...gameData, ...data };
-
-        // Flip first card
-        const c1 = document.querySelector(`.card[data-position="${data.ai_move.pos1}"]`);
-        if (c1) c1.classList.add('flipped');
-
-        await sleep(500);
-
-        // Flip second card
-        const c2 = document.querySelector(`.card[data-position="${data.ai_move.pos2}"]`);
-        if (c2) c2.classList.add('flipped');
-
-        updateHUD(data);
-
-        await sleep(800);
-
-        if (data.turn_result) {
-            if (data.turn_result.is_match) {
-                if (c1) c1.classList.add('matched');
-                if (c2) c2.classList.add('matched');
-                showMatchToast(data.turn_result);
-
-                if (data.game_over) {
-                    isProcessing = false;
-                    setTimeout(() => showResult(data), 1000);
-                    return;
+                        // Si es turno de la IA
+                        if (data.current_player === 'IA') {
+                            triggerAITurn();
+                        }
+                    }, 900);
                 }
-
-                // AI repeats turn
-                isProcessing = false;
-                setTimeout(() => doAITurn(), 600);
-            } else {
-                await api('hide-unmatched', 'POST');
-                document.querySelectorAll('.card.flipped:not(.matched)').forEach(c => c.classList.remove('flipped'));
-                isProcessing = false;
-                updateHUD(data);
             }
-        } else {
-            isProcessing = false;
-        }
-
-        if (data.ai_stats) {
-            document.getElementById('ai-info').innerHTML = `
-                <div class="info-row"><span class="label">Nivel</span><span class="val">${data.ai_stats.display_name}</span></div>
-                <div class="info-row"><span class="label">Retención</span><span class="val">${data.ai_stats.retention_rate}</span></div>
-                <div class="info-row"><span class="label">Cartas memorizadas</span><span class="val">${data.ai_stats.cards_memorized}</span></div>
-            `;
+        } catch (e) {
+            console.error('Error flip:', e);
+            slot.classList.remove('flipped');
         }
     }
 
-    // ─── HUD UPDATE ─────────────────────────────────────
+    // ─── TURNO DE LA INTELIGENCIA ARTIFICIAL ───────────
+    async function triggerAITurn() {
+        if (!activeMatch || activeMatch.game_over) return;
+        isLocked = true;
+
+        const monitor = document.getElementById('ai-status-label');
+        const strat = document.getElementById('ai-strategy-label');
+        monitor.textContent = 'Analizando probabilidades...';
+        strat.textContent = 'Consultando memoria';
+
+        await wait(700);
+
+        try {
+            const res = await fetch('/api/ai-turn', { method: 'POST' });
+            const data = await res.json();
+            if (data.error) { isLocked = false; return; }
+            activeMatch = { ...activeMatch, ...data };
+
+            // Voltear primera carta
+            const s1 = document.querySelector(`.card-slot[data-pos="${data.ai_move.pos1}"]`);
+            if (s1) {
+                audio.playFlip();
+                s1.classList.add('flipped');
+            }
+            monitor.textContent = `Descubriendo carta #${data.ai_move.pos1}`;
+
+            await wait(600);
+
+            // Voltear segunda carta
+            const s2 = document.querySelector(`.card-slot[data-pos="${data.ai_move.pos2}"]`);
+            if (s2) {
+                audio.playFlip();
+                s2.classList.add('flipped');
+            }
+
+            updateHUD(data);
+            await wait(800);
+
+            if (data.turn_result) {
+                if (data.turn_result.is_match) {
+                    audio.playMatch();
+                    markMatched(data.turn_result.card1, data.turn_result.card2);
+                    showLandscapeToast(data.turn_result);
+                    monitor.textContent = '¡Acierto por memoria!';
+                    strat.textContent = 'Repitiendo turno';
+
+                    if (data.game_over) {
+                        isLocked = false;
+                        setTimeout(() => triggerVictory(data), 700);
+                        return;
+                    }
+
+                    // La IA repite turno
+                    setTimeout(() => triggerAITurn(), 800);
+                } else {
+                    audio.playMismatch();
+                    await fetch('/api/hide-unmatched', { method: 'POST' });
+                    document.querySelectorAll('.card-slot.flipped:not(.matched)').forEach(s => s.classList.remove('flipped'));
+                    monitor.textContent = 'Falló. Tu turno.';
+                    strat.textContent = 'Esperando';
+                    isLocked = false;
+                    updateHUD(data);
+                }
+            } else {
+                isLocked = false;
+            }
+        } catch (e) {
+            console.error('Error IA:', e);
+            isLocked = false;
+        }
+    }
+
+    function markMatched(c1, c2) {
+        const s1 = document.querySelector(`.card-slot[data-pos="${c1}"]`);
+        const s2 = document.querySelector(`.card-slot[data-pos="${c2}"]`);
+        if (s1) s1.classList.add('matched');
+        if (s2) s2.classList.add('matched');
+    }
+
+    // ─── ACTUALIZADORES DE INTERFAZ ────────────────────
     function updateHUD(data) {
         if (data.scores) {
-            document.getElementById('hud-player-score').textContent = data.scores.Jugador;
-            document.getElementById('hud-ai-score').textContent = data.scores.IA || 0;
+            document.getElementById('val-player-score').textContent = data.scores.Jugador || 0;
+            document.getElementById('val-ai-score').textContent = data.scores.IA || 0;
         }
         if (data.current_player) {
-            const isPlayer = data.current_player === 'Jugador';
-            document.getElementById('hud-turn').textContent = isPlayer ? '👤 Tu turno' : '🤖 Turno IA';
-            document.getElementById('hud-turn').style.color = isPlayer ? 'var(--accent-light)' : 'var(--danger)';
+            const isMe = data.current_player === 'Jugador';
+            const el = document.getElementById('val-current-turn');
+            el.textContent = isMe ? 'Tú 👤' : 'IA 🤖';
+            el.style.color = isMe ? 'var(--accent-green)' : 'var(--danger)';
         }
         if (data.matched_pairs !== undefined) {
-            document.getElementById('hud-pairs').textContent = `${data.matched_pairs}/${data.total_pairs}`;
+            document.getElementById('val-progress').textContent = `${data.matched_pairs}/${data.total_pairs}`;
+        }
+        if (data.ai_stats) {
+            document.getElementById('ai-memory-count').textContent = `${data.ai_stats.cards_memorized} cartas (${data.ai_stats.retention_rate})`;
         }
     }
 
-    // ─── TIMER ──────────────────────────────────────────
+    function updateLPSummary(meta) {
+        if (!meta) return;
+        document.getElementById('lp-solver-label').textContent = meta.solver;
+        document.getElementById('lp-z-label').textContent = meta.objective_value?.toFixed(1) || '0.0';
+        document.getElementById('lp-time-label').textContent = `${meta.solve_time_seconds?.toFixed(4)}s`;
+    }
+
+    function showLandscapeToast(res) {
+        const toast = document.getElementById('landscape-toast');
+        document.getElementById('toast-title').textContent = `✅ ${res.landscape_name} (${res.landscape_state})`;
+        document.getElementById('toast-body').textContent = res.landscape_description;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4500);
+    }
+
+    // ─── CRONÓMETRO ────────────────────────────────────
     function startTimer() {
-        gameStartTime = Date.now();
         stopTimer();
-        timerInterval = setInterval(() => {
-            const secs = Math.floor((Date.now() - gameStartTime) / 1000);
-            const m = String(Math.floor(secs / 60)).padStart(2, '0');
-            const s = String(secs % 60).padStart(2, '0');
-            document.getElementById('hud-time').textContent = `${m}:${s}`;
+        timerStart = Date.now();
+        timerRef = setInterval(() => {
+            const sec = Math.floor((Date.now() - timerStart) / 1000);
+            const m = String(Math.floor(sec / 60)).padStart(2, '0');
+            const s = String(sec % 60).padStart(2, '0');
+            document.getElementById('val-timer').textContent = `${m}:${s}`;
         }, 1000);
     }
     function stopTimer() {
-        if (timerInterval) clearInterval(timerInterval);
+        if (timerRef) clearInterval(timerRef);
     }
 
-    // ─── MATCH TOAST ────────────────────────────────────
-    function showMatchToast(result) {
-        const toast = document.getElementById('match-toast');
-        document.getElementById('toast-title').textContent = `✅ ¡${result.player === 'Jugador' ? 'Encontraste' : 'La IA encontró'} una pareja!`;
-        document.getElementById('toast-text').textContent = `${result.landscape_name} — ${result.landscape_state}: ${result.landscape_description}`;
-        toast.classList.add('visible');
-        setTimeout(() => toast.classList.remove('visible'), 4000);
-    }
-
-    // ─── LP SUMMARY (sidebar) ───────────────────────────
-    function renderLPSummary(meta) {
-        document.getElementById('lp-summary').innerHTML = `
-            <div class="info-row"><span class="label">Solver</span><span class="val">${meta.solver}</span></div>
-            <div class="info-row"><span class="label">Estado</span><span class="val">${meta.status}</span></div>
-            <div class="info-row"><span class="label">Z* (Óptimo)</span><span class="val" style="color:var(--gold)">${meta.objective_value?.toFixed(1)}</span></div>
-            <div class="info-row"><span class="label">Restricciones</span><span class="val">${meta.constraints_count}</span></div>
-            <div class="info-row"><span class="label">Tiempo solver</span><span class="val">${meta.solve_time_seconds?.toFixed(4)}s</span></div>
+    // ─── MODAL DE OPTIMIZACIÓN MATEMÁTICA ──────────────
+    function openLPModal() {
+        if (!activeMatch || !activeMatch.lp_report) return;
+        const m = activeMatch.lp_report;
+        const grid = document.getElementById('lp-metrics-grid');
+        grid.innerHTML = `
+            <div class="report-tile"><div class="t-lbl">Solver</div><div class="t-val">${m.solver}</div></div>
+            <div class="report-tile"><div class="t-lbl">Estado de Solución</div><div class="t-val">${m.status}</div></div>
+            <div class="report-tile"><div class="t-lbl">Valor Óptimo Z*</div><div class="t-val" style="color:var(--accent-gold);">${m.objective_value?.toFixed(2)}</div></div>
+            <div class="report-tile"><div class="t-lbl">Tiempo de Cómputo</div><div class="t-val">${m.solve_time_seconds?.toFixed(4)}s</div></div>
+            <div class="report-tile"><div class="t-lbl">Variables Binarias</div><div class="t-val">${m.variables_count}</div></div>
+            <div class="report-tile"><div class="t-lbl">Restricciones Lineales</div><div class="t-val">${m.constraints_count}</div></div>
+            <div class="report-tile"><div class="t-lbl">Dificultad Acumulada</div><div class="t-val">${m.total_difficulty}</div></div>
+            <div class="report-tile"><div class="t-lbl">Cotas Dificultad</div><div class="t-val">[${m.difficulty_bounds?.[0]?.toFixed(1)}, ${m.difficulty_bounds?.[1]?.toFixed(1)}]</div></div>
         `;
+
+        const list = document.getElementById('lp-selected-list');
+        const seen = new Set();
+        list.innerHTML = '';
+        activeMatch.board.forEach(c => {
+            if (!seen.has(c.landscape_id)) {
+                seen.add(c.landscape_id);
+                list.innerHTML += `<div>▸ <strong>${c.name}</strong> (${c.state_name})</div>`;
+            }
+        });
+
+        openModal('modal-lp');
     }
 
-    // ─── LP FULL REPORT MODAL ───────────────────────────
-    function showLPModal() {
-        if (!lpReport) return;
-        const m = lpReport;
-        let landscapesList = '';
-        if (gameData && gameData.board) {
-            const seen = new Set();
-            gameData.board.forEach(c => {
-                if (!seen.has(c.landscape_id)) {
-                    seen.add(c.landscape_id);
-                    landscapesList += `<li>${c.name} (${c.state_name})</li>`;
-                }
-            });
-        }
-
-        document.getElementById('lp-full-report').innerHTML = `
-            <div class="lp-section">
-                <h4>Modelo Matemático</h4>
-                <div class="lp-row"><span class="lbl">Problema</span><span class="val">Selección Óptima de Tablero (PLB)</span></div>
-                <div class="lp-row"><span class="lbl">Tipo</span><span class="val">Programación Lineal Entera / Binaria</span></div>
-                <div class="lp-row"><span class="lbl">Función Objetivo</span><span class="val">Max Z = Σ vᵢ · xᵢ</span></div>
-            </div>
-            <div class="lp-section">
-                <h4>Resultados del Solver</h4>
-                <div class="lp-row"><span class="lbl">Solver</span><span class="val">${m.solver}</span></div>
-                <div class="lp-row"><span class="lbl">Estado</span><span class="val">${m.status}</span></div>
-                <div class="lp-row"><span class="lbl">Valor Óptimo Z*</span><span class="val" style="color:var(--gold);font-size:1.1rem;">${m.objective_value?.toFixed(2)}</span></div>
-                <div class="lp-row"><span class="lbl">Variables (paisajes candidatos)</span><span class="val">${m.variables_count}</span></div>
-                <div class="lp-row"><span class="lbl">Restricciones</span><span class="val">${m.constraints_count}</span></div>
-                <div class="lp-row"><span class="lbl">Parejas seleccionadas</span><span class="val">${m.total_pairs}</span></div>
-                <div class="lp-row"><span class="lbl">Total cartas</span><span class="val">${m.total_cards}</span></div>
-                <div class="lp-row"><span class="lbl">Dificultad acumulada</span><span class="val">${m.total_difficulty}</span></div>
-                <div class="lp-row"><span class="lbl">Cotas dificultad</span><span class="val">[${m.difficulty_bounds?.[0]?.toFixed(1)}, ${m.difficulty_bounds?.[1]?.toFixed(1)}]</span></div>
-                <div class="lp-row"><span class="lbl">Tiempo de resolución</span><span class="val">${m.solve_time_seconds?.toFixed(4)} seg</span></div>
-            </div>
-            <div class="lp-section">
-                <h4>Paisajes Seleccionados por la PL</h4>
-                <ul class="lp-landscapes">${landscapesList}</ul>
-            </div>
-        `;
-        document.getElementById('lp-modal').classList.add('visible');
-    }
-
-    // ─── RESULT MODAL ───────────────────────────────────
-    function showResult(data) {
+    // ─── VICTORIA & CONFETTI ───────────────────────────
+    function triggerVictory(data) {
         stopTimer();
-        let title = '🏆 ¡GANASTE!';
-        let titleColor = 'var(--gold)';
-        if (data.winner === 'IA') { title = '🤖 Ganó la IA'; titleColor = 'var(--danger)'; }
-        else if (data.winner === 'Empate') { title = '🤝 ¡Empate!'; titleColor = 'var(--accent-light)'; }
+        audio.playFanfare();
+        startConfetti();
 
-        const el = document.getElementById('result-title');
-        el.textContent = title;
-        el.style.color = titleColor;
+        let title = '🏆 ¡VICTORIA!';
+        let color = 'var(--accent-gold)';
+        if (data.winner === 'IA') { title = '🤖 La IA se llevó la victoria'; color = 'var(--danger)'; }
+        else if (data.winner === 'Empate') { title = '🤝 ¡Empate!'; color = 'var(--accent-green)'; }
 
-        document.getElementById('result-stats').innerHTML = `
-            <div class="stat-row"><span>👤 Jugador</span><span>${data.scores.Jugador} parejas</span></div>
-            ${config.mode === 'Vs_IA' ? `<div class="stat-row"><span>🤖 IA</span><span>${data.scores.IA} parejas</span></div>` : ''}
-            <div class="stat-row"><span>🔄 Turnos</span><span>${data.turn_number}</span></div>
-            <div class="stat-row"><span>⏱️ Tiempo</span><span>${data.elapsed_time?.toFixed(1)}s</span></div>
+        const titleEl = document.getElementById('victory-title');
+        titleEl.textContent = title;
+        titleEl.style.color = color;
+
+        document.getElementById('victory-stats').innerHTML = `
+            <div>👤 Tus parejas: <strong>${data.scores.Jugador}</strong></div>
+            ${currentConfig.mode === 'Vs_IA' ? `<div>🤖 Parejas de la IA: <strong>${data.scores.IA}</strong></div>` : ''}
+            <div>🔄 Turnos totales: <strong>${data.turn_number}</strong></div>
+            <div>⏱️ Tiempo final: <strong>${data.elapsed_time?.toFixed(1)} segundos</strong></div>
         `;
-        document.getElementById('result-modal').classList.add('visible');
+
+        openModal('modal-victory');
     }
 
-    async function saveScore() {
-        const name = document.getElementById('player-name').value.trim() || 'Anónimo';
-        await api('save-score', 'POST', { player_name: name });
-        document.getElementById('result-modal').classList.remove('visible');
-        backToMenu();
+    async function saveVictoryScore() {
+        const name = document.getElementById('victory-player-name').value.trim() || 'Viajero de Venezuela';
+        await fetch('/api/save-score', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ player_name: name })
+        });
+        stopConfetti();
+        closeModal('modal-victory');
+        returnToMenu();
     }
 
-    // ─── HELPERS ────────────────────────────────────────
-    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+    // ─── SALÓN DE LA FAMA ──────────────────────────────
+    async function openRecordsModal() {
+        const container = document.getElementById('records-table-container');
+        container.innerHTML = '<span style="color:var(--text-dim);">Cargando mejores récords...</span>';
+        openModal('modal-records');
+
+        try {
+            const res = await fetch('/api/leaderboard');
+            const list = await res.json();
+            if (list.length === 0) {
+                container.innerHTML = '<span style="color:var(--text-muted);">Aún no hay partidas registradas. ¡Sé el primero!</span>';
+                return;
+            }
+            let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
+            list.forEach((r, idx) => {
+                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '•';
+                html += `
+                    <div style="display:flex; justify-content:space-between; padding:6px 8px; background:rgba(255,255,255,0.03); border-radius:6px;">
+                        <span>${medal} <strong>${r.player_name}</strong> (${r.mode})</span>
+                        <span style="color:var(--accent-gold);">${r.score} pts • ${r.time_seconds}s</span>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        } catch (e) {
+            container.innerHTML = '<span style="color:var(--danger);">Error cargando récords.</span>';
+        }
+    }
+
+    function returnToMenu() {
+        stopTimer();
+        stopConfetti();
+        document.getElementById('menu-view').style.display = 'flex';
+        document.getElementById('game-view').style.display = 'none';
+        document.getElementById('game-hud').classList.remove('active');
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    // ─── SIMPLE CONFETTI ───────────────────────────────
+    let confettiTimer = null;
+    function startConfetti() {
+        const c = document.getElementById('confetti-canvas');
+        const ctx = c.getContext('2d');
+        c.width = window.innerWidth;
+        c.height = window.innerHeight;
+        const pieces = Array.from({ length: 90 }, () => ({
+            x: Math.random() * c.width,
+            y: Math.random() * c.height - c.height,
+            size: Math.random() * 8 + 4,
+            speed: Math.random() * 3 + 2,
+            color: ['#f59e0b', '#2ecc71', '#38bdf8', '#ef4444', '#fbbf24'][Math.floor(Math.random() * 5)]
+        }));
+
+        function draw() {
+            ctx.clearRect(0, 0, c.width, c.height);
+            pieces.forEach(p => {
+                p.y += p.speed;
+                if (p.y > c.height) p.y = -10;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+            });
+            confettiTimer = requestAnimationFrame(draw);
+        }
+        draw();
+    }
+    function stopConfetti() {
+        if (confettiTimer) cancelAnimationFrame(confettiTimer);
+        const c = document.getElementById('confetti-canvas');
+        if (c) c.getContext('2d').clearRect(0, 0, c.width, c.height);
+    }
     </script>
 </body>
 </html>

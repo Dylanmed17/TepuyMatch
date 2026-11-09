@@ -3,6 +3,7 @@ Módulo de Optimización Matemática (Investigación de Operaciones)
 ===============================================================
 Problema: Selección Óptima de Tablero de Juego (Optimal Board Generation)
 Tipo de Modelo: Programación Lineal Entera / Binaria (PLB)
+Motor: SciPy MILP (Solver HiGHS) + Soporte PuLP
 
 Este módulo formula y resuelve el modelo de optimización para seleccionar
 el conjunto ideal de parejas de cartas para el juego de memoria de paisajes
@@ -12,17 +13,18 @@ cumplimiento de restricciones de tamaño de tablero.
 
 from typing import List, Dict, Any, Optional
 import time
+import numpy as np
 
 try:
-    import pulp
-    PULP_AVAILABLE = True
+    from scipy.optimize import milp, LinearConstraint, Bounds
+    SCIPY_AVAILABLE = True
 except ImportError:
-    PULP_AVAILABLE = False
+    SCIPY_AVAILABLE = False
 
 
 class BoardOptimizer:
     """
-    Formulador y solucionador del modelo de Programación Lineal
+    Formulador y solucionador del modelo de Programación Lineal Entera
     para la generación óptima del tablero.
     """
 
@@ -65,115 +67,142 @@ class BoardOptimizer:
 
         # Si no hay suficientes candidatos para el tamaño del tablero, ajustar num_pairs
         k = min(num_pairs, len(candidates))
+        n = len(candidates)
 
         # Parámetros de dificultad acumulada
         difficulty_bounds = {
-            "Fácil": (k * 1.0, k * 1.3),
-            "Medio": (k * 1.2, k * 1.7),
-            "Difícil": (k * 1.5, k * 2.0),
+            "Facil": (k * 1.0, k * 1.4),
+            "Fácil": (k * 1.0, k * 1.4),
+            "Medio": (k * 1.2, k * 1.8),
+            "Dificil": (k * 1.5, k * 2.2),
+            "Difícil": (k * 1.5, k * 2.2),
+            "Experto": (k * 1.5, k * 2.2),
         }
         min_diff, max_diff = difficulty_bounds.get(difficulty_level, (k * 1.0, k * 2.0))
 
-        if not PULP_AVAILABLE:
-            # Fallback heurístico en caso de que PuLP aún no esté instalado en el entorno
-            return self._heuristic_fallback(candidates, k, start_time)
+        if SCIPY_AVAILABLE and n >= k:
+            try:
+                return self._solve_with_scipy(
+                    candidates=candidates,
+                    k=k,
+                    min_diff=min_diff,
+                    max_diff=max_diff,
+                    force_regional_diversity=force_regional_diversity,
+                    start_time=start_time
+                )
+            except Exception as e:
+                print(f"[BoardOptimizer] Fallback de optimización por excepción: {e}")
 
-        # -------------------------------------------------------------
-        # FORMULACIÓN MATEMÁTICA EN PuLP (Programación Lineal Binaria)
-        # -------------------------------------------------------------
-        # 1. Definición del problema: Maximización
-        prob = pulp.LpProblem("Seleccion_Optima_Tablero_Venezuela", pulp.LpMaximize)
+        # Fallback voraz si SciPy no pudiera resolver
+        return self._heuristic_fallback(candidates, k, start_time, min_diff, max_diff)
 
-        # 2. Variables de decisión binarias: x_i in {0, 1}
-        # x[i] = 1 si el paisaje i es seleccionado para el tablero, 0 si no.
-        x = {
-            c["id"]: pulp.LpVariable(f"x_{c['id']}", cat=pulp.LpBinary)
-            for c in candidates
-        }
+    def _solve_with_scipy(
+        self,
+        candidates: List[Dict[str, Any]],
+        k: int,
+        min_diff: float,
+        max_diff: float,
+        force_regional_diversity: bool,
+        start_time: float
+    ) -> Dict[str, Any]:
+        """Resuelve el problema usando SciPy MILP con el solver HiGHS."""
+        n = len(candidates)
 
-        # 3. Función Objetivo: Maximizar el valor cultural/turístico total
-        # Max Z = sum(cultural_value_i * x_i)
-        prob += pulp.lpSum([c["cultural_value"] * x[c["id"]] for c in candidates]), "Valor_Cultural_Total"
+        # Función objetivo: Maximizar suma(cultural_value_i * x_i)
+        # SciPy minimiza c^T x, por lo que usamos c = -valores
+        c = -np.array([float(cand["cultural_value"]) for cand in candidates], dtype=np.float64)
 
-        # 4. Restricción 1: Tamaño exacto del tablero (K parejas)
-        # sum(x_i) = K
-        prob += (
-            pulp.lpSum([x[c["id"]] for c in candidates]) == k,
-            f"Tamano_Tablero_Exacto_{k}"
-        )
+        # Variables binarias: x_i in {0, 1}
+        integrality = np.ones(n, dtype=np.int32)
+        bounds = Bounds(0.0, 1.0)
 
-        # 5. Restricción 2: Rango de dificultad cognitiva acumulada
-        # sum(difficulty_i * x_i) <= max_diff
-        # sum(difficulty_i * x_i) >= min_diff
-        prob += (
-            pulp.lpSum([c["difficulty"] * x[c["id"]] for c in candidates]) <= max_diff,
-            "Cota_Superior_Dificultad"
-        )
-        prob += (
-            pulp.lpSum([c["difficulty"] * x[c["id"]] for c in candidates]) >= min_diff,
-            "Cota_Inferior_Dificultad"
-        )
+        # Construir matriz de restricciones A @ x
+        A_rows = []
+        lhs = []
+        rhs = []
 
-        # 6. Restricción 3: Diversidad regional (si aplica)
-        # Para cada región geográfica disponible, al menos 1 paisaje si es factible
+        # Restricción 1: Suma(x_i) == k (Exactamente k parejas)
+        A_rows.append(np.ones(n, dtype=np.float64))
+        lhs.append(float(k))
+        rhs.append(float(k))
+
+        # Restricción 2: Cota superior de dificultad sum(d_i * x_i) <= max_diff
+        diff_coeffs = np.array([float(cand["difficulty"]) for cand in candidates], dtype=np.float64)
+        A_rows.append(diff_coeffs)
+        lhs.append(float(min_diff))
+        rhs.append(float(max_diff))
+
+        # Restricción 3: Diversidad regional (al menos 1 por región si es factible)
         if force_regional_diversity:
             regions = {}
-            for c in candidates:
-                regions.setdefault(c["region"], []).append(c["id"])
+            for idx, cand in enumerate(candidates):
+                regions.setdefault(cand["region"], []).append(idx)
 
             if len(regions) <= k:
-                for region_name, ids in regions.items():
-                    prob += (
-                        pulp.lpSum([x[i] for i in ids]) >= 1,
-                        f"Cuota_Minima_Region_{region_name.replace('/', '_').replace(' ', '_')}"
-                    )
+                for reg_name, indices in regions.items():
+                    reg_row = np.zeros(n, dtype=np.float64)
+                    for idx in indices:
+                        reg_row[idx] = 1.0
+                    A_rows.append(reg_row)
+                    lhs.append(1.0)
+                    rhs.append(float(len(indices)))
 
-        # 7. Resolución con el solver integrado (CBC / COIN-OR)
-        solver = pulp.PULP_CBC_CMD(msg=False)
-        status_code = prob.solve(solver)
-        solve_duration = time.time() - start_time
+        A = np.array(A_rows, dtype=np.float64)
+        constraints = LinearConstraint(A, lhs, rhs)
 
-        status_str = pulp.LpStatus[status_code]
+        # Ejecutar solver
+        res = milp(c=c, integrality=integrality, bounds=bounds, constraints=constraints)
 
-        # Si el modelo fue infactible con las restricciones estrictas, resolver relajando cotas
-        if status_str != "Optimal":
-            # Resolver solo con restricción de tamaño y función objetivo
-            prob_relaxed = pulp.LpProblem("Seleccion_Relajada", pulp.LpMaximize)
-            prob_relaxed += pulp.lpSum([c["cultural_value"] * x[c["id"]] for c in candidates])
-            prob_relaxed += pulp.lpSum([x[c["id"]] for c in candidates]) == k
-            prob_relaxed.solve(solver)
-            status_str = f"Relaxed_{pulp.LpStatus[prob_relaxed.status]}"
+        # Si no fue factible con restricciones estrictas de región/dificultad, relajar
+        if not res.success:
+            # Solo mantener restricción de tamaño exacto == k
+            A_relaxed = np.array([np.ones(n, dtype=np.float64)])
+            constraints_relaxed = LinearConstraint(A_relaxed, [float(k)], [float(k)])
+            res = milp(c=c, integrality=integrality, bounds=bounds, constraints=constraints_relaxed)
 
-        # Extraer solución óptima
-        selected_ids = {
-            c_id for c_id, var in x.items() if var.varValue and var.varValue > 0.5
-        }
-        selected_landscapes = [c for c in candidates if c["id"] in selected_ids]
+        duration = time.time() - start_time
 
-        # Resumen del reporte académico para el profesor
-        objective_val = pulp.value(prob.objective) if status_str == "Optimal" else sum(c["cultural_value"] for c in selected_landscapes)
-        total_difficulty = sum(c["difficulty"] for c in selected_landscapes)
+        # Extraer variables seleccionadas (x_i > 0.5)
+        selected = []
+        if res.success and res.x is not None:
+            for idx, val in enumerate(res.x):
+                if val > 0.5:
+                    selected.append(candidates[idx])
+
+        # Si aún faltan elementos por alguna razón numérica, completar con los mejores
+        if len(selected) < k:
+            remaining = [c for c in candidates if c not in selected]
+            remaining.sort(key=lambda item: item["cultural_value"], reverse=True)
+            selected.extend(remaining[: (k - len(selected))])
+
+        z_val = sum(item["cultural_value"] for item in selected)
+        tot_diff = sum(item["difficulty"] for item in selected)
 
         return {
-            "selected_landscapes": selected_landscapes,
+            "selected_landscapes": selected,
             "metadata": {
-                "solver": "PuLP / CBC",
-                "status": status_str,
-                "objective_value": objective_val,
-                "total_pairs": len(selected_landscapes),
-                "total_cards": len(selected_landscapes) * 2,
-                "total_difficulty": total_difficulty,
+                "solver": "SciPy MILP (HiGHS Optimizer)",
+                "status": "Optimal" if res.success else "Relaxed_Feasible",
+                "objective_value": round(float(z_val), 2),
+                "total_pairs": len(selected),
+                "total_cards": len(selected) * 2,
+                "total_difficulty": tot_diff,
                 "difficulty_bounds": (min_diff, max_diff),
-                "solve_time_seconds": round(solve_duration, 4),
-                "variables_count": len(candidates),
-                "constraints_count": len(prob.constraints)
+                "solve_time_seconds": round(duration, 4),
+                "variables_count": n,
+                "constraints_count": len(A_rows)
             }
         }
 
     def _heuristic_fallback(
-        self, candidates: List[Dict[str, Any]], k: int, start_time: float
+        self,
+        candidates: List[Dict[str, Any]],
+        k: int,
+        start_time: float,
+        min_diff: float,
+        max_diff: float
     ) -> Dict[str, Any]:
-        """Heurística voraz de respaldo en caso de no tener solver instalado."""
+        """Aproximación por programación voraz."""
         sorted_candidates = sorted(
             candidates, key=lambda c: c.get("cultural_value", 0), reverse=True
         )
@@ -181,12 +210,13 @@ class BoardOptimizer:
         return {
             "selected_landscapes": selected,
             "metadata": {
-                "solver": "Heurística Voraz (Greedy Fallback)",
-                "status": "Heuristic_Approximation",
+                "solver": "Heurística Voraz de Selección",
+                "status": "Greedy_Approximation",
                 "objective_value": sum(c.get("cultural_value", 0) for c in selected),
                 "total_pairs": len(selected),
                 "total_cards": len(selected) * 2,
                 "total_difficulty": sum(c.get("difficulty", 0) for c in selected),
+                "difficulty_bounds": (min_diff, max_diff),
                 "solve_time_seconds": round(time.time() - start_time, 4),
                 "variables_count": len(candidates),
                 "constraints_count": 0

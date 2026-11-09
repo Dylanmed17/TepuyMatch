@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⛰️ TepuyMatch — Paisajes de Venezuela</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ─── RESET & BASE ───────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-primary: #0a1a12;
+            --bg-secondary: #0f2218;
+            --bg-card: #132e1f;
+            --bg-panel: #152a1c;
+            --accent: #2ea650;
+            --accent-light: #3cc964;
+            --gold: #d4a520;
+            --gold-light: #f0c040;
+            --text-primary: #e8e8e0;
+            --text-secondary: #a0a098;
+            --text-dim: #6a6a60;
+            --danger: #e04040;
+            --info: #4090d0;
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ─── HEADER ─────────────────────────────────── */
+        .header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+            border-bottom: 2px solid var(--accent);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-logo h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header-logo .subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* ─── HUD (game header) ──────────────────────── */
+        .hud {
+            display: none;
+            background: var(--bg-secondary);
+            padding: 12px 32px;
+            border-bottom: 1px solid rgba(46,166,79,0.2);
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .hud.visible { display: flex; }
+        .hud-item {
+            text-align: center;
+            min-width: 100px;
+        }
+        .hud-item .label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .hud-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .hud-item .value.player { color: var(--accent-light); }
+        .hud-item .value.ai { color: var(--danger); }
+        .hud-item .value.turn { color: var(--gold); font-size: 1rem; }
+        .hud-divider {
+            width: 1px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* ─── MAIN CONTAINERS ────────────────────────── */
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+        /* ─── MENU SCREEN ────────────────────────────── */
+        #menu-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+            padding-top: 40px;
+        }
+        .menu-hero {
+            text-align: center;
+        }
+        .menu-hero h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gold), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .menu-hero p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .menu-options {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .option-group {
+            background: var(--bg-panel);
+            border: 1px solid rgba(46,166,79,0.15);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+        }
+        .option-group h3 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .option-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .opt-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 16px;
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+        .opt-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+            background: rgba(46,166,79,0.08);
+        }
+        .opt-btn.active {
+            border-color: var(--accent);
+            background: rgba(46,166,79,0.15);
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+
+        .btn-play {
+            width: 100%;
+            max-width: 600px;
+            padding: 18px 32px;
+            border: none;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, var(--accent), #1a8a3f);
+            color: white;
+            font-family: inherit;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 4px 24px rgba(46,166,79,0.3);
+        }
+        .btn-play:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(46,166,79,0.5);
+        }
+
+        /* ─── GAME SCREEN ────────────────────────────── */
+        #game-screen { display: none; }
+        .game-layout {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        /* ─── BOARD ──────────────────────────────────── */
+        .board-container { flex: 1; }
+        .board {
+            display: grid;
+            gap: 12px;
+            justify-content: center;
+            perspective: 1000px;
+        }
+
+        /* ─── CARDS ──────────────────────────────────── */
+        .card {
+            width: 120px;
+            height: 160px;
+            cursor: pointer;
+            perspective: 800px;
+            position: relative;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner,
+        .card.matched .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        .card-front {
+            transform: rotateY(180deg);
+        }
+        .card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .card-front .card-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 6px 8px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: white;
+            text-align: center;
+        }
+        .card-back {
+            background: var(--bg-card);
+            border: 2px solid rgba(46,166,79,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+        }
+        .card:hover .card-back {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(46,166,79,0.2);
+        }
+        .card.matched .card-face {
+            border: 2px solid var(--accent-light);
+        }
+        .card.matched .card-front::after {
+            content: '✓';
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-size: 1.2rem;
+            color: var(--accent-light);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        }
+        .card.disabled { pointer-events: none; opacity: 0.7; }
+
+        /* ─── SIDEBAR ────────────────────────────────── */
+        .sidebar {
+            width: 300px;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .sidebar-panel {
+            background: var(--bg-panel);
+            border: 1px solid rgba(46,166,79,0.12);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+        }
+        .sidebar-panel h3 {
+            font-size: 0.8rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sidebar-panel .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 0.8rem;
+        }
+        .sidebar-panel .info-row .label { color: var(--text-secondary); }
+        .sidebar-panel .info-row .val { color: var(--text-primary); font-weight: 500; }
+
+        .match-toast {
+            background: rgba(46,166,79,0.12);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .match-toast.visible { display: block; }
+        .match-toast h4 { color: var(--accent-light); font-size: 0.85rem; margin-bottom: 4px; }
+        .match-toast p { color: var(--text-secondary); font-size: 0.75rem; line-height: 1.4; }
+
+        /* ─── MODAL (Results / LP Report) ────────────── */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+        .modal-overlay.visible { display: flex; }
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--gold);
+            border-radius: var(--radius);
+            padding: 32px;
+            max-width: 550px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .modal h2 {
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .modal .stats { margin-bottom: 20px; }
+        .modal .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+        .modal input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            margin: 12px 0;
+            transition: var(--transition);
+        }
+        .modal input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.1) !important;
+        }
+
+        /* LP Report Modal */
+        .lp-section { margin: 16px 0; }
+        .lp-section h4 {
+            color: var(--gold);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .lp-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            font-size: 0.82rem;
+        }
+        .lp-row .lbl { color: var(--text-secondary); }
+        .lp-row .val { color: var(--accent-light); font-weight: 500; }
+        .lp-landscapes {
+            list-style: none;
+            padding: 0;
+        }
+        .lp-landscapes li {
+            padding: 4px 0;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .lp-landscapes li::before {
+            content: '▸ ';
+            color: var(--accent);
+        }
+
+        /* ─── ANIMATIONS ─────────────────────────────── */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── GESTURE INDICATOR ──────────────────────── */
+        .gesture-dot {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+            transition: 0.05s linear;
+        }
+        .gesture-dot.active { display: block; }
+        .gesture-dot.pinch { background: var(--gold); }
+
+        /* ─── RESPONSIVE ─────────────────────────────── */
+        @media (max-width: 900px) {
+            .game-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .card { width: 90px; height: 120px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-logo">
+            <div>
+                <h1>⛰️ TepuyMatch</h1>
+                <div class="subtitle">Paisajes de Venezuela • Investigación de Operaciones</div>
+            </div>
+        </div>
+        <div id="header-actions"></div>
+    </header>
+
+    <!-- HUD -->
+    <div class="hud" id="game-hud">
+        <div class="hud-item">
+            <div class="label">Jugador 👤</div>
+            <div class="value player" id="hud-player-score">0</div>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item">
+            <div class="label">IA 🤖</div>
+            <div class="value ai" id="hud-ai-score">0</div>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item">
+            <div class="label">Turno</div>
+            <div class="value turn" id="hud-turn">Jugador</div>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item">
+            <div class="label">Tiempo</div>
+            <div class="value" id="hud-time" style="color: var(--text-primary)">00:00</div>
+        </div>
+        <div class="hud-divider"></div>
+        <div class="hud-item">
+            <div class="label">Parejas</div>
+            <div class="value" id="hud-pairs" style="color: var(--text-primary)">0/0</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- MENU -->
+        <div id="menu-screen">
+            <div class="menu-hero">
+                <h2>🇻🇪 Juego de Memoria</h2>
+                <p>Encuentra las parejas de los paisajes más emblemáticos de Venezuela</p>
+            </div>
+            <div class="menu-options">
+                <div class="option-group">
+                    <h3>Modo de Juego</h3>
+                    <div class="option-buttons" id="mode-options">
+                        <button class="opt-btn" data-value="Solitario">🧩 Solitario</button>
+                        <button class="opt-btn active" data-value="Vs_IA">🤖 Jugador vs IA</button>
+                    </div>
+                </div>
+                <div class="option-group" id="ai-diff-group">
+                    <h3>Dificultad de la IA</h3>
+                    <div class="option-buttons" id="diff-options">
+                        <button class="opt-btn" data-value="Facil">🟢 Turista Novato</button>
+                        <button class="opt-btn active" data-value="Medio">🟡 Guía Turístico</button>
+                        <button class="opt-btn" data-value="Experto">🔴 Experto Nacional</button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <h3>Tamaño del Tablero</h3>
+                    <div class="option-buttons" id="board-options">
+                        <button class="opt-btn" data-rows="3" data-cols="4">3×4 (6 parejas)</button>
+                        <button class="opt-btn active" data-rows="4" data-cols="4">4×4 (8 parejas)</button>
+                        <button class="opt-btn" data-rows="4" data-cols="6">4×6 (12 parejas)</button>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-play" id="btn-start">▶ INICIAR PARTIDA</button>
+        </div>
+
+        <!-- GAME -->
+        <div id="game-screen">
+            <div class="game-layout">
+                <div class="board-container">
+                    <div class="board" id="board"></div>
+                </div>
+                <div class="sidebar">
+                    <div class="sidebar-panel" id="match-toast-panel">
+                        <div class="match-toast" id="match-toast">
+                            <h4 id="toast-title">✅ ¡Pareja encontrada!</h4>
+                            <p id="toast-text"></p>
+                        </div>
+                    </div>
+                    <div class="sidebar-panel">
+                        <h3>📐 Programación Lineal</h3>
+                        <div id="lp-summary"></div>
+                        <button class="btn-secondary" style="width:100%; margin-top:10px; padding:8px; font-size:0.8rem; cursor:pointer; border-radius:6px;" id="btn-lp-detail">
+                            Ver Reporte Completo
+                        </button>
+                    </div>
+                    <div class="sidebar-panel" id="ai-panel" style="display:none;">
+                        <h3>🤖 Agente IA</h3>
+                        <div id="ai-info"></div>
+                    </div>
+                    <button class="btn-secondary" style="padding:10px; cursor:pointer; border-radius:8px; font-size:0.85rem;" id="btn-back-menu">
+                        ← Volver al Menú
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULT MODAL -->
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal">
+            <h2 id="result-title">🏆</h2>
+            <div class="stats" id="result-stats"></div>
+            <label style="font-size:0.85rem; color: var(--text-secondary);">Tu nombre para el récord:</label>
+            <input type="text" id="player-name" placeholder="Escribe tu nombre..." maxlength="20">
+            <div class="modal-buttons">
+                <button class="btn-primary" id="btn-save-score">Guardar Récord</button>
+                <button class="btn-secondary" id="btn-result-lp">Ver Reporte PL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LP REPORT MODAL -->
+    <div class="modal-overlay" id="lp-modal">
+        <div class="modal" style="max-width: 620px;">
+            <h2 style="font-size:1.3rem;">📐 Reporte de Programación Lineal</h2>
+            <div id="lp-full-report"></div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" id="btn-close-lp">← Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GESTURE DOT -->
+    <div class="gesture-dot" id="gesture-dot"></div>
+
+    <script>
+    // ─── STATE ──────────────────────────────────────────
+    let config = {
+        mode: 'Vs_IA',
+        ai_difficulty: 'Medio',
+        rows: 4,
+        cols: 4,
+    };
+    let gameData = null;
+    let lpReport = null;
+    let flippedCards = [];
+    let isProcessing = false;
+    let timerInterval = null;
+    let gameStartTime = null;
+
+    // ─── MENU SETUP ─────────────────────────────────────
+    function setupOptionButtons(containerId, callback) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.querySelectorAll('.opt-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                container.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                callback(btn);
+            });
+        });
+    }
+
+    setupOptionButtons('mode-options', btn => {
+        config.mode = btn.dataset.value;
+        document.getElementById('ai-diff-group').style.display = config.mode === 'Vs_IA' ? 'block' : 'none';
+    });
+    setupOptionButtons('diff-options', btn => { config.ai_difficulty = btn.dataset.value; });
+    setupOptionButtons('board-options', btn => {
+        config.rows = parseInt(btn.dataset.rows);
+        config.cols = parseInt(btn.dataset.cols);
+    });
+
+    document.getElementById('btn-start').addEventListener('click', startGame);
+    document.getElementById('btn-back-menu').addEventListener('click', backToMenu);
+    document.getElementById('btn-lp-detail').addEventListener('click', () => showLPModal());
+    document.getElementById('btn-result-lp').addEventListener('click', () => showLPModal());
+    document.getElementById('btn-close-lp').addEventListener('click', () =>
+        document.getElementById('lp-modal').classList.remove('visible'));
+    document.getElementById('btn-save-score').addEventListener('click', saveScore);
+
+    // ─── API HELPERS ────────────────────────────────────
+    async function api(endpoint, method = 'GET', body = null) {
+        const opts = { method, headers: { 'Content-Type': 'application/json' } };
+        if (body) opts.body = JSON.stringify(body);
+        const res = await fetch('/api/' + endpoint, opts);
+        return res.json();
+    }
+
+    // ─── START GAME ─────────────────────────────────────
+    async function startGame() {
+        document.getElementById('btn-start').textContent = '⏳ Generando tablero óptimo...';
+
+        const data = await api('new-game', 'POST', {
+            mode: config.mode,
+            ai_difficulty: config.ai_difficulty,
+            rows: config.rows,
+            cols: config.cols,
+        });
+
+        gameData = data;
+        lpReport = data.lp_report;
+        flippedCards = [];
+        isProcessing = false;
+
+        document.getElementById('menu-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'block';
+        document.getElementById('game-hud').classList.add('visible');
+        document.getElementById('btn-start').textContent = '▶ INICIAR PARTIDA';
+
+        document.getElementById('ai-panel').style.display = config.mode === 'Vs_IA' ? 'block' : 'none';
+
+        renderBoard(data);
+        renderLPSummary(data.lp_report);
+        updateHUD(data);
+        startTimer();
+    }
+
+    function backToMenu() {
+        stopTimer();
+        document.getElementById('menu-screen').style.display = 'flex';
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('game-hud').classList.remove('visible');
+    }
+
+    // ─── RENDER BOARD ───────────────────────────────────
+    function renderBoard(data) {
+        const board = document.getElementById('board');
+        board.innerHTML = '';
+        board.style.gridTemplateColumns = `repeat(${data.cols}, 120px)`;
+
+        data.board.forEach(card => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.dataset.position = card.position;
+            div.dataset.landscapeId = card.landscape_id;
+
+            if (card.status === 'matched') {
+                div.classList.add('matched');
+            } else if (card.status === 'face_up') {
+                div.classList.add('flipped');
+            }
+
+            div.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-face card-back">
+                        <img src="/assets/images/card_back.png" alt="Carta">
+                    </div>
+                    <div class="card-face card-front">
+                        <img src="/assets/images/${card.landscape_id}.png" alt="${card.name}"
+                             onerror="this.src='/assets/images/card_back.png'">
+                        <div class="card-label">${card.name}</div>
+                    </div>
+                </div>
+            `;
+
+            div.addEventListener('click', () => onCardClick(card.position));
+            board.appendChild(div);
+        });
+    }
+
+    // ─── CARD CLICK ─────────────────────────────────────
+    async function onCardClick(position) {
+        if (isProcessing) return;
+        if (gameData && gameData.current_player !== 'Jugador') return;
+
+        const cardEl = document.querySelector(`.card[data-position="${position}"]`);
+        if (!cardEl || cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+
+        isProcessing = true;
+        cardEl.classList.add('flipped');
+
+        const data = await api('flip', 'POST', { position });
+        if (data.error) {
+            cardEl.classList.remove('flipped');
+            isProcessing = false;
+            return;
+        }
+
+        gameData = { ...gameData, ...data };
+        updateHUD(data);
+
+        if (data.turn_result) {
+            if (data.turn_result.is_match) {
+                // Match!
+                const c1 = document.querySelector(`.card[data-position="${data.turn_result.card1}"]`);
+                const c2 = document.querySelector(`.card[data-position="${data.turn_result.card2}"]`);
+                setTimeout(() => {
+                    if (c1) c1.classList.add('matched');
+                    if (c2) c2.classList.add('matched');
+                }, 300);
+                showMatchToast(data.turn_result);
+                isProcessing = false;
+
+                if (data.game_over) {
+                    setTimeout(() => showResult(data), 1200);
+                }
+            } else {
+                // No match — show for a moment, then flip back
+                setTimeout(async () => {
+                    await api('hide-unmatched', 'POST');
+                    document.querySelectorAll('.card.flipped:not(.matched)').forEach(c => c.classList.remove('flipped'));
+                    isProcessing = false;
+
+                    // AI turn
+                    if (data.current_player === 'IA') {
+                        setTimeout(() => doAITurn(), 600);
+                    }
+                }, 1000);
+            }
+        } else {
+            // First card of the turn — wait for second
+            isProcessing = false;
+        }
+    }
+
+    // ─── AI TURN ────────────────────────────────────────
+    async function doAITurn() {
+        if (!gameData || gameData.game_over) return;
+        isProcessing = true;
+
+        document.getElementById('hud-turn').textContent = '🤖 IA pensando...';
+
+        await sleep(800);
+
+        const data = await api('ai-turn', 'POST');
+        if (data.error) { isProcessing = false; return; }
+        gameData = { ...gameData, ...data };
+
+        // Flip first card
+        const c1 = document.querySelector(`.card[data-position="${data.ai_move.pos1}"]`);
+        if (c1) c1.classList.add('flipped');
+
+        await sleep(500);
+
+        // Flip second card
+        const c2 = document.querySelector(`.card[data-position="${data.ai_move.pos2}"]`);
+        if (c2) c2.classList.add('flipped');
+
+        updateHUD(data);
+
+        await sleep(800);
+
+        if (data.turn_result) {
+            if (data.turn_result.is_match) {
+                if (c1) c1.classList.add('matched');
+                if (c2) c2.classList.add('matched');
+                showMatchToast(data.turn_result);
+
+                if (data.game_over) {
+                    isProcessing = false;
+                    setTimeout(() => showResult(data), 1000);
+                    return;
+                }
+
+                // AI repeats turn
+                isProcessing = false;
+                setTimeout(() => doAITurn(), 600);
+            } else {
+                await api('hide-unmatched', 'POST');
+                document.querySelectorAll('.card.flipped:not(.matched)').forEach(c => c.classList.remove('flipped'));
+                isProcessing = false;
+                updateHUD(data);
+            }
+        } else {
+            isProcessing = false;
+        }
+
+        if (data.ai_stats) {
+            document.getElementById('ai-info').innerHTML = `
+                <div class="info-row"><span class="label">Nivel</span><span class="val">${data.ai_stats.display_name}</span></div>
+                <div class="info-row"><span class="label">Retención</span><span class="val">${data.ai_stats.retention_rate}</span></div>
+                <div class="info-row"><span class="label">Cartas memorizadas</span><span class="val">${data.ai_stats.cards_memorized}</span></div>
+            `;
+        }
+    }
+
+    // ─── HUD UPDATE ─────────────────────────────────────
+    function updateHUD(data) {
+        if (data.scores) {
+            document.getElementById('hud-player-score').textContent = data.scores.Jugador;
+            document.getElementById('hud-ai-score').textContent = data.scores.IA || 0;
+        }
+        if (data.current_player) {
+            const isPlayer = data.current_player === 'Jugador';
+            document.getElementById('hud-turn').textContent = isPlayer ? '👤 Tu turno' : '🤖 Turno IA';
+            document.getElementById('hud-turn').style.color = isPlayer ? 'var(--accent-light)' : 'var(--danger)';
+        }
+        if (data.matched_pairs !== undefined) {
+            document.getElementById('hud-pairs').textContent = `${data.matched_pairs}/${data.total_pairs}`;
+        }
+    }
+
+    // ─── TIMER ──────────────────────────────────────────
+    function startTimer() {
+        gameStartTime = Date.now();
+        stopTimer();
+        timerInterval = setInterval(() => {
+            const secs = Math.floor((Date.now() - gameStartTime) / 1000);
+            const m = String(Math.floor(secs / 60)).padStart(2, '0');
+            const s = String(secs % 60).padStart(2, '0');
+            document.getElementById('hud-time').textContent = `${m}:${s}`;
+        }, 1000);
+    }
+    function stopTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+    }
+
+    // ─── MATCH TOAST ────────────────────────────────────
+    function showMatchToast(result) {
+        const toast = document.getElementById('match-toast');
+        document.getElementById('toast-title').textContent = `✅ ¡${result.player === 'Jugador' ? 'Encontraste' : 'La IA encontró'} una pareja!`;
+        document.getElementById('toast-text').textContent = `${result.landscape_name} — ${result.landscape_state}: ${result.landscape_description}`;
+        toast.classList.add('visible');
+        setTimeout(() => toast.classList.remove('visible'), 4000);
+    }
+
+    // ─── LP SUMMARY (sidebar) ───────────────────────────
+    function renderLPSummary(meta) {
+        document.getElementById('lp-summary').innerHTML = `
+            <div class="info-row"><span class="label">Solver</span><span class="val">${meta.solver}</span></div>
+            <div class="info-row"><span class="label">Estado</span><span class="val">${meta.status}</span></div>
+            <div class="info-row"><span class="label">Z* (Óptimo)</span><span class="val" style="color:var(--gold)">${meta.objective_value?.toFixed(1)}</span></div>
+            <div class="info-row"><span class="label">Restricciones</span><span class="val">${meta.constraints_count}</span></div>
+            <div class="info-row"><span class="label">Tiempo solver</span><span class="val">${meta.solve_time_seconds?.toFixed(4)}s</span></div>
+        `;
+    }
+
+    // ─── LP FULL REPORT MODAL ───────────────────────────
+    function showLPModal() {
+        if (!lpReport) return;
+        const m = lpReport;
+        let landscapesList = '';
+        if (gameData && gameData.board) {
+            const seen = new Set();
+            gameData.board.forEach(c => {
+                if (!seen.has(c.landscape_id)) {
+                    seen.add(c.landscape_id);
+                    landscapesList += `<li>${c.name} (${c.state_name})</li>`;
+                }
+            });
+        }
+
+        document.getElementById('lp-full-report').innerHTML = `
+            <div class="lp-section">
+                <h4>Modelo Matemático</h4>
+                <div class="lp-row"><span class="lbl">Problema</span><span class="val">Selección Óptima de Tablero (PLB)</span></div>
+                <div class="lp-row"><span class="lbl">Tipo</span><span class="val">Programación Lineal Entera / Binaria</span></div>
+                <div class="lp-row"><span class="lbl">Función Objetivo</span><span class="val">Max Z = Σ vᵢ · xᵢ</span></div>
+            </div>
+            <div class="lp-section">
+                <h4>Resultados del Solver</h4>
+                <div class="lp-row"><span class="lbl">Solver</span><span class="val">${m.solver}</span></div>
+                <div class="lp-row"><span class="lbl">Estado</span><span class="val">${m.status}</span></div>
+                <div class="lp-row"><span class="lbl">Valor Óptimo Z*</span><span class="val" style="color:var(--gold);font-size:1.1rem;">${m.objective_value?.toFixed(2)}</span></div>
+                <div class="lp-row"><span class="lbl">Variables (paisajes candidatos)</span><span class="val">${m.variables_count}</span></div>
+                <div class="lp-row"><span class="lbl">Restricciones</span><span class="val">${m.constraints_count}</span></div>
+                <div class="lp-row"><span class="lbl">Parejas seleccionadas</span><span class="val">${m.total_pairs}</span></div>
+                <div class="lp-row"><span class="lbl">Total cartas</span><span class="val">${m.total_cards}</span></div>
+                <div class="lp-row"><span class="lbl">Dificultad acumulada</span><span class="val">${m.total_difficulty}</span></div>
+                <div class="lp-row"><span class="lbl">Cotas dificultad</span><span class="val">[${m.difficulty_bounds?.[0]?.toFixed(1)}, ${m.difficulty_bounds?.[1]?.toFixed(1)}]</span></div>
+                <div class="lp-row"><span class="lbl">Tiempo de resolución</span><span class="val">${m.solve_time_seconds?.toFixed(4)} seg</span></div>
+            </div>
+            <div class="lp-section">
+                <h4>Paisajes Seleccionados por la PL</h4>
+                <ul class="lp-landscapes">${landscapesList}</ul>
+            </div>
+        `;
+        document.getElementById('lp-modal').classList.add('visible');
+    }
+
+    // ─── RESULT MODAL ───────────────────────────────────
+    function showResult(data) {
+        stopTimer();
+        let title = '🏆 ¡GANASTE!';
+        let titleColor = 'var(--gold)';
+        if (data.winner === 'IA') { title = '🤖 Ganó la IA'; titleColor = 'var(--danger)'; }
+        else if (data.winner === 'Empate') { title = '🤝 ¡Empate!'; titleColor = 'var(--accent-light)'; }
+
+        const el = document.getElementById('result-title');
+        el.textContent = title;
+        el.style.color = titleColor;
+
+        document.getElementById('result-stats').innerHTML = `
+            <div class="stat-row"><span>👤 Jugador</span><span>${data.scores.Jugador} parejas</span></div>
+            ${config.mode === 'Vs_IA' ? `<div class="stat-row"><span>🤖 IA</span><span>${data.scores.IA} parejas</span></div>` : ''}
+            <div class="stat-row"><span>🔄 Turnos</span><span>${data.turn_number}</span></div>
+            <div class="stat-row"><span>⏱️ Tiempo</span><span>${data.elapsed_time?.toFixed(1)}s</span></div>
+        `;
+        document.getElementById('result-modal').classList.add('visible');
+    }
+
+    async function saveScore() {
+        const name = document.getElementById('player-name').value.trim() || 'Anónimo';
+        await api('save-score', 'POST', { player_name: name });
+        document.getElementById('result-modal').classList.remove('visible');
+        backToMenu();
+    }
+
+    // ─── HELPERS ────────────────────────────────────────
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+    </script>
+</body>
+</html>

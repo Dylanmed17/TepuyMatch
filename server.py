@@ -234,6 +234,29 @@ def ai_turn():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/set-difficulty", methods=["POST"])
+def set_difficulty():
+    """Permite cambiar la dificultad de la IA en tiempo real durante la partida."""
+    try:
+        data = request.json or {}
+        diff = data.get("ai_difficulty", "Medio")
+        ai = game_state.get("ai")
+        if ai:
+            # Preservar memoria actual si existe, pero cambiar la tasa de retención
+            old_memory = ai._memory.copy() if hasattr(ai, '_memory') else {}
+            new_ai = AIPlayer(difficulty=diff)
+            new_ai._memory = old_memory
+            game_state["ai"] = new_ai
+            return jsonify({
+                "ok": True,
+                "ai_difficulty": diff,
+                "ai_stats": new_ai.get_stats()
+            })
+        return jsonify({"ok": True, "ai_difficulty": diff})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/save-score", methods=["POST"])
 def save_score():
     """Guarda el récord y métricas en SQLite."""

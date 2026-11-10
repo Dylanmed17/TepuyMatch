@@ -614,6 +614,9 @@
     <!-- BARRA SUPERIOR DE ACCIONES -->
     <header class="top-action-bar">
         <div class="dock-pill-group">
+            <button class="pill-dock-btn" id="btn-open-instructions" title="Cómo jugar y dinámica">
+                📖 Instructivo
+            </button>
             <button class="pill-dock-btn" id="btn-music-toggle" title="Música Criolla de Fondo">
                 <span id="music-icon">🎵</span> Música
             </button>
@@ -810,6 +813,11 @@
                     </div>
                 </div>
 
+                <!-- Instructivo de Juego -->
+                <button class="btn-game-action" style="background:#ffffff; border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-instructions">
+                    📖 ¿Cómo Jugar? (Instructivo)
+                </button>
+
                 <!-- Formulación PL HiGHS -->
                 <button class="btn-game-action" style="background:#ffffff; border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-view-lp">
                     📐 Formulación Matemática (PLB)
@@ -825,6 +833,80 @@
                     🚪 Volver al Menú Principal
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE INSTRUCTIVO Y DINÁMICA DE JUEGO -->
+    <div class="modal-backdrop" id="modal-instructions">
+        <div class="modal-box" style="max-width: 520px; max-height: 85vh; display:flex; flex-direction:column; text-align:left; padding: 20px 22px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-shrink:0;">
+                <h2 style="color:var(--vzla-blue); margin-bottom:0; font-size:1.25rem;">📖 Instructivo y Dinámica</h2>
+                <button class="pill-dock-btn" id="btn-x-instructions" style="padding:4px 8px; font-size:0.9rem;">✕</button>
+            </div>
+            
+            <div style="overflow-y:auto; flex:1; padding-right:6px; font-size:0.82rem; line-height:1.55; color:var(--text-body); display:flex; flex-direction:column; gap:12px;">
+                
+                <!-- Sección 1: Objetivo -->
+                <div style="background:var(--bg-subtle); padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
+                    <div style="font-weight:800; color:var(--vzla-blue); text-transform:uppercase; font-size:0.72rem; margin-bottom:4px; display:flex; align-items:center; gap:5px;">
+                        🎯 Objetivo del Juego
+                    </div>
+                    <p>
+                        Encuentra y empareja todos los <strong>paisajes emblemáticos de Venezuela</strong> (Salto Ángel, Roraima, Los Roques, Médanos de Coro, etc.) en el menor tiempo y turnos posibles.
+                    </p>
+                </div>
+
+                <!-- Sección 2: Dinámica Paso a Paso -->
+                <div style="background:#ffffff; padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
+                    <div style="font-weight:800; color:var(--vzla-yellow); text-transform:uppercase; font-size:0.72rem; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+                        🔄 Dinámica Turno a Turno
+                    </div>
+                    <ul style="padding-left:18px; margin:0; display:flex; flex-direction:column; gap:4px;">
+                        <li><strong>Voltea 2 cartas:</strong> Haz clic o toca dos casillas para revelar sus paisajes.</li>
+                        <li><strong>Si son Iguales (¡Match!):</strong> Sumas 1 punto, se desbloquea la <em>ficha geográfica y educativa</em> del paisaje, y <strong>conservas el turno</strong> para seguir volteando.</li>
+                        <li><strong>Si son Diferentes:</strong> Las cartas se voltean boca abajo tras un breve instante y el turno pasa a tu rival.</li>
+                    </ul>
+                </div>
+
+                <!-- Sección 3: Modos de Juego y Canaibot -->
+                <div style="background:var(--bg-subtle); padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
+                    <div style="font-weight:800; color:var(--vzla-red); text-transform:uppercase; font-size:0.72rem; margin-bottom:4px; display:flex; align-items:center; gap:5px;">
+                        🤖 Modos y Rival Canaibot
+                    </div>
+                    <p style="margin-bottom:6px;">
+                        <strong>• Solitario:</strong> Desafía tu propia memoria y velocidad para alcanzar el top del Salón de la Fama.
+                    </p>
+                    <p style="margin-bottom:6px;">
+                        <strong>• Jugador vs Canaibot:</strong> Enfréntate a la IA. Canaibot memoriza cartas vistas según su dificultad:
+                    </p>
+                    <div style="display:flex; flex-direction:column; gap:3px; padding-left:8px; font-size:0.78rem;">
+                        <div>🟢 <strong>Novato (30% retención):</strong> Memoria corta, comete errores frecuentemente.</div>
+                        <div>🟡 <strong>Guía (70% retención):</strong> Dificultad equilibrada, recuerda la mayoría.</div>
+                        <div>🔴 <strong>Experto (100% retención):</strong> Memoria fotográfica exacta. ¡Si una carta se mostró, no fallará!</div>
+                    </div>
+                    <div style="margin-top:6px; font-size:0.74rem; color:var(--vzla-red); font-weight:700;">
+                        ⚠️ Regla de honor: Si Canaibot te gana, no se permite registrar récord.
+                    </div>
+                </div>
+
+                <!-- Sección 4: Investigación de Operaciones -->
+                <div style="background:#ffffff; padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
+                    <div style="font-weight:800; color:var(--vzla-emerald); text-transform:uppercase; font-size:0.72rem; margin-bottom:4px; display:flex; align-items:center; gap:5px;">
+                        📐 Investigación de Operaciones (El Secreto Detrás del Tablero)
+                    </div>
+                    <p>
+                        A diferencia de un juego común, el tablero <strong>no es aleatorio</strong>. Cada partida resuelve en milisegundos un modelo de <strong>Programación Lineal Binaria (PLB)</strong> usando el solver <code>SciPy HiGHS</code>:
+                    </p>
+                    <p style="font-size:0.76rem; color:var(--text-muted); margin-top:4px;">
+                        Maximiza el balance de dificultad y la diversidad regional venezolana sujeta a restricciones de capacidad y filtros de estados. Puedes auditar la fórmula con el botón <strong>Formulación PL</strong>.
+                    </p>
+                </div>
+
+            </div>
+
+            <button class="btn-launch" style="padding:10px; margin-top:12px; flex-shrink:0; font-size:0.85rem;" id="btn-close-instructions">
+                ¡Entendido, a Jugar!
+            </button>
         </div>
     </div>
 
@@ -1096,6 +1178,15 @@
         document.getElementById('btn-open-leaderboard').addEventListener('click', openRecordsModal);
         document.getElementById('btn-close-records').addEventListener('click', () => closeModal('modal-records'));
         document.getElementById('btn-save-victory').addEventListener('click', saveVictoryScore);
+
+        // Instructivo
+        document.getElementById('btn-open-instructions').addEventListener('click', openInstructionsModal);
+        document.getElementById('btn-menu-instructions').addEventListener('click', () => {
+            closeModal('modal-game-menu');
+            openInstructionsModal();
+        });
+        document.getElementById('btn-close-instructions').addEventListener('click', closeInstructionsModal);
+        document.getElementById('btn-x-instructions').addEventListener('click', closeInstructionsModal);
 
         setupLiveDifficultyChips();
 
@@ -1460,6 +1551,22 @@
     function closeInGameMenu() {
         closeModal('modal-game-menu');
         startTimer(true);
+    }
+
+    // ─── INSTRUCTIVO DE JUEGO ─────────────────────────
+    function openInstructionsModal() {
+        if (activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex') {
+            pauseTimer();
+        }
+        openModal('modal-instructions');
+    }
+    function closeInstructionsModal() {
+        closeModal('modal-instructions');
+        if (activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex') {
+            if (!document.getElementById('modal-game-menu').classList.contains('open')) {
+                startTimer(true);
+            }
+        }
     }
 
     function openLPModal() {

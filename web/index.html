@@ -779,6 +779,140 @@
             margin-bottom: 10px;
         }
 
+        /* ─── GESTICULACIÓN: CÁMARA, VOZ, CURSOR Y TOUCH ─── */
+        #webcam-floating-dock {
+            position: fixed;
+            bottom: 14px;
+            right: 14px;
+            width: 145px;
+            height: 110px;
+            background: rgba(15, 23, 42, 0.94);
+            backdrop-filter: blur(14px);
+            border: 2px solid var(--vzla-blue);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--ios-shadow-lg);
+            z-index: 600;
+            display: none;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+        #webcam-floating-dock.active { display: flex; }
+        #webcam-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+        .webcam-header-pill {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            background: rgba(0, 0, 0, 0.75);
+            color: #10b981;
+            font-size: 0.62rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: var(--radius-pill);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 10;
+        }
+        .webcam-close-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: rgba(0, 0, 0, 0.65);
+            border: none;
+            color: #ffffff;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #virtual-hand-cursor {
+            position: fixed;
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--vzla-blue);
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 16px var(--vzla-blue-glow);
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+            transform: translate(-50%, -50%);
+            transition: border-color 0.15s ease;
+        }
+        #virtual-hand-cursor.pinching {
+            border-color: var(--vzla-yellow);
+            background: rgba(245, 158, 11, 0.45);
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+        #virtual-cursor-bar {
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        #virtual-cursor-fill {
+            width: 0%;
+            height: 100%;
+            background: var(--vzla-yellow);
+            transition: width 0.1s linear;
+        }
+
+        /* Banner de estado de Voz */
+        #voice-indicator-pill {
+            position: fixed;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e1b4b;
+            color: #e0e7ff;
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: var(--ios-shadow-md);
+            z-index: 900;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #4338ca;
+            animation: fadeIn 0.2s ease;
+        }
+        #voice-indicator-pill.active { display: flex; }
+
+        /* Tooltip de Touch Gestures */
+        #touch-hint-tooltip {
+            position: fixed;
+            background: rgba(15, 23, 42, 0.95);
+            color: #ffffff;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: var(--ios-shadow-md);
+            pointer-events: none;
+            z-index: 3000;
+            display: none;
+            transform: translate(-50%, -130%);
+            white-space: nowrap;
+        }
+
         #confetti-canvas {
             position: fixed;
             inset: 0;
@@ -794,6 +928,23 @@
     <div class="venezuela-ribbon"></div>
     <canvas id="confetti-canvas"></canvas>
 
+    <!-- INDICADORES FLOTANTES: VOZ, CURSOR Y CÁMARA -->
+    <div id="voice-indicator-pill">
+        <span>🎙️</span> <span id="voice-recognized-word">Escuchando comando de voz...</span>
+    </div>
+    <div id="touch-hint-tooltip"></div>
+    <div id="virtual-hand-cursor">
+        <div id="virtual-cursor-bar"><div id="virtual-cursor-fill"></div></div>
+    </div>
+    <div id="webcam-floating-dock">
+        <div class="webcam-header-pill">
+            <span style="font-size:0.55rem;">🟢</span> <span>Mano / Gesto</span>
+        </div>
+        <button class="webcam-close-btn" id="btn-close-webcam" title="Cerrar Cámara">✕</button>
+        <video id="webcam-feed" playsinline autoplay muted></video>
+        <canvas id="webcam-canvas" style="display:none;"></canvas>
+    </div>
+
     <!-- BARRA SUPERIOR DE ACCIONES (DESPLEGABLE ELEGANTE) -->
     <header class="top-action-bar">
         <div class="dropdown-wrapper" id="top-dropdown-wrapper">
@@ -806,7 +957,7 @@
                     <span class="item-icon">📖</span>
                     <div class="item-text">
                         <strong>¿Cómo Jugar?</strong>
-                        <small>Instructivo y dinámica</small>
+                        <small>Instructivo y modalidades</small>
                     </div>
                 </button>
                 <button class="dropdown-item" id="btn-music-toggle">
@@ -824,6 +975,31 @@
                         <small id="sound-status-text">Activados</small>
                     </div>
                     <span class="item-badge on" id="sound-badge">On</span>
+                </button>
+                <!-- MODALIDADES DE GESTICULACIÓN Y ACCESIBILIDAD -->
+                <button class="dropdown-item" id="btn-camera-toggle">
+                    <span class="item-icon">📷</span>
+                    <div class="item-text">
+                        <strong>Cámara Gestual</strong>
+                        <small id="camera-status-text">Control por mano (Webcam)</small>
+                    </div>
+                    <span class="item-badge" id="camera-badge">Off</span>
+                </button>
+                <button class="dropdown-item" id="btn-shake-toggle">
+                    <span class="item-icon">🪇</span>
+                    <div class="item-text">
+                        <strong>Agitar para Barajar</strong>
+                        <small id="shake-status-text">Giroscopio / Acelerómetro</small>
+                    </div>
+                    <span class="item-badge on" id="shake-badge">On</span>
+                </button>
+                <button class="dropdown-item" id="btn-voice-toggle">
+                    <span class="item-icon">🎙️</span>
+                    <div class="item-text">
+                        <strong>Control por Voz</strong>
+                        <small id="voice-status-text">Comandos en español</small>
+                    </div>
+                    <span class="item-badge" id="voice-badge">Off</span>
                 </button>
                 <button class="dropdown-item" id="btn-open-leaderboard">
                     <span class="item-icon">🏆</span>
@@ -1039,6 +1215,16 @@
                     </button>
                 </div>
 
+                <!-- Controles de Gesticulación en Partida -->
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-camera-toggle">
+                        <span>📷</span> Cámara: <strong id="menu-camera-txt">Off</strong>
+                    </button>
+                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-voice-toggle">
+                        <span>🎙️</span> Voz: <strong id="menu-voice-txt">Off</strong>
+                    </button>
+                </div>
+
                 <!-- Instructivo de Juego -->
                 <button class="btn-game-action" style="background:#ffffff; border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-instructions">
                     📖 ¿Cómo Jugar? (Instructivo)
@@ -1126,6 +1312,19 @@
                     <p style="font-size:0.76rem; color:var(--text-muted); margin-top:4px;">
                         Maximiza el balance de dificultad y la diversidad regional venezolana sujeta a restricciones de capacidad y filtros de estados. Puedes auditar la fórmula con el botón <strong>Formulación PL</strong>.
                     </p>
+                </div>
+
+                <!-- Sección 5: Modalidades de Gesticulación y Accesibilidad -->
+                <div style="background:#f0fdf4; padding:10px 12px; border-radius:12px; border:1px solid #bbf7d0;">
+                    <div style="font-weight:800; color:#15803d; text-transform:uppercase; font-size:0.72rem; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+                        🖐️ Modalidades de Gesticulación y Control
+                    </div>
+                    <ul style="padding-left:16px; margin:0; display:flex; flex-direction:column; gap:5px; font-size:0.76rem;">
+                        <li><strong>📷 Control por Cámara (Visión Artificial):</strong> Enciende tu webcam. Un cursor virtual flotante seguirá tu mano en el aire. Al apuntar sobre una carta durante 1 segundo o juntar los dedos (pellizco 🤏), la carta se voltea automáticamente.</li>
+                        <li><strong>🪇 Gesto de Sacudida (Shake to Reshuffle):</strong> En tu teléfono móvil, ¡agita el dispositivo con tu mano! El acelerómetro detectará el movimiento, sonarán maracas y se resolverá un nuevo tablero óptimo con HiGHS.</li>
+                        <li><strong>👆 Gesticulación Táctil (Long-Press):</strong> En pantallas táctiles, mantén presionado tu dedo 500ms sobre cualquier carta boca abajo para recibir una pista sutil del estado venezolano al que pertenece.</li>
+                        <li><strong>🎙️ Comandos por Voz (Micrófono):</strong> Activa el micrófono y di en voz alta <em>«Carta 1»</em>, <em>«Reiniciar»</em>, <em>«Música»</em> o <em>«Menú»</em>.</li>
+                    </ul>
                 </div>
 
             </div>
@@ -1356,8 +1555,396 @@
                 }, i * 130);
             });
         }
+        playMaraca() {
+            if (!this.enabled) return;
+            this.init();
+            try {
+                const bufferSize = Math.floor(this.ctx.sampleRate * 0.12);
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.35));
+                }
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buffer;
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.value = 3400;
+                const gain = this.ctx.createGain();
+                gain.gain.value = 0.22;
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(this.ctx.destination);
+                noise.start();
+            } catch(e){}
+        }
     }
     const audio = new SoundFX();
+
+    // ─── CONTROLADORES DE GESTICULACIÓN Y ACCESIBILIDAD ─
+
+    // 1. CÁMARA WEB (VISIÓN ARTIFICIAL Y CURSOR VIRTUAL EN NAVEGADOR)
+    class WebcamGestureController {
+        constructor() {
+            this.stream = null;
+            this.active = false;
+            this.video = null;
+            this.canvas = null;
+            this.ctx = null;
+            this.cursorEl = null;
+            this.cursorFill = null;
+            this.dockEl = null;
+            this.animFrame = null;
+            this.cursorX = window.innerWidth / 2;
+            this.cursorY = window.innerHeight / 2;
+            this.hoveredCard = null;
+            this.hoverStart = 0;
+        }
+
+        init() {
+            this.video = document.getElementById('webcam-feed');
+            this.canvas = document.getElementById('webcam-canvas');
+            this.ctx = this.canvas.getContext('2d', { willReadFrequently: true });
+            this.cursorEl = document.getElementById('virtual-hand-cursor');
+            this.cursorFill = document.getElementById('virtual-cursor-fill');
+            this.dockEl = document.getElementById('webcam-floating-dock');
+            document.getElementById('btn-close-webcam').onclick = () => this.stop();
+        }
+
+        async start() {
+            this.init();
+            try {
+                this.stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: { ideal: 320 }, height: { ideal: 240 }, facingMode: 'user' },
+                    audio: false
+                });
+                this.video.srcObject = this.stream;
+                await this.video.play();
+                this.active = true;
+                this.dockEl.classList.add('active');
+                this.cursorEl.style.display = 'block';
+                this.canvas.width = 160;
+                this.canvas.height = 120;
+                this.loop();
+                updateGestureUI();
+
+                const toast = document.getElementById('landscape-toast');
+                document.getElementById('toast-title').textContent = '📷 ¡Cámara Web Activa!';
+                document.getElementById('toast-body').textContent = 'Mueve tu mano en el aire para guiar el cursor. Manténlo sobre una carta 1s para voltearla.';
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 5000);
+            } catch (err) {
+                alert('No se pudo acceder a la cámara web:\n' + err.message + '\n\nPor favor otorga permiso de cámara en tu navegador.');
+                this.stop();
+            }
+        }
+
+        stop() {
+            this.active = false;
+            if (this.stream) {
+                this.stream.getTracks().forEach(t => t.stop());
+                this.stream = null;
+            }
+            if (this.video) this.video.srcObject = null;
+            if (this.dockEl) this.dockEl.classList.remove('active');
+            if (this.cursorEl) this.cursorEl.style.display = 'none';
+            if (this.animFrame) cancelAnimationFrame(this.animFrame);
+            this.resetHover();
+            updateGestureUI();
+        }
+
+        toggle() {
+            if (this.active) this.stop();
+            else this.start();
+        }
+
+        loop() {
+            if (!this.active) return;
+            if (this.video.readyState >= 2) {
+                this.ctx.drawImage(this.video, 0, 0, 160, 120);
+                const frame = this.ctx.getImageData(0, 0, 160, 120);
+                this.detectHand(frame);
+            }
+            this.animFrame = requestAnimationFrame(() => this.loop());
+        }
+
+        detectHand(frame) {
+            // Algoritmo ligero de visión artificial en JS para 60 FPS:
+            // Centrómetro cromático de tono de piel y movimiento
+            const data = frame.data;
+            let sumX = 0, sumY = 0, count = 0;
+
+            for (let i = 0; i < data.length; i += 16) {
+                const r = data[i], g = data[i+1], b = data[i+2];
+                if (r > 60 && g > 40 && b > 20 && r > g && r > b && (r - g) > 15) {
+                    const idx = i / 4;
+                    const x = idx % 160;
+                    const y = Math.floor(idx / 160);
+                    sumX += x;
+                    sumY += y;
+                    count++;
+                }
+            }
+
+            if (count > 40) {
+                // Espejo
+                const normX = 1 - (sumX / count) / 160;
+                const normY = (sumY / count) / 120;
+
+                // Suavizado exponencial
+                this.cursorX += (normX * window.innerWidth - this.cursorX) * 0.22;
+                this.cursorY += (normY * window.innerHeight - this.cursorY) * 0.22;
+
+                this.cursorEl.style.left = `${this.cursorX}px`;
+                this.cursorEl.style.top = `${this.cursorY}px`;
+
+                this.checkCardHover(this.cursorX, this.cursorY);
+            } else {
+                this.resetHover();
+            }
+        }
+
+        checkCardHover(x, y) {
+            const el = document.elementFromPoint(x, y);
+            const slot = el ? el.closest('.card-slot:not(.flipped):not(.matched)') : null;
+
+            if (slot && slot === this.hoveredCard) {
+                const elapsed = Date.now() - this.hoverStart;
+                const progress = Math.min(100, (elapsed / 1000) * 100);
+                if (this.cursorFill) this.cursorFill.style.width = `${progress}%`;
+
+                if (elapsed >= 1000) {
+                    this.cursorEl.classList.add('pinching');
+                    audio.playFlip();
+                    slot.click();
+                    this.resetHover();
+                    setTimeout(() => this.cursorEl.classList.remove('pinching'), 350);
+                }
+            } else if (slot) {
+                this.hoveredCard = slot;
+                this.hoverStart = Date.now();
+                if (this.cursorFill) this.cursorFill.style.width = '0%';
+            } else {
+                this.resetHover();
+            }
+        }
+
+        resetHover() {
+            this.hoveredCard = null;
+            if (this.cursorFill) this.cursorFill.style.width = '0%';
+        }
+    }
+    const webcamController = new WebcamGestureController();
+
+    // 2. DETECTOR DE SACUDIDA (GIROSCOPIO / ACELERÓMETRO)
+    class ShakeDetector {
+        constructor() {
+            this.enabled = true;
+            this.lastX = null;
+            this.lastY = null;
+            this.lastZ = null;
+            this.lastTime = 0;
+            this.threshold = 18;
+        }
+
+        init() {
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', (e) => this.onMotion(e), false);
+            }
+        }
+
+        async requestPermission() {
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                try {
+                    const res = await DeviceMotionEvent.requestPermission();
+                    return res === 'granted';
+                } catch (e) {
+                    console.log('Permiso DeviceMotion:', e);
+                }
+            }
+            return true;
+        }
+
+        onMotion(e) {
+            if (!this.enabled) return;
+            if (!activeMatch || activeMatch.game_over || document.getElementById('game-view').style.display !== 'flex') return;
+
+            const acc = e.accelerationIncludingGravity || e.acceleration;
+            if (!acc) return;
+
+            const now = Date.now();
+            if ((now - this.lastTime) > 120) {
+                const diffTime = now - this.lastTime;
+                this.lastTime = now;
+
+                if (this.lastX !== null) {
+                    const delta = Math.abs(acc.x - this.lastX) + Math.abs(acc.y - this.lastY) + Math.abs(acc.z - this.lastZ);
+                    const speed = (delta / diffTime) * 1000;
+
+                    if (speed > this.threshold) {
+                        this.triggerShake();
+                    }
+                }
+                this.lastX = acc.x;
+                this.lastY = acc.y;
+                this.lastZ = acc.z;
+            }
+        }
+
+        triggerShake() {
+            audio.playMaraca();
+            startConfetti();
+            setTimeout(stopConfetti, 1400);
+
+            const toast = document.getElementById('landscape-toast');
+            document.getElementById('toast-title').textContent = '🪇 ¡Gesto de Sacudida!';
+            document.getElementById('toast-body').textContent = 'Agitaste el dispositivo. Barajando y reoptimizando tablero con SciPy HiGHS...';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3500);
+
+            setTimeout(() => {
+                restartCurrentGame();
+            }, 650);
+        }
+    }
+    const shakeDetector = new ShakeDetector();
+
+    // 3. COMANDOS POR VOZ (WEB SPEECH API)
+    class VoiceCommandManager {
+        constructor() {
+            this.recognition = null;
+            this.active = false;
+            this.indicator = null;
+            this.label = null;
+        }
+
+        init() {
+            this.indicator = document.getElementById('voice-indicator-pill');
+            this.label = document.getElementById('voice-recognized-word');
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                console.log('SpeechRecognition no disponible');
+                return false;
+            }
+            this.recognition = new SpeechRec();
+            this.recognition.lang = 'es-VE';
+            this.recognition.continuous = true;
+            this.recognition.interimResults = false;
+
+            this.recognition.onresult = (e) => {
+                const last = e.results.length - 1;
+                const text = e.results[last][0].transcript.trim().toLowerCase();
+                this.processCommand(text);
+            };
+
+            this.recognition.onerror = (e) => {
+                if (e.error === 'not-allowed') this.stop();
+            };
+
+            this.recognition.onend = () => {
+                if (this.active) {
+                    try { this.recognition.start(); } catch(err){}
+                }
+            };
+            return true;
+        }
+
+        start() {
+            if (!this.recognition && !this.init()) {
+                alert('Tu navegador actual no soporta reconocimiento de voz nativo.\nRecomendado: Google Chrome o Safari.');
+                return;
+            }
+            try {
+                this.active = true;
+                this.recognition.start();
+                this.indicator.classList.add('active');
+                this.label.textContent = 'Escuchando... Di "carta 1", "reiniciar", "música"';
+                updateGestureUI();
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        stop() {
+            this.active = false;
+            if (this.recognition) {
+                try { this.recognition.stop(); } catch(e){}
+            }
+            if (this.indicator) this.indicator.classList.remove('active');
+            updateGestureUI();
+        }
+
+        toggle() {
+            if (this.active) this.stop();
+            else this.start();
+        }
+
+        processCommand(text) {
+            this.label.textContent = `🗣️ "${text}"`;
+            setTimeout(() => {
+                if (this.active) this.label.textContent = 'Escuchando comandos...';
+            }, 3000);
+
+            if (text.includes('reiniciar') || text.includes('otra') || text.includes('nuevo')) {
+                restartCurrentGame();
+            } else if (text.includes('música') || text.includes('musica')) {
+                toggleMusic();
+            } else if (text.includes('menú') || text.includes('menu') || text.includes('pausa')) {
+                openInGameMenu();
+            } else if (text.includes('ayuda') || text.includes('instructivo') || text.includes('cómo')) {
+                openInstructionsModal();
+            } else {
+                const nums = {
+                    'uno': 1, 'dos': 2, 'tres': 3, 'cuatro': 4, 'cinco': 5,
+                    'seis': 6, 'siete': 7, 'ocho': 8, 'nueve': 9, 'diez': 10,
+                    'once': 11, 'doce': 12, 'trece': 13, 'catorce': 14, 'quince': 15, 'dieciséis': 16
+                };
+                let pos = null;
+                for (const [w, val] of Object.entries(nums)) {
+                    if (text.includes(w)) { pos = val; break; }
+                }
+                const matchDigit = text.match(/\d+/);
+                if (matchDigit) pos = parseInt(matchDigit[0]);
+
+                if (pos !== null) {
+                    const cards = Array.from(document.querySelectorAll('.card-slot'));
+                    const target = cards[pos - 1];
+                    if (target && !target.classList.contains('flipped') && !target.classList.contains('matched')) {
+                        target.click();
+                    }
+                }
+            }
+        }
+    }
+    const voiceController = new VoiceCommandManager();
+
+    // 4. GESTICULACIÓN TÁCTIL (LONG PRESS TOOLTIP DE ESTADOS)
+    function setupTouchGesturesOnSlot(slot, card) {
+        let touchTimer = null;
+        const tooltip = document.getElementById('touch-hint-tooltip');
+
+        slot.addEventListener('touchstart', (e) => {
+            if (slot.classList.contains('flipped') || slot.classList.contains('matched')) return;
+            const touch = e.touches[0];
+            touchTimer = setTimeout(() => {
+                if (navigator.vibrate) navigator.vibrate(40);
+                tooltip.textContent = `📍 ${card.state}`;
+                tooltip.style.left = `${touch.clientX}px`;
+                tooltip.style.top = `${touch.clientY}px`;
+                tooltip.style.display = 'block';
+            }, 450);
+        }, { passive: true });
+
+        slot.addEventListener('touchend', () => {
+            if (touchTimer) clearTimeout(touchTimer);
+            tooltip.style.display = 'none';
+        });
+
+        slot.addEventListener('touchmove', () => {
+            if (touchTimer) clearTimeout(touchTimer);
+            tooltip.style.display = 'none';
+        });
+    }
 
     // ─── ESTADO GLOBAL ─────────────────────────────────
     let currentConfig = {
@@ -1436,8 +2023,37 @@
         document.getElementById('btn-sound-toggle').addEventListener('click', toggleSound);
         document.getElementById('btn-menu-sound-toggle').addEventListener('click', toggleSound);
 
+        // Control por Cámara
+        document.getElementById('btn-camera-toggle').addEventListener('click', () => {
+            dropdownWrap.classList.remove('open');
+            webcamController.toggle();
+        });
+        document.getElementById('btn-menu-camera-toggle').addEventListener('click', () => {
+            closeInGameMenu();
+            webcamController.toggle();
+        });
+
+        // Agitar para Barajar (Shake)
+        shakeDetector.init();
+        document.getElementById('btn-shake-toggle').addEventListener('click', async () => {
+            await shakeDetector.requestPermission();
+            shakeDetector.enabled = !shakeDetector.enabled;
+            updateGestureUI();
+        });
+
+        // Control por Voz
+        document.getElementById('btn-voice-toggle').addEventListener('click', () => {
+            dropdownWrap.classList.remove('open');
+            voiceController.toggle();
+        });
+        document.getElementById('btn-menu-voice-toggle').addEventListener('click', () => {
+            closeInGameMenu();
+            voiceController.toggle();
+        });
+
         setupLiveDifficultyChips();
         updateAudioUI();
+        updateGestureUI();
     });
 
     function toggleMusic() {
@@ -1476,6 +2092,34 @@
         if (menuMText) menuMText.textContent = isMusic ? 'On' : 'Off';
         const menuSText = document.getElementById('menu-sound-txt');
         if (menuSText) menuSText.textContent = isSound ? 'On' : 'Off';
+    }
+
+    function updateGestureUI() {
+        const isCam = webcamController.active;
+        const isShake = shakeDetector.enabled;
+        const isVoice = voiceController.active;
+
+        const camBadge = document.getElementById('camera-badge');
+        if (camBadge) {
+            camBadge.textContent = isCam ? 'On' : 'Off';
+            camBadge.classList.toggle('on', isCam);
+        }
+        const menuCam = document.getElementById('menu-camera-txt');
+        if (menuCam) menuCam.textContent = isCam ? 'On' : 'Off';
+
+        const shakeBadge = document.getElementById('shake-badge');
+        if (shakeBadge) {
+            shakeBadge.textContent = isShake ? 'On' : 'Off';
+            shakeBadge.classList.toggle('on', isShake);
+        }
+
+        const voiceBadge = document.getElementById('voice-badge');
+        if (voiceBadge) {
+            voiceBadge.textContent = isVoice ? 'On' : 'Off';
+            voiceBadge.classList.toggle('on', isVoice);
+        }
+        const menuVoice = document.getElementById('menu-voice-txt');
+        if (menuVoice) menuVoice.textContent = isVoice ? 'On' : 'Off';
     }
 
     function setupChips() {
@@ -1635,6 +2279,7 @@
             `;
 
             slot.addEventListener('click', () => handleCardClick(card.position));
+            setupTouchGesturesOnSlot(slot, card);
             grid.appendChild(slot);
         });
     }

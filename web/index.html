@@ -63,7 +63,7 @@
             );
         }
 
-        /* ─── BARRA DE ACCIONES SUPERIOR (RESPONSIVE: NUNCA TAPA EL LOGO) ─── */
+        /* ─── BARRA DE ACCIONES SUPERIOR (DESPLEGABLE COMPACTO) ─── */
         .top-action-bar {
             width: 100%;
             height: 48px;
@@ -73,43 +73,118 @@
             align-items: center;
             justify-content: flex-end;
             position: relative;
-            z-index: 50;
+            z-index: 100;
         }
-        .dock-pill-group {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+        .dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-toggle-btn {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-light);
             border-radius: var(--radius-pill);
-            padding: 4px 8px;
-            box-shadow: var(--ios-shadow-sm);
-        }
-        .pill-dock-btn {
-            background: transparent;
-            border: none;
-            padding: 6px 12px;
-            border-radius: var(--radius-pill);
+            padding: 7px 15px;
             color: var(--text-title);
-            font-size: 0.78rem;
+            font-size: 0.82rem;
             font-weight: 700;
             cursor: pointer;
-            transition: var(--transition);
-            display: flex;
+            box-shadow: var(--ios-shadow-sm);
+            display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
+            transition: var(--transition);
             font-family: inherit;
         }
-        .pill-dock-btn:hover {
-            background: rgba(29, 78, 216, 0.08);
+        .dropdown-toggle-btn:hover {
+            border-color: var(--vzla-blue);
             color: var(--vzla-blue);
+            box-shadow: 0 4px 12px var(--vzla-blue-glow);
         }
-        .pill-dock-btn.active {
-            background: var(--vzla-blue);
-            color: #ffffff;
-            box-shadow: 0 2px 8px var(--vzla-blue-glow);
+        .dropdown-arrow {
+            font-size: 0.72rem;
+            transition: transform 0.2s ease;
+        }
+        .dropdown-wrapper.open .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-popover {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 250px;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            box-shadow: var(--ios-shadow-lg);
+            padding: 6px;
+            display: none;
+            flex-direction: column;
+            gap: 3px;
+            z-index: 150;
+            animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dropdown-wrapper.open .dropdown-popover {
+            display: flex;
+        }
+        @keyframes popoverFadeIn {
+            from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: transparent;
+            border: none;
+            color: var(--text-title);
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            text-align: left;
+            width: 100%;
+        }
+        .dropdown-item:hover {
+            background: var(--bg-subtle);
+        }
+        .dropdown-item .item-icon {
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+        .dropdown-item .item-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        .dropdown-item .item-text strong {
+            font-size: 0.8rem;
+            color: var(--text-title);
+        }
+        .dropdown-item .item-text small {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+        .dropdown-item .item-badge {
+            font-size: 0.68rem;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: var(--radius-pill);
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            color: var(--text-muted);
+        }
+        .dropdown-item .item-badge.on {
+            background: #dbeafe;
+            color: var(--vzla-blue);
+            border-color: #bfdbfe;
         }
 
         /* ─── CONTENEDOR PRINCIPAL NO-SCROLL ─────────── */
@@ -294,53 +369,161 @@
         }
 
         .game-top-hud {
-            height: 46px;
+            height: 48px;
             flex-shrink: 0;
             background: #ffffff;
             border: 1px solid var(--border-light);
-            border-radius: 12px;
-            padding: 0 12px;
+            border-radius: 14px;
+            padding: 4px 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             box-shadow: var(--ios-shadow-sm);
             gap: 6px;
         }
-        .stat-pill {
+
+        /* Grupos del HUD estructurados para CERO desborde */
+        .hud-group {
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 0.82rem;
+            gap: 6px;
+        }
+        .hud-scores {
+            flex-shrink: 0;
+        }
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.8rem;
             font-weight: 700;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
             white-space: nowrap;
         }
-        .stat-pill .num {
+        .stat-badge .num {
             font-weight: 800;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
-        .stat-pill.p-score { color: var(--vzla-blue); }
-        .stat-pill.ai-score { color: var(--vzla-red); }
-        .stat-pill.turn-val { color: var(--vzla-yellow); }
+        .stat-badge.p-badge {
+            color: var(--vzla-blue);
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+        .stat-badge.ai-badge {
+            color: var(--vzla-red);
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
 
+        /* Centro: Turno y Reloj + Progreso bien integrados */
+        .hud-center {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+            flex: 1;
+            min-width: 0;
+        }
+        .turn-indicator-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: var(--radius-pill);
+            font-size: 0.74rem;
+            font-weight: 800;
+            background: #eff6ff;
+            color: var(--vzla-blue);
+            border: 1px solid #bfdbfe;
+            white-space: nowrap;
+            transition: var(--transition);
+        }
+        .clock-container-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            font-size: 0.84rem;
+            font-weight: 800;
+            color: var(--text-title);
+            white-space: nowrap;
+        }
+        .clock-container-pill .clock-time {
+            color: #0f172a;
+            letter-spacing: 0.5px;
+            font-variant-numeric: tabular-nums;
+        }
+        .clock-container-pill .prog-split {
+            color: var(--text-muted);
+            font-size: 0.74rem;
+            font-weight: 700;
+            padding-left: 5px;
+            border-left: 1px solid #cbd5e1;
+            margin-left: 2px;
+        }
+
+        .hud-actions {
+            flex-shrink: 0;
+        }
         .btn-hud-menu {
             background: var(--bg-subtle);
             border: 1.5px solid var(--border-light);
             border-radius: var(--radius-pill);
-            padding: 5px 12px;
+            padding: 6px 12px;
             font-size: 0.78rem;
             font-weight: 800;
             color: var(--text-title);
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 5px;
             font-family: inherit;
             transition: var(--transition);
+            white-space: nowrap;
         }
         .btn-hud-menu:hover {
             background: var(--vzla-blue);
             color: #ffffff;
             border-color: var(--vzla-blue);
+        }
+
+        /* Reglas Responsive para pantallas móviles estrechas (iPhone / Android) */
+        @media (max-width: 520px) {
+            .game-top-hud {
+                padding: 2px 6px;
+                height: 44px;
+                gap: 4px;
+            }
+            .stat-badge {
+                padding: 3px 5px;
+                font-size: 0.75rem;
+            }
+            .stat-badge .badge-label {
+                display: none;
+            }
+            .turn-indicator-pill {
+                padding: 3px 6px;
+                font-size: 0.68rem;
+            }
+            .clock-container-pill {
+                padding: 3px 6px;
+                font-size: 0.78rem;
+                gap: 3px;
+            }
+            .clock-container-pill .prog-split {
+                padding-left: 3px;
+                font-size: 0.7rem;
+            }
+            .btn-hud-menu {
+                padding: 4px 8px;
+                font-size: 0.74rem;
+            }
         }
 
         .game-main-split {
@@ -380,7 +563,7 @@
 
         .card-slot {
             aspect-ratio: 3 / 4;
-            max-height: calc((100dvh - 120px) / var(--grid-rows, 4));
+            max-height: calc((100dvh - 75px) / var(--grid-rows, 4));
             width: auto;
             perspective: 1000px;
             cursor: pointer;
@@ -611,21 +794,45 @@
     <div class="venezuela-ribbon"></div>
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- BARRA SUPERIOR DE ACCIONES -->
+    <!-- BARRA SUPERIOR DE ACCIONES (DESPLEGABLE ELEGANTE) -->
     <header class="top-action-bar">
-        <div class="dock-pill-group">
-            <button class="pill-dock-btn" id="btn-open-instructions" title="Cómo jugar y dinámica">
-                📖 Instructivo
+        <div class="dropdown-wrapper" id="top-dropdown-wrapper">
+            <button class="dropdown-toggle-btn" id="btn-top-dropdown-toggle" title="Opciones del Juego">
+                <span>⚙️ Opciones</span>
+                <span class="dropdown-arrow">▾</span>
             </button>
-            <button class="pill-dock-btn" id="btn-music-toggle" title="Música Criolla de Fondo">
-                <span id="music-icon">🎵</span> Música
-            </button>
-            <button class="pill-dock-btn" id="btn-sound-toggle" title="Efectos de Sonido">
-                <span id="sound-icon">🔊</span> Efectos
-            </button>
-            <button class="pill-dock-btn" id="btn-open-leaderboard">
-                🏆 Récords
-            </button>
+            <div class="dropdown-popover" id="top-dropdown-menu">
+                <button class="dropdown-item" id="btn-open-instructions">
+                    <span class="item-icon">📖</span>
+                    <div class="item-text">
+                        <strong>¿Cómo Jugar?</strong>
+                        <small>Instructivo y dinámica</small>
+                    </div>
+                </button>
+                <button class="dropdown-item" id="btn-music-toggle">
+                    <span class="item-icon" id="music-icon">🎵</span>
+                    <div class="item-text">
+                        <strong>Música Criolla</strong>
+                        <small id="music-status-text">Desactivada (6/8)</small>
+                    </div>
+                    <span class="item-badge" id="music-badge">Off</span>
+                </button>
+                <button class="dropdown-item" id="btn-sound-toggle">
+                    <span class="item-icon" id="sound-icon">🔊</span>
+                    <div class="item-text">
+                        <strong>Efectos de Sonido</strong>
+                        <small id="sound-status-text">Activados</small>
+                    </div>
+                    <span class="item-badge on" id="sound-badge">On</span>
+                </button>
+                <button class="dropdown-item" id="btn-open-leaderboard">
+                    <span class="item-icon">🏆</span>
+                    <div class="item-text">
+                        <strong>Salón de la Fama</strong>
+                        <small>Récords y mejores tiempos</small>
+                    </div>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -692,31 +899,40 @@
 
         <!-- 2. VISTA DE PARTIDA ACTIVA (TODO VISIBLE EN 1 SOLA PANTALLA) -->
         <section id="game-view">
-            <!-- HUD Superior Compacto con Ícono de Robot y Botón de Menú -->
+            <!-- HUD Superior Compacto: Cero desborde en móvil y escritorio -->
             <div class="game-top-hud">
-                <div class="stat-pill p-score">
-                    <span>👤 Tú:</span>
-                    <span class="num" id="val-player-score">0</span>
+                <!-- Marcador de Parejas -->
+                <div class="hud-group hud-scores">
+                    <div class="stat-badge p-badge" title="Tus Parejas">
+                        <span>👤</span>
+                        <span class="badge-label">Tú:</span>
+                        <span class="num" id="val-player-score">0</span>
+                    </div>
+                    <div class="stat-badge ai-badge" id="hud-ai-box" title="Parejas de Canaibot">
+                        <span>🤖</span>
+                        <span class="badge-label">Canaibot:</span>
+                        <span class="num" id="val-ai-score">0</span>
+                    </div>
                 </div>
-                <div class="stat-pill ai-score" id="hud-ai-box">
-                    <span>🤖 Canaibot:</span>
-                    <span class="num" id="val-ai-score">0</span>
+
+                <!-- Centro: Turno Activo y Reloj con Progreso Prominente -->
+                <div class="hud-center">
+                    <div class="turn-indicator-pill" id="hud-turn-pill" title="Turno actual">
+                        <span id="val-current-turn">Tú 👤</span>
+                    </div>
+                    <div class="clock-container-pill" title="Tiempo y Progreso">
+                        <span>⏱️</span>
+                        <span class="clock-time" id="val-timer">00:00</span>
+                        <span class="prog-split" id="val-progress">0/8</span>
+                    </div>
                 </div>
-                <div class="stat-pill turn-val">
-                    <span>Turno:</span>
-                    <span id="val-current-turn">Tú 👤</span>
+
+                <!-- Menú de Pausa -->
+                <div class="hud-actions">
+                    <button class="btn-hud-menu" id="btn-open-game-menu" title="Pausa y Opciones">
+                        <span>☰</span> <span>Menú</span>
+                    </button>
                 </div>
-                <div class="stat-pill" style="color:var(--text-title);">
-                    <span>⏱️</span>
-                    <span id="val-timer">00:00</span>
-                </div>
-                <div class="stat-pill" style="color:var(--text-muted);">
-                    <span id="val-progress">0/8</span>
-                </div>
-                <!-- BOTÓN DE MENÚ PARA RESPONSIVE Y DESKTOP -->
-                <button class="btn-hud-menu" id="btn-open-game-menu" title="Opciones y Pausa">
-                    <span>☰</span> <strong>Menú</strong>
-                </button>
             </div>
 
             <!-- Tablero y Lateral -->
@@ -811,6 +1027,16 @@
                         <button class="chip-live-diff active" data-level="Medio">🟡 Guía</button>
                         <button class="chip-live-diff" data-level="Experto">🔴 Experto</button>
                     </div>
+                </div>
+
+                <!-- Controles de Sonido en Partida -->
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-music-toggle">
+                        <span id="menu-music-icon">🎵</span> Música: <strong id="menu-music-txt">Off</strong>
+                    </button>
+                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-sound-toggle">
+                        <span id="menu-sound-icon">🔊</span> Efectos: <strong id="menu-sound-txt">On</strong>
+                    </button>
                 </div>
 
                 <!-- Instructivo de Juego -->
@@ -1180,7 +1406,10 @@
         document.getElementById('btn-save-victory').addEventListener('click', saveVictoryScore);
 
         // Instructivo
-        document.getElementById('btn-open-instructions').addEventListener('click', openInstructionsModal);
+        document.getElementById('btn-open-instructions').addEventListener('click', () => {
+            document.getElementById('top-dropdown-wrapper').classList.remove('open');
+            openInstructionsModal();
+        });
         document.getElementById('btn-menu-instructions').addEventListener('click', () => {
             closeModal('modal-game-menu');
             openInstructionsModal();
@@ -1188,20 +1417,66 @@
         document.getElementById('btn-close-instructions').addEventListener('click', closeInstructionsModal);
         document.getElementById('btn-x-instructions').addEventListener('click', closeInstructionsModal);
 
+        // Desplegable de Opciones
+        const dropdownWrap = document.getElementById('top-dropdown-wrapper');
+        const dropdownBtn = document.getElementById('btn-top-dropdown-toggle');
+        dropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownWrap.classList.toggle('open');
+        });
+        document.addEventListener('click', (e) => {
+            if (dropdownWrap && !dropdownWrap.contains(e.target)) {
+                dropdownWrap.classList.remove('open');
+            }
+        });
+
+        // Audio y Música (sincronizados entre desplegable y menú en partida)
+        document.getElementById('btn-music-toggle').addEventListener('click', toggleMusic);
+        document.getElementById('btn-menu-music-toggle').addEventListener('click', toggleMusic);
+        document.getElementById('btn-sound-toggle').addEventListener('click', toggleSound);
+        document.getElementById('btn-menu-sound-toggle').addEventListener('click', toggleSound);
+
         setupLiveDifficultyChips();
-
-        const musicBtn = document.getElementById('btn-music-toggle');
-        musicBtn.addEventListener('click', () => {
-            const isPlaying = musicEngine.toggle();
-            musicBtn.classList.toggle('active', isPlaying);
-        });
-
-        const soundBtn = document.getElementById('btn-sound-toggle');
-        soundBtn.addEventListener('click', () => {
-            audio.enabled = !audio.enabled;
-            soundBtn.classList.toggle('active', audio.enabled);
-        });
+        updateAudioUI();
     });
+
+    function toggleMusic() {
+        const isPlaying = musicEngine.toggle();
+        updateAudioUI();
+    }
+
+    function toggleSound() {
+        audio.enabled = !audio.enabled;
+        updateAudioUI();
+    }
+
+    function updateAudioUI() {
+        const isMusic = musicEngine.isPlaying;
+        const isSound = audio.enabled;
+
+        // Desplegable superior
+        const mBadge = document.getElementById('music-badge');
+        const mText = document.getElementById('music-status-text');
+        if (mBadge) {
+            mBadge.textContent = isMusic ? 'On' : 'Off';
+            mBadge.classList.toggle('on', isMusic);
+        }
+        if (mText) mText.textContent = isMusic ? 'Reproduciendo 6/8' : 'Desactivada';
+
+        const sBadge = document.getElementById('sound-badge');
+        const sText = document.getElementById('sound-status-text');
+        if (sBadge) {
+            sBadge.textContent = isSound ? 'On' : 'Off';
+            sBadge.classList.toggle('on', isSound);
+        }
+        if (sText) sText.textContent = isSound ? 'Activados' : 'Silenciados';
+
+        // Menú de pausa en partida
+        const menuMText = document.getElementById('menu-music-txt');
+        if (menuMText) menuMText.textContent = isMusic ? 'On' : 'Off';
+        const menuSText = document.getElementById('menu-sound-txt');
+        if (menuSText) menuSText.textContent = isSound ? 'On' : 'Off';
+    }
 
     function setupChips() {
         document.querySelectorAll('#group-mode .chip-btn').forEach(btn => {
@@ -1308,6 +1583,7 @@
 
             document.getElementById('menu-view').style.display = 'none';
             document.getElementById('game-view').style.display = 'flex';
+            document.querySelector('.top-action-bar').style.display = 'none';
 
             document.getElementById('hud-ai-box').style.display = currentConfig.mode === 'Vs_IA' ? 'flex' : 'none';
             document.getElementById('ai-monitor-card').style.display = currentConfig.mode === 'Vs_IA' ? 'block' : 'none';
@@ -1492,7 +1768,12 @@
             const isMe = data.current_player === 'Jugador';
             const el = document.getElementById('val-current-turn');
             el.textContent = isMe ? 'Tú 👤' : 'Canaibot 🤖';
-            el.style.color = isMe ? 'var(--vzla-blue)' : 'var(--vzla-red)';
+            const pill = document.getElementById('hud-turn-pill');
+            if (pill) {
+                pill.style.background = isMe ? '#eff6ff' : '#fef2f2';
+                pill.style.color = isMe ? 'var(--vzla-blue)' : 'var(--vzla-red)';
+                pill.style.borderColor = isMe ? '#bfdbfe' : '#fecaca';
+            }
         }
         if (data.matched_pairs !== undefined) {
             document.getElementById('val-progress').textContent = `${data.matched_pairs}/${data.total_pairs}`;
@@ -1664,6 +1945,9 @@
         stopConfetti();
         document.getElementById('menu-view').style.display = 'flex';
         document.getElementById('game-view').style.display = 'none';
+        document.querySelector('.top-action-bar').style.display = 'flex';
+        const wrap = document.getElementById('top-dropdown-wrapper');
+        if (wrap) wrap.classList.remove('open');
     }
 
     function openModal(id) { document.getElementById(id).classList.add('open'); }

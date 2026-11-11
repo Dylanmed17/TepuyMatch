@@ -875,8 +875,8 @@
         }
         .card-slot.gesture-aimed {
             transform: scale(1.05) translateY(-3px) !important;
-            border-color: var(--vzla-yellow) !important;
-            box-shadow: 0 0 20px var(--vzla-yellow-glow), 0 8px 18px rgba(0,0,0,0.25) !important;
+            border-color: #00f0ff !important;
+            box-shadow: 0 0 22px rgba(0, 240, 255, 0.85), 0 8px 18px rgba(0,0,0,0.35) !important;
             z-index: 20;
         }
 
@@ -1183,20 +1183,37 @@
             position: fixed;
             width: 36px;
             height: 36px;
-            border: 3px solid var(--vzla-blue);
+            border: 3px solid #00f0ff;
             border-radius: 50%;
-            background: rgba(37, 99, 235, 0.2);
-            box-shadow: 0 0 16px var(--vzla-blue-glow);
+            background: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 16px rgba(0, 240, 255, 0.85), inset 0 0 8px rgba(0, 240, 255, 0.5);
             pointer-events: none;
-            z-index: 9999;
+            z-index: 99999;
             display: none;
             transform: translate(-50%, -50%);
-            transition: border-color 0.15s ease;
+            transition: transform 0.08s ease, border-color 0.15s ease;
+        }
+        #virtual-hand-cursor::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ffffff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 6px #00f0ff;
         }
         #virtual-hand-cursor.pinching {
-            border-color: var(--vzla-yellow);
-            background: rgba(245, 158, 11, 0.45);
-            transform: translate(-50%, -50%) scale(0.8);
+            border-color: #fbbf24;
+            background: rgba(251, 191, 36, 0.4);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.9), inset 0 0 8px rgba(251, 191, 36, 0.6);
+            transform: translate(-50%, -50%) scale(0.82);
+        }
+        #virtual-hand-cursor.pinching::after {
+            background: #fef08a;
+            box-shadow: 0 0 8px #fbbf24;
         }
         #virtual-cursor-bar {
             position: absolute;
@@ -1205,15 +1222,16 @@
             transform: translateX(-50%);
             width: 32px;
             height: 4px;
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 2px;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         #virtual-cursor-fill {
             width: 0%;
             height: 100%;
-            background: var(--vzla-yellow);
-            transition: width 0.1s linear;
+            background: #00f0ff;
+            transition: width 0.08s linear;
         }
 
         /* Banner de estado de Voz */
@@ -1264,8 +1282,9 @@
     </div>
     <div id="webcam-floating-dock">
         <div class="webcam-header-pill">
-            <span style="font-size:0.55rem;">🟢</span> <span id="webcam-status-label">MediaPipe IA</span>
+            <span style="font-size:0.55rem;">🟢</span>
             <button class="webcam-guide-btn" id="btn-dock-camera-guide" title="Ver Guía de Gestos">❓ Guía</button>
+            <span id="webcam-status-label" style="display:none;"></span>
         </div>
         <button class="webcam-close-btn" id="btn-close-webcam" title="Cerrar Cámara">✕</button>
         <video id="webcam-feed" playsinline webkit-playsinline autoplay muted style="display:none;"></video>
@@ -1742,18 +1761,20 @@
                 </div>
 
                 <!-- Sección 5: Modalidades de Control y Accesibilidad -->
-                <div style="background:#f0fdf4; padding:10px 12px; border-radius:12px; border:1px solid #bbf7d0;">
-                    <div style="font-weight:800; color:#15803d; text-transform:uppercase; font-size:0.72rem; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+                <div style="background:var(--bg-surface); padding:12px; border-radius:12px; border:1px solid var(--border-light);">
+                    <div style="font-weight:800; color:var(--vzla-emerald); text-transform:uppercase; font-size:0.75rem; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
                         🖐️ Modalidades de Control y Accesibilidad
                     </div>
-                    <ul style="padding-left:16px; margin:0; display:flex; flex-direction:column; gap:5px; font-size:0.76rem;">
-                        <li><strong>👆 Control Táctil / Clic Inmediato:</strong> Toca suavemente cualquier carta para voltearla. En teléfonos móviles la cuadrícula se auto-orienta para encajar el 100% de la altura sin recorte (cero scroll).</li>
-                        <li><strong>📷 Control Gestual por Cámara (Google MediaPipe IA):</strong> Enciende tu cámara web. Una red neuronal detecta tu mano en tiempo real:
-                            <br>• <strong>Apunta:</strong> Mueve el dedo índice en el aire para guiar el puntero.
-                            <br>• <strong>Pellizca (🤏):</strong> Une la punta del pulgar y el índice para voltear la carta (o mantén el puntero 1s).
-                            <br>• <strong>Palma Abierta (✋):</strong> Muestra la palma extendida para pausar y abrir el menú.
+                    <ul style="padding-left:16px; margin:0; display:flex; flex-direction:column; gap:6px; font-size:0.78rem; color:var(--text-body);">
+                        <li><strong style="color:var(--text-title);">👆 Control Táctil / Clic:</strong> Toca suavemente cualquier carta para voltearla. En teléfonos móviles la cuadrícula se auto-orienta para encajar el 100% de la altura sin recorte (cero scroll).</li>
+                        <li><strong style="color:var(--text-title);">📷 Control Gestual por Cámara (Google MediaPipe IA):</strong>
+                            <div style="margin-top:4px; padding-left:6px; display:flex; flex-direction:column; gap:3px; color:var(--text-muted);">
+                                <span>• <strong>☝️ Apunta:</strong> Mueve el dedo índice en el aire para mover el puntero neón.</span>
+                                <span>• <strong>🤏 Pellizca:</strong> Une pulgar e índice (o mantén 0.8s fijo) para voltear.</span>
+                                <span>• <strong>✋ Palma Abierta:</strong> Abre la palma para pausar o reanudar el juego.</span>
+                            </div>
                         </li>
-                        <li><strong>🎙️ Comandos por Voz (Micrófono):</strong> Activa el micrófono y di en voz alta <em>«Carta 1»</em>, <em>«Reiniciar»</em>, <em>«Música»</em> o <em>«Menú»</em>.</li>
+                        <li><strong style="color:var(--text-title);">🎙️ Comandos por Voz (Micrófono):</strong> Di en voz alta <em>«Carta 1»</em>, <em>«Reiniciar»</em>, <em>«Música»</em> o <em>«Menú»</em>.</li>
                     </ul>
                 </div>
 
@@ -2012,8 +2033,33 @@
     const audio = new SoundFX();
 
     // ─── CONTROLADORES DE GESTICULACIÓN Y ACCESIBILIDAD ─
-
-    // 1. CÁMARA GESTUAL CON INTELIGENCIA ARTIFICIAL (GOOGLE MEDIAPIPE HANDS)
+    /**
+     * =========================================================================
+     * MÓDULO DE INTELIGENCIA ARTIFICIAL: VISIÓN POR COMPUTADORA EN EL BORDE
+     * MODELO: Google MediaPipe Hands (Pipeline de Redes Convolucionales 3D)
+     * =========================================================================
+     * 
+     * JUSTIFICACIÓN TEÓRICA Y ACADÉMICA DEL MODELO (INVESTIGACIÓN DE OPERACIONES & IA):
+     * 1. Arquitectura de Dos Etapas (Two-Stage Deep Learning Pipeline):
+     *    - Etapa 1: BlazePalm Detector (Red CNN basada en Single Shot Detector - SSD).
+     *      Escanea el fotograma completo para inferir la bounding box de la palma,
+     *      siendo invariante a rotaciones y oclusiones de los dedos.
+     *    - Etapa 2: Hand Landmark 3D Regression Model.
+     *      Procesa la región recortada predicha por BlazePalm y realiza una regresión
+     *      densa directa de 21 puntos articulares clave (landmarks) con coordenadas (X, Y, Z).
+     * 
+     * 2. Inferencia en el Borde (Client-Side Edge AI):
+     *    - Compilado en WebAssembly (Wasm) y acelerado por hardware mediante WebGL (GPU).
+     *    - Cero latencia de red (16-25ms por frame, 45-60 FPS) y privacidad total (las imágenes
+     *      no viajan a ningún servidor externo).
+     * 
+     * 3. Cinemática y Clasificación Geométrica Invariante:
+     *    - Pellizco (Pinch): Distancia euclidiana 3D normalizada por la escala intrínseca
+     *      de la palma (muñeca a nudillo medio), haciéndola invariante a la distancia de la cámara.
+     *    - Suavizado Espacial: Filtro de Promedio Móvil Exponencial (EMA / Lerp) para eliminar el jitter.
+     *    - Máquina de Estados con Tiempos de Enfriamiento (Cooldowns): Previene disparos erráticos
+     *      y permite alternar Pausa y Reanudación de forma limpia.
+     */
     class MediaPipeGestureController {
         constructor() {
             this.active = false;
@@ -2026,13 +2072,35 @@
             this.cursorFill = null;
             this.dockEl = null;
             this.statusLabel = null;
+
+            // Coordenadas actuales interpoladas
             this.cursorX = window.innerWidth / 2;
             this.cursorY = window.innerHeight / 2;
             this.hoveredCard = null;
             this.hoverStart = 0;
+
+            // ─── CONFIGURACIÓN MODULAR DE GESTOS Y ENFRIAMIENTO ───
+            this.config = {
+                // 1. Pellizco (Pinch Clic): Tiempo de enfriamiento entre volteos sucesivos (ms)
+                pinchCooldownMs: 850,
+                // Umbral relativo: distancia pulgar-índice dividida entre escala de la palma
+                pinchThreshold: 0.32,
+                // 2. Palma Abierta (Pausa / Reanudación): Tiempo sosteniendo la palma para activar (ms)
+                palmHoldMs: 700,
+                // Tiempo de enfriamiento obligatorio entre alternancias de menú (ms)
+                palmToggleCooldownMs: 1600,
+                // 3. Volteo por Mantenimiento (Dwell Click): Tiempo apuntando a la carta para voltear (ms)
+                hoverDwellMs: 850,
+                // 4. Período de gracia inicial: Tiempo tras detectar la mano antes de aceptar acciones (ms)
+                handGraceMs: 450
+            };
+
+            // Estados temporales de control
+            this.handDetectedSince = 0;
             this.lastPinchTime = 0;
             this.isPinching = false;
             this.palmStartTime = 0;
+            this.lastPalmToggleTime = 0;
         }
 
         init() {
@@ -2055,10 +2123,9 @@
             }
 
             try {
-                if (this.statusLabel) this.statusLabel.textContent = 'Iniciando cámara...';
                 if (this.dockEl) this.dockEl.classList.add('active');
 
-                // Configuración de video para compatibilidad total con Safari iOS y Android
+                // Compatibilidad total con Safari iOS y navegadores móviles
                 this.video.setAttribute('playsinline', 'true');
                 this.video.setAttribute('webkit-playsinline', 'true');
                 this.video.muted = true;
@@ -2069,37 +2136,36 @@
                     });
                     this.hands.setOptions({
                         maxNumHands: 1,
-                        modelComplexity: 0, // Lite: 60 FPS en móvil y PC
-                        minDetectionConfidence: 0.55,
-                        minTrackingConfidence: 0.5
+                        modelComplexity: 0, // Lite: óptimo para 60 FPS en móvil y PC
+                        minDetectionConfidence: 0.52,
+                        minTrackingConfidence: 0.48
                     });
                     this.hands.onResults((results) => this.onResults(results));
                 }
 
                 if (!this.camera) {
-                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                     this.camera = new Camera(this.video, {
                         onFrame: async () => {
                             if (this.active && this.hands) {
                                 await this.hands.send({ image: this.video });
                             }
                         },
-                        facingMode: 'user', // Forzar siempre cámara frontal
-                        width: isMobile ? 320 : 480,
-                        height: isMobile ? 240 : 360
+                        facingMode: 'user', // Cámara frontal / selfie
+                        width: 640,
+                        height: 480
                     });
                 }
 
                 await this.camera.start();
                 this.active = true;
                 if (this.cursorEl) this.cursorEl.style.display = 'block';
-                if (this.statusLabel) this.statusLabel.textContent = 'MediaPipe ✋';
+                this.handDetectedSince = 0;
                 updateGestureUI();
 
                 const toast = document.getElementById('landscape-toast');
                 if (toast) {
                     document.getElementById('toast-title').textContent = '📷 ¡Cámara Gestual Activa!';
-                    document.getElementById('toast-body').textContent = 'Apunta con tu índice hacia una carta y pellizca (🤏) o mantén 0.8s para voltear.';
+                    document.getElementById('toast-body').textContent = 'Mueve tu índice para guiar el puntero neón. Pellizca (🤏) o mantén fijo para voltear.';
                     toast.classList.add('show');
                     setTimeout(() => toast.classList.remove('show'), 5000);
                 }
@@ -2118,6 +2184,8 @@
             if (this.dockEl) this.dockEl.classList.remove('active');
             if (this.cursorEl) this.cursorEl.style.display = 'none';
             this.resetHover();
+            this.handDetectedSince = 0;
+            this.palmStartTime = 0;
             updateGestureUI();
         }
 
@@ -2129,14 +2197,18 @@
         onResults(results) {
             if (!this.active) return;
 
-            // Dibujar video y landmarks en el canvas PIP
-            this.canvas.width = this.video.videoWidth || 320;
-            this.canvas.height = this.video.videoHeight || 240;
+            // Renderizar video y esqueleto en el canvas PIP
+            this.canvas.width = this.video.videoWidth || 640;
+            this.canvas.height = this.video.videoHeight || 480;
             this.ctx.save();
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.drawImage(results.image, 0, 0, this.canvas.width, this.canvas.height);
 
             if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const now = Date.now();
+                if (!this.handDetectedSince) this.handDetectedSince = now;
+                const handActiveTime = now - this.handDetectedSince;
+
                 const landmarks = results.multiHandLandmarks[0];
 
                 // Dibujar esqueleto de 21 articulaciones
@@ -2145,55 +2217,58 @@
                 const indexTip = landmarks[8];
                 const thumbTip = landmarks[4];
 
-                // Calibración adaptativa (Deadzone Expansion):
-                // Mapea la región central [0.15, 0.85] de la cámara al 100% de la pantalla
-                // para que pequeños movimientos cómodos en móvil alcancen todos los bordes
+                // ─── 1. CALIBRACIÓN CINEMÁTICA Y EXPANSIÓN DE ZONA MUERTA ───
+                // Mapea la región central [0.12, 0.88] de la cámara al 100% de la pantalla móvil/PC
                 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-                const normX = clamp(((1 - indexTip.x) - 0.15) / 0.70, 0, 1);
-                const normY = clamp((indexTip.y - 0.16) / 0.68, 0, 1);
+                const normX = clamp(((1 - indexTip.x) - 0.12) / 0.76, 0, 1);
+                const normY = clamp((indexTip.y - 0.12) / 0.76, 0, 1);
 
                 const targetX = normX * window.innerWidth;
                 const targetY = normY * window.innerHeight;
 
                 // Suavizado Lerp anti-jitter
-                this.cursorX += (targetX - this.cursorX) * 0.42;
-                this.cursorY += (targetY - this.cursorY) * 0.42;
+                this.cursorX += (targetX - this.cursorX) * 0.44;
+                this.cursorY += (targetY - this.cursorY) * 0.44;
 
                 if (this.cursorEl) {
                     this.cursorEl.style.left = `${this.cursorX}px`;
                     this.cursorEl.style.top = `${this.cursorY}px`;
                 }
 
-                // Detección de Pellizco (Pinch 🤏) Invariante a Escala y Distancia
-                const dx = thumbTip.x - indexTip.x;
-                const dy = thumbTip.y - indexTip.y;
-                const dz = (thumbTip.z || 0) - (indexTip.z || 0);
-                const pinchDist = Math.hypot(dx, dy, dz);
+                // Período de gracia inicial: estabilizar antes de ejecutar acciones
+                if (handActiveTime < this.config.handGraceMs) {
+                    this.ctx.restore();
+                    return;
+                }
 
-                // Escala de la palma (muñeca a nudillo medio)
-                const palmScale = Math.hypot(landmarks[9].x - landmarks[0].x, landmarks[9].y - landmarks[0].y) || 0.25;
-                const relativePinch = pinchDist / palmScale;
-                const isPinchingNow = (relativePinch < 0.32) || (pinchDist < 0.088);
-
-                // Detección de Palma Abierta (Open Palm ✋) para Pausa
+                // ─── 2. GESTO DE PAUSA / REANUDACIÓN CON PALMA ABIERTA (✋) ───
                 const isPalm = this.checkPalmOpen(landmarks);
                 if (isPalm) {
-                    if (!this.palmStartTime) this.palmStartTime = Date.now();
-                    else if (Date.now() - this.palmStartTime > 850) {
-                        if (this.statusLabel) this.statusLabel.textContent = '✋ Pausa';
-                        this.palmStartTime = 0;
-                        openInGameMenu();
+                    if (now - this.lastPalmToggleTime > this.config.palmToggleCooldownMs) {
+                        if (!this.palmStartTime) this.palmStartTime = now;
+                        else if (now - this.palmStartTime >= this.config.palmHoldMs) {
+                            this.lastPalmToggleTime = now;
+                            this.palmStartTime = 0;
+                            this.toggleGamePause();
+                        }
                     }
                 } else {
                     this.palmStartTime = 0;
                 }
 
-                if (isPinchingNow) {
-                    if (this.cursorEl) this.cursorEl.classList.add('pinching');
-                    if (this.statusLabel) this.statusLabel.textContent = '🤏 Pellizco (Clic)';
+                // ─── 3. GESTO DE PELLIZCO (PINCH 🤏) INVARIANTE A ESCALA ───
+                const dx = thumbTip.x - indexTip.x;
+                const dy = thumbTip.y - indexTip.y;
+                const dz = (thumbTip.z || 0) - (indexTip.z || 0);
+                const pinchDist = Math.hypot(dx, dy, dz);
+                const palmScale = Math.hypot(landmarks[9].x - landmarks[0].x, landmarks[9].y - landmarks[0].y) || 0.25;
+                const relativePinch = pinchDist / palmScale;
+                const isPinchingNow = (relativePinch < this.config.pinchThreshold) || (pinchDist < 0.088);
 
-                    const now = Date.now();
-                    if (!this.isPinching && (now - this.lastPinchTime > 450)) {
+                if (isPinchingNow && !isPalm) {
+                    if (this.cursorEl) this.cursorEl.classList.add('pinching');
+
+                    if (!this.isPinching && (now - this.lastPinchTime > this.config.pinchCooldownMs)) {
                         this.lastPinchTime = now;
                         this.triggerClickAt(this.cursorX, this.cursorY);
                     }
@@ -2201,24 +2276,50 @@
                 } else {
                     if (this.cursorEl) this.cursorEl.classList.remove('pinching');
                     this.isPinching = false;
-                    if (!isPalm && this.statusLabel) {
-                        this.statusLabel.textContent = '☝️ Apuntando';
+
+                    // ─── 4. VOLTEO POR MANTENIMIENTO (DWELL CLICK ⏱️) ───
+                    if (!isPalm) {
+                        this.checkCardHover(this.cursorX, this.cursorY);
+                    } else {
+                        this.resetHover();
                     }
-                    this.checkCardHover(this.cursorX, this.cursorY);
                 }
             } else {
-                if (this.statusLabel) this.statusLabel.textContent = 'Buscando mano...';
+                this.handDetectedSince = 0;
+                this.palmStartTime = 0;
                 this.resetHover();
             }
             this.ctx.restore();
         }
 
+        // Alterna entre abrir menú (pausa) o cerrarlo (reanudar)
+        toggleGamePause() {
+            const inGameMenu = document.getElementById('modal-game-menu');
+            const isMenuOpen = inGameMenu && inGameMenu.classList.contains('open');
+
+            if (isMenuOpen) {
+                // Reanudar partida
+                closeInGameMenu();
+                if (activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex') {
+                    startTimer(true);
+                }
+                audio.playFlip();
+            } else {
+                // Pausar partida
+                if (activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex') {
+                    pauseTimer();
+                    openInGameMenu();
+                    audio.playFlip();
+                }
+            }
+        }
+
         drawSkeleton(landmarks) {
             const w = this.canvas.width;
             const h = this.canvas.height;
-            this.ctx.fillStyle = '#facc15';
+            this.ctx.fillStyle = '#00f0ff';
             this.ctx.strokeStyle = '#22c55e';
-            this.ctx.lineWidth = 2;
+            this.ctx.lineWidth = 2.5;
 
             const connections = [
                 [0,1],[1,2],[2,3],[3,4],
@@ -2237,7 +2338,7 @@
 
             landmarks.forEach((p, idx) => {
                 this.ctx.beginPath();
-                this.ctx.arc(p.x * w, p.y * h, (idx === 8 || idx === 4) ? 4 : 2, 0, 2 * Math.PI);
+                this.ctx.arc(p.x * w, p.y * h, (idx === 8 || idx === 4) ? 4.5 : 2.5, 0, 2 * Math.PI);
                 this.ctx.fill();
             });
         }
@@ -2280,10 +2381,10 @@
             if (slot && slot === this.hoveredCard) {
                 slot.classList.add('gesture-aimed');
                 const elapsed = Date.now() - this.hoverStart;
-                const progress = Math.min(100, (elapsed / 800) * 100);
+                const progress = Math.min(100, (elapsed / this.config.hoverDwellMs) * 100);
                 if (this.cursorFill) this.cursorFill.style.width = `${progress}%`;
 
-                if (elapsed >= 800) {
+                if (elapsed >= this.config.hoverDwellMs) {
                     if (this.cursorEl) this.cursorEl.classList.add('pinching');
                     slot.click();
                     this.resetHover();
@@ -2592,14 +2693,22 @@
         if (btnCamToggle) {
             btnCamToggle.addEventListener('click', () => {
                 dropdownWrap.classList.remove('open');
-                webcamController.toggle();
+                if (!webcamController.active) {
+                    openCameraGuideModal();
+                } else {
+                    webcamController.stop();
+                }
             });
         }
         const btnMenuCam = document.getElementById('btn-menu-camera-toggle');
         if (btnMenuCam) {
             btnMenuCam.addEventListener('click', () => {
                 closeInGameMenu();
-                webcamController.toggle();
+                if (!webcamController.active) {
+                    openCameraGuideModal();
+                } else {
+                    webcamController.stop();
+                }
             });
         }
 

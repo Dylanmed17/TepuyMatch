@@ -1,12 +1,25 @@
 """
-Agente de Inteligencia Artificial para TepuyMatch 🇻🇪
-=====================================================
-Bot con memoria y toma de decisiones secuenciales.
+Agente Inteligente Autónomo: Toma de Decisiones Secuenciales (IA Canaibot) 🇻🇪
+=============================================================================
+Modelo Teórico: Sistema de Toma de Decisiones Óptimas en Entornos Parcialmente
+Observables (POMDP) con Memoria de Trabajo Estocástica (Modelo de Atkinson-Shiffrin).
 
-Implementa 3 niveles de dificultad:
-  🟢 "Turista Novato"    → Memoria frágil (~30% de retención)
-  🟡 "Guía Turístico"    → Memoria moderada (~70% de retención)
-  🔴 "Experto Nacional"  → Memoria perfecta (recuerda todo)
+Fundamentación de Inteligencia Artificial:
+------------------------------------------
+El agente opera en un espacio de estados parcialmente observable donde el tablero
+contiene información oculta. Para cada turno, el agente:
+1. Mantiene un 'Belief State' (estado de creencias / memoria interna) que mapea
+   posiciones descubiertas a identidades de paisajes.
+2. Aplica una tasa de retención probabilística rho in {0.30, 0.70, 1.00} según la dificultad:
+   - Fácil   (Novato): rho = 0.30 (memoria humana imperfecta/degradada).
+   - Medio   (Guía):   rho = 0.70 (retención moderada con olvido selectivo).
+   - Experto (Nacional): rho = 1.00 (oráculo observacional perfecto).
+3. Función de Política de Acción (Policy Function pi(s)):
+   - Rama Explotación (Greedy Choice): Si la memoria contiene una pareja completa conocida,
+     ejecuta de inmediato ambas acciones para garantizar el punto con certeza P = 1.
+   - Rama Exploración Inteligente: Si no hay pareja completa, selecciona una carta desconocida
+     para maximizar la ganancia de información. Si la carta descubierta coincide con otra en memoria,
+     explota el conocimiento inmediatamente; si no, explora una segunda carta desconocida.
 """
 
 import random

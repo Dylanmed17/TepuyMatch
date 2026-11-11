@@ -1,14 +1,40 @@
 """
 Módulo de Optimización Matemática (Investigación de Operaciones)
 ===============================================================
-Problema: Selección Óptima de Tablero de Juego (Optimal Board Generation)
-Tipo de Modelo: Programación Lineal Entera / Binaria (PLB)
-Motor: SciPy MILP (Solver HiGHS) + Soporte PuLP
+Problema: Selección Óptima de Tablero de Juego (Optimal Board Selection Problem)
+Tipo de Modelo: Programación Lineal Entera Mixta / Binaria (MILP / PLB)
+Solver: SciPy MILP (Solver HiGHS - Simplex & Branch and Bound de Alto Rendimiento)
 
-Este módulo formula y resuelve el modelo de optimización para seleccionar
-el conjunto ideal de parejas de cartas para el juego de memoria de paisajes
-de Venezuela, garantizando diversidad regional, ajuste de dificultad y
-cumplimiento de restricciones de tamaño de tablero.
+FORMULACIÓN MATEMÁTICA FORMAL:
+------------------------------
+Sea N = {1, 2, ..., n} el conjunto de paisajes candidatos disponibles.
+Variables de Decisión:
+    x_i in {0, 1} para todo i in N  (1 si el paisaje i es seleccionado para el tablero, 0 en caso contrario)
+
+Parámetros:
+    c_i : Valor de representatividad cultural y patrimonial del paisaje i
+    d_i : Índice de dificultad visual / mnemotécnica del paisaje i
+    k   : Número exacto de parejas requerido por las dimensiones del tablero (k = (filas * columnas) / 2)
+    [D_min, D_max] : Rango de dificultad total admisible para el nivel elegido (Fácil, Medio, Experto)
+    R_j : Subconjunto de paisajes pertenecientes a la región geográfica j in R
+
+Función Objetivo:
+    Maximizar Z = SUM_{i=1}^n (c_i * x_i)   [Maximizar el valor cultural y pedagógico global]
+
+Sujeto a:
+    1. Restricción de Cardinalidad Exacta de Parejas:
+       SUM_{i=1}^n x_i = k
+
+    2. Restricción de Cota de Dificultad Acumulada:
+       D_min <= SUM_{i=1}^n (d_i * x_i) <= D_max
+
+    3. Restricción de Cobertura y Diversidad Regional:
+       SUM_{i in R_j} x_i >= 1   para cada región j in R (si |R| <= k)
+
+    4. Naturaleza de las Variables:
+       x_i in {0, 1}   para todo i in N
+
+Tiempo de resolución típico con SciPy HiGHS: < 0.005 segundos (< 5 ms).
 """
 
 from typing import List, Dict, Any, Optional

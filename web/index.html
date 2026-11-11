@@ -1786,7 +1786,7 @@
             <!-- Contenedor para registrar récord (SOLO si gana el jugador) -->
             <div id="player-record-input-section" style="margin: 12px 0; text-align: left;">
                 <label style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">¡Ganaste! Registra tu nombre en el Salón de la Fama:</label>
-                <input type="text" id="victory-player-name" placeholder="Tu nombre..." maxlength="20" style="width:100%; padding:10px; border:1.5px solid var(--border-light); border-radius:10px; font-family:inherit; margin-top:6px; font-weight:600;">
+                <input type="text" id="victory-player-name" placeholder="Tu nombre..." maxlength="20" style="width:100%; padding:10px 12px; border:1.5px solid var(--border-light); border-radius:10px; font-family:inherit; margin-top:6px; font-weight:700; background:var(--bg-subtle); color:var(--text-title); font-size:0.95rem; box-sizing:border-box;">
                 <button class="btn-launch" style="padding:12px; margin-top:10px;" id="btn-save-victory">💾 Guardar Récord</button>
             </div>
 
@@ -3110,7 +3110,7 @@
         if (!activeMatch || !activeMatch.lp_report) return;
         const m = activeMatch.lp_report;
         document.getElementById('lp-metrics-content').innerHTML = `
-            <div style="background:#f8fafc; padding:12px; border-radius:10px; border:1px solid #e2e8f0;">
+            <div style="background:var(--bg-subtle); padding:12px; border-radius:10px; border:1px solid var(--border-light); color:var(--text-body);">
                 <div><strong>Solver:</strong> ${m.solver}</div>
                 <div><strong>Valor Óptimo Z*:</strong> <span style="color:var(--vzla-blue); font-weight:800;">${m.objective_value}</span></div>
                 <div><strong>Variables Binarias:</strong> ${m.variables_count}</div>
@@ -3176,16 +3176,28 @@
             const res = await fetch('/api/leaderboard');
             const list = await res.json();
             if (list.length === 0) {
-                container.innerHTML = '<span>No hay partidas registradas aún.</span>';
+                container.innerHTML = '<span style="color:var(--text-muted);">No hay partidas registradas aún.</span>';
                 return;
             }
-            let html = '<div style="display:flex; flex-direction:column; gap:6px;">';
+            let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
             list.forEach((r, idx) => {
-                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '•';
+                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}º`;
                 html += `
-                    <div style="display:flex; justify-content:space-between; padding:8px 12px; background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0;">
-                        <span>${medal} <strong>${r.player_name}</strong></span>
-                        <span style="color:var(--vzla-blue); font-weight:800;">${r.score} pts • ${r.time_seconds}s</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg-subtle); border-radius:12px; border:1.5px solid var(--border-light); box-shadow:var(--ios-shadow-sm);">
+                        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
+                            <span style="font-size:1.2rem; flex-shrink:0;">${medal}</span>
+                            <span style="font-size:0.95rem; font-weight:800; color:var(--text-title); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                ${r.player_name}
+                            </span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                            <span style="font-size:0.8rem; font-weight:800; color:var(--vzla-blue); background:rgba(37,99,235,0.14); padding:3px 9px; border-radius:6px; border:1px solid rgba(37,99,235,0.25);">
+                                ${r.score} pts
+                            </span>
+                            <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">
+                                ⏱️ ${r.time_seconds}s
+                            </span>
+                        </div>
                     </div>
                 `;
             });

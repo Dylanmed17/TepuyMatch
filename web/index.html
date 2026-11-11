@@ -366,6 +366,11 @@
             height: 100%;
             flex-direction: column;
             gap: 6px;
+            background: radial-gradient(circle at 50% 12%, #f1f5f9 0%, #e2e8f0 45%, #cbd5e1 100%);
+            border-radius: 18px;
+            padding: 8px 10px;
+            box-shadow: inset 0 2px 10px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.05);
+            border: 1px solid rgba(203, 213, 225, 0.7);
         }
 
         .game-top-hud {
@@ -531,11 +536,11 @@
             display: grid;
             grid-template-columns: 1fr 240px;
             gap: 10px;
-            height: calc(100% - 52px);
+            height: calc(100% - 50px);
             min-height: 0;
         }
         @media (max-width: 820px) {
-            .game-main-split { grid-template-columns: 1fr; }
+            .game-main-split { grid-template-columns: 1fr; gap: 0; }
             .side-bar-controls { display: none !important; }
         }
 
@@ -564,11 +569,36 @@
         .card-slot {
             aspect-ratio: 3 / 4;
             max-height: calc((100dvh - 75px) / var(--grid-rows, 4));
-            width: auto;
+            width: 100%;
             perspective: 1000px;
             cursor: pointer;
             touch-action: manipulation;
             position: relative;
+        }
+
+        /* En teléfonos: alinear al inicio (sin espacio muerto arriba) y aprovechar altura */
+        @media (max-width: 640px) {
+            .stage-container {
+                padding: 0 8px 6px;
+            }
+            #game-view {
+                padding: 6px 6px 8px;
+                border-radius: 14px;
+                gap: 4px;
+            }
+            .board-stage {
+                align-items: flex-start;
+                justify-content: center;
+                padding-top: 4px;
+            }
+            .game-grid {
+                align-content: start;
+                justify-content: center;
+                gap: 5px;
+            }
+            .card-slot {
+                max-height: calc((100dvh - 66px) / var(--grid-rows, 4));
+            }
         }
         .card-flipper {
             position: relative;
@@ -591,8 +621,8 @@
             -webkit-backface-visibility: hidden;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
-            border: 1.5px solid #ffffff;
+            box-shadow: 0 6px 14px -2px rgba(15, 23, 42, 0.16), 0 2px 6px rgba(15, 23, 42, 0.08);
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
             background: #ffffff;
             transition: var(--transition);
         }
@@ -896,22 +926,7 @@
         }
         #voice-indicator-pill.active { display: flex; }
 
-        /* Tooltip de Touch Gestures */
-        #touch-hint-tooltip {
-            position: fixed;
-            background: rgba(15, 23, 42, 0.95);
-            color: #ffffff;
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            box-shadow: var(--ios-shadow-md);
-            pointer-events: none;
-            z-index: 3000;
-            display: none;
-            transform: translate(-50%, -130%);
-            white-space: nowrap;
-        }
+
 
         #confetti-canvas {
             position: fixed;
@@ -928,21 +943,9 @@
     <div class="venezuela-ribbon"></div>
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- INDICADORES FLOTANTES: VOZ, CURSOR Y CÁMARA -->
+    <!-- INDICADOR FLOTANTE DE VOZ -->
     <div id="voice-indicator-pill">
         <span>🎙️</span> <span id="voice-recognized-word">Escuchando comando de voz...</span>
-    </div>
-    <div id="touch-hint-tooltip"></div>
-    <div id="virtual-hand-cursor">
-        <div id="virtual-cursor-bar"><div id="virtual-cursor-fill"></div></div>
-    </div>
-    <div id="webcam-floating-dock">
-        <div class="webcam-header-pill">
-            <span style="font-size:0.55rem;">🟢</span> <span>Mano / Gesto</span>
-        </div>
-        <button class="webcam-close-btn" id="btn-close-webcam" title="Cerrar Cámara">✕</button>
-        <video id="webcam-feed" playsinline autoplay muted></video>
-        <canvas id="webcam-canvas" style="display:none;"></canvas>
     </div>
 
     <!-- BARRA SUPERIOR DE ACCIONES (DESPLEGABLE ELEGANTE) -->
@@ -975,23 +978,6 @@
                         <small id="sound-status-text">Activados</small>
                     </div>
                     <span class="item-badge on" id="sound-badge">On</span>
-                </button>
-                <!-- MODALIDADES DE GESTICULACIÓN Y ACCESIBILIDAD -->
-                <button class="dropdown-item" id="btn-camera-toggle">
-                    <span class="item-icon">📷</span>
-                    <div class="item-text">
-                        <strong>Cámara Gestual</strong>
-                        <small id="camera-status-text">Control por mano (Webcam)</small>
-                    </div>
-                    <span class="item-badge" id="camera-badge">Off</span>
-                </button>
-                <button class="dropdown-item" id="btn-shake-toggle">
-                    <span class="item-icon">🪇</span>
-                    <div class="item-text">
-                        <strong>Agitar para Barajar</strong>
-                        <small id="shake-status-text">Giroscopio / Acelerómetro</small>
-                    </div>
-                    <span class="item-badge on" id="shake-badge">On</span>
                 </button>
                 <button class="dropdown-item" id="btn-voice-toggle">
                     <span class="item-icon">🎙️</span>
@@ -1215,15 +1201,10 @@
                     </button>
                 </div>
 
-                <!-- Controles de Gesticulación en Partida -->
-                <div style="display:flex; gap:6px;">
-                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-camera-toggle">
-                        <span>📷</span> Cámara: <strong id="menu-camera-txt">Off</strong>
-                    </button>
-                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-voice-toggle">
-                        <span>🎙️</span> Voz: <strong id="menu-voice-txt">Off</strong>
-                    </button>
-                </div>
+                <!-- Controles de Accesibilidad en Partida -->
+                <button class="btn-game-action" style="background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-voice-toggle">
+                    <span>🎙️</span> Control por Voz: <strong id="menu-voice-txt">Off</strong>
+                </button>
 
                 <!-- Instructivo de Juego -->
                 <button class="btn-game-action" style="background:#ffffff; border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-instructions">
@@ -1314,16 +1295,15 @@
                     </p>
                 </div>
 
-                <!-- Sección 5: Modalidades de Gesticulación y Accesibilidad -->
+                <!-- Sección 5: Modalidades de Control y Accesibilidad -->
                 <div style="background:#f0fdf4; padding:10px 12px; border-radius:12px; border:1px solid #bbf7d0;">
                     <div style="font-weight:800; color:#15803d; text-transform:uppercase; font-size:0.72rem; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
-                        🖐️ Modalidades de Gesticulación y Control
+                        🖐️ Modalidades de Control y Accesibilidad
                     </div>
                     <ul style="padding-left:16px; margin:0; display:flex; flex-direction:column; gap:5px; font-size:0.76rem;">
-                        <li><strong>📷 Control por Cámara (Visión Artificial):</strong> Enciende tu webcam. Un cursor virtual flotante seguirá tu mano en el aire. Al apuntar sobre una carta durante 1 segundo o juntar los dedos (pellizco 🤏), la carta se voltea automáticamente.</li>
-                        <li><strong>🪇 Gesto de Sacudida (Shake to Reshuffle):</strong> En tu teléfono móvil, ¡agita el dispositivo con tu mano! El acelerómetro detectará el movimiento, sonarán maracas y se resolverá un nuevo tablero óptimo con HiGHS.</li>
-                        <li><strong>👆 Gesticulación Táctil (Long-Press):</strong> En pantallas táctiles, mantén presionado tu dedo 500ms sobre cualquier carta boca abajo para recibir una pista sutil del estado venezolano al que pertenece.</li>
+                        <li><strong>👆 Control Táctil / Clic Inmediato:</strong> Toca suavemente cualquier carta para voltearla. En dispositivos móviles la cuadrícula se auto-orienta para maximizar el tamaño de las cartas y evitar cualquier desplazamiento (cero scroll).</li>
                         <li><strong>🎙️ Comandos por Voz (Micrófono):</strong> Activa el micrófono y di en voz alta <em>«Carta 1»</em>, <em>«Reiniciar»</em>, <em>«Música»</em> o <em>«Menú»</em>.</li>
+                        <li><strong>🖥️ Visión Artificial con MediaPipe:</strong> El control gestual por reconocimiento de mano en tiempo real con IA está disponible en la versión de escritorio ejecutando <code>python main.py</code> con la librería OpenCV + MediaPipe.</li>
                     </ul>
                 </div>
 
@@ -1918,34 +1898,6 @@
     }
     const voiceController = new VoiceCommandManager();
 
-    // 4. GESTICULACIÓN TÁCTIL (LONG PRESS TOOLTIP DE ESTADOS)
-    function setupTouchGesturesOnSlot(slot, card) {
-        let touchTimer = null;
-        const tooltip = document.getElementById('touch-hint-tooltip');
-
-        slot.addEventListener('touchstart', (e) => {
-            if (slot.classList.contains('flipped') || slot.classList.contains('matched')) return;
-            const touch = e.touches[0];
-            touchTimer = setTimeout(() => {
-                if (navigator.vibrate) navigator.vibrate(40);
-                tooltip.textContent = `📍 ${card.state}`;
-                tooltip.style.left = `${touch.clientX}px`;
-                tooltip.style.top = `${touch.clientY}px`;
-                tooltip.style.display = 'block';
-            }, 450);
-        }, { passive: true });
-
-        slot.addEventListener('touchend', () => {
-            if (touchTimer) clearTimeout(touchTimer);
-            tooltip.style.display = 'none';
-        });
-
-        slot.addEventListener('touchmove', () => {
-            if (touchTimer) clearTimeout(touchTimer);
-            tooltip.style.display = 'none';
-        });
-    }
-
     // ─── ESTADO GLOBAL ─────────────────────────────────
     let currentConfig = {
         mode: 'Vs_IA',
@@ -2022,24 +1974,6 @@
         document.getElementById('btn-menu-music-toggle').addEventListener('click', toggleMusic);
         document.getElementById('btn-sound-toggle').addEventListener('click', toggleSound);
         document.getElementById('btn-menu-sound-toggle').addEventListener('click', toggleSound);
-
-        // Control por Cámara
-        document.getElementById('btn-camera-toggle').addEventListener('click', () => {
-            dropdownWrap.classList.remove('open');
-            webcamController.toggle();
-        });
-        document.getElementById('btn-menu-camera-toggle').addEventListener('click', () => {
-            closeInGameMenu();
-            webcamController.toggle();
-        });
-
-        // Agitar para Barajar (Shake)
-        shakeDetector.init();
-        document.getElementById('btn-shake-toggle').addEventListener('click', async () => {
-            await shakeDetector.requestPermission();
-            shakeDetector.enabled = !shakeDetector.enabled;
-            updateGestureUI();
-        });
 
         // Control por Voz
         document.getElementById('btn-voice-toggle').addEventListener('click', () => {
@@ -2213,11 +2147,35 @@
         btn.disabled = true;
         btn.innerHTML = '<span>⚡ Optimizando Tablero...</span>';
 
+        // Auto-orientación según el dispositivo:
+        // En teléfonos verticales (pantalla alta y estrecha), orientar las cartas verticalmente
+        // para que 4x6 sea 4 cols x 6 filas (y 3x4 sea 3 cols x 4 filas), eliminando huecos vacíos
+        const isMobilePortrait = window.innerWidth <= 640 && window.innerHeight > window.innerWidth;
+        let effRows = currentConfig.rows;
+        let effCols = currentConfig.cols;
+        if (isMobilePortrait) {
+            if (effCols > effRows) {
+                effRows = currentConfig.cols;
+                effCols = currentConfig.rows;
+            }
+        } else {
+            if (effRows > effCols) {
+                effCols = currentConfig.rows;
+                effRows = currentConfig.cols;
+            }
+        }
+
+        const payload = {
+            ...currentConfig,
+            rows: effRows,
+            cols: effCols
+        };
+
         try {
             const res = await fetch('/api/new-game', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(currentConfig)
+                body: JSON.stringify(payload)
             });
             const data = await res.json();
             if (data.error) throw new Error(data.error);
@@ -2279,7 +2237,6 @@
             `;
 
             slot.addEventListener('click', () => handleCardClick(card.position));
-            setupTouchGesturesOnSlot(slot, card);
             grid.appendChild(slot);
         });
     }

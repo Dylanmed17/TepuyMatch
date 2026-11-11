@@ -14,39 +14,97 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --bg-base: #f8fafc;
-            --bg-surface: #ffffff;
-            --bg-subtle: #f1f5f9;
-            --border-light: #e2e8f0;
+            --bg-base: #f0f4f9;
+            --bg-surface: rgba(255, 255, 255, 0.90);
+            --bg-subtle: rgba(241, 245, 249, 0.88);
+            --border-light: rgba(226, 232, 240, 0.92);
+            --border-glass: rgba(255, 255, 255, 0.7);
 
-            /* Paleta Venezuela */
+            /* Paleta Tricolor y Naturaleza Venezuela */
             --vzla-blue: #1d4ed8;
-            --vzla-blue-glow: rgba(29, 78, 216, 0.28);
+            --vzla-blue-glow: rgba(29, 78, 216, 0.32);
             --vzla-yellow: #f59e0b;
-            --vzla-yellow-glow: rgba(245, 158, 11, 0.25);
+            --vzla-yellow-glow: rgba(245, 158, 11, 0.3);
             --vzla-red: #dc2626;
-            --vzla-red-glow: rgba(220, 38, 38, 0.25);
+            --vzla-red-glow: rgba(220, 38, 38, 0.3);
             --vzla-emerald: #059669;
+
+            /* Cromática única para dificultades */
+            --diff-easy-bg: #ecfdf5;
+            --diff-easy-border: #a7f3d0;
+            --diff-easy-text: #065f46;
+            --diff-easy-glow: rgba(16, 185, 129, 0.42);
+
+            --diff-med-bg: #fffbeb;
+            --diff-med-border: #fde68a;
+            --diff-med-text: #92400e;
+            --diff-med-glow: rgba(245, 158, 11, 0.42);
+
+            --diff-hard-bg: #fef2f2;
+            --diff-hard-border: #fecaca;
+            --diff-hard-text: #991b1b;
+            --diff-hard-glow: rgba(239, 68, 68, 0.42);
 
             --text-title: #0f172a;
             --text-body: #334155;
             --text-muted: #64748b;
 
-            --ios-shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06);
-            --ios-shadow-md: 0 10px 24px -4px rgba(15, 23, 42, 0.09);
-            --ios-shadow-lg: 0 18px 36px -6px rgba(15, 23, 42, 0.12);
+            --ios-shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.06);
+            --ios-shadow-md: 0 10px 24px -4px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+            --ios-shadow-lg: 0 20px 40px -8px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.05);
 
             --radius-squircle: 20px;
             --radius-pill: 9999px;
             --transition: all 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* Fondo dinámico del juego: Bruma de la Gran Sabana */
+            --game-bg: radial-gradient(circle at 50% 12%, rgba(241, 245, 249, 0.96) 0%, rgba(226, 232, 240, 0.92) 45%, rgba(203, 213, 225, 0.96) 100%);
         }
 
-        /* 100vh sin scroll estricto con soporte para safe area de móviles */
+        [data-theme="dark"] {
+            --bg-base: #070b14;
+            --bg-surface: rgba(15, 23, 42, 0.88);
+            --bg-subtle: rgba(30, 41, 59, 0.78);
+            --border-light: rgba(51, 65, 85, 0.85);
+            --border-glass: rgba(255, 255, 255, 0.14);
+
+            --vzla-blue: #3b82f6;
+            --vzla-blue-glow: rgba(59, 130, 246, 0.42);
+            --vzla-yellow: #fbbf24;
+            --vzla-yellow-glow: rgba(251, 191, 36, 0.4);
+            --vzla-red: #f87171;
+            --vzla-red-glow: rgba(248, 113, 113, 0.4);
+            --vzla-emerald: #10b981;
+
+            --diff-easy-bg: rgba(6, 78, 59, 0.38);
+            --diff-easy-border: rgba(16, 185, 129, 0.45);
+            --diff-easy-text: #6ee7b7;
+
+            --diff-med-bg: rgba(120, 53, 15, 0.38);
+            --diff-med-border: rgba(245, 158, 11, 0.45);
+            --diff-med-text: #fcd34d;
+
+            --diff-hard-bg: rgba(127, 29, 29, 0.38);
+            --diff-hard-border: rgba(239, 68, 68, 0.45);
+            --diff-hard-text: #fca5a5;
+
+            --text-title: #f8fafc;
+            --text-body: #cbd5e1;
+            --text-muted: #94a3b8;
+
+            --ios-shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.35);
+            --ios-shadow-md: 0 10px 28px -4px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+            --ios-shadow-lg: 0 24px 48px -10px rgba(0, 0, 0, 0.65), 0 4px 12px rgba(0, 0, 0, 0.4);
+
+            /* Fondo dinámico del juego: Noche Estrellada en el Tepuy */
+            --game-bg: radial-gradient(circle at 50% 12%, rgba(20, 30, 55, 0.96) 0%, rgba(11, 18, 38, 0.96) 50%, rgba(5, 9, 20, 0.98) 100%);
+        }
+
+        /* Fondo ambiental cartográfico con curvas de nivel topográficas */
         html, body {
             height: 100%;
             height: 100dvh;
             overflow: hidden;
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
             font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
             color: var(--text-body);
             display: flex;
@@ -55,6 +113,24 @@
             -webkit-user-select: none;
             padding-bottom: env(safe-area-inset-bottom, 0px);
             box-sizing: border-box;
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.10) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(220, 38, 38, 0.08) 0px, transparent 40%),
+                url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30 Q 30 15, 60 30 T 120 30 M0 60 Q 30 45, 60 60 T 120 60 M0 90 Q 30 75, 60 90 T 120 90' fill='none' stroke='%233b82f6' stroke-width='0.6' stroke-opacity='0.08'/%3E%3C/svg%3E");
+            background-attachment: fixed;
+            transition: background-color 0.35s ease, color 0.25s ease;
+        }
+
+        [data-theme="dark"] html,
+        [data-theme="dark"] body {
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.40) 0px, transparent 55%),
+                radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.14) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.85) 0px, transparent 70%),
+                url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 30 Q 30 15, 60 30 T 120 30 M0 60 Q 30 45, 60 60 T 120 60 M0 90 Q 30 75, 60 90 T 120 90' fill='none' stroke='%2360a5fa' stroke-width='0.7' stroke-opacity='0.12'/%3E%3C/svg%3E");
         }
 
         .venezuela-ribbon {
@@ -79,13 +155,40 @@
             justify-content: flex-end;
             position: relative;
             z-index: 100;
+            gap: 8px;
         }
+
+        .theme-toggle-btn {
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-pill);
+            padding: 7px 14px;
+            color: var(--text-title);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--ios-shadow-sm);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+        .theme-toggle-btn:hover {
+            border-color: var(--vzla-yellow);
+            color: var(--vzla-yellow);
+            box-shadow: 0 4px 12px var(--vzla-yellow-glow);
+            transform: translateY(-1px);
+        }
+
         .dropdown-wrapper {
             position: relative;
             display: inline-block;
         }
         .dropdown-toggle-btn {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--bg-surface);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-light);
@@ -120,7 +223,7 @@
             top: calc(100% + 8px);
             right: 0;
             width: 250px;
-            background: rgba(255, 255, 255, 0.97);
+            background: var(--bg-surface);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--border-light);
@@ -250,7 +353,7 @@
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            background: #ffffff;
+            background: var(--bg-surface);
             padding: 3px 12px;
             border-radius: var(--radius-pill);
             box-shadow: var(--ios-shadow-sm);
@@ -280,7 +383,9 @@
         }
 
         .config-card {
-            background: #ffffff;
+            background: var(--bg-surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--border-light);
             border-radius: var(--radius-squircle);
             padding: 16px 20px;
@@ -320,7 +425,59 @@
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             border-color: var(--vzla-blue);
             color: #ffffff;
-            box-shadow: 0 4px 12px var(--vzla-blue-glow);
+            box-shadow: 0 4px 14px var(--vzla-blue-glow);
+        }
+
+        /* ─── CROMÁTICA VIBRANTE Y DIFUMINADA PARA DIFICULTADES ─── */
+        .chip-diff-novato {
+            background: var(--diff-easy-bg) !important;
+            border-color: var(--diff-easy-border) !important;
+            color: var(--diff-easy-text) !important;
+        }
+        .chip-diff-novato:hover {
+            border-color: #10b981 !important;
+            box-shadow: 0 3px 12px var(--diff-easy-glow);
+        }
+        .chip-diff-novato.selected,
+        .chip-diff-novato.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            border-color: #059669 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 16px var(--diff-easy-glow), inset 0 1px 1px rgba(255, 255, 255, 0.45) !important;
+        }
+
+        .chip-diff-guia {
+            background: var(--diff-med-bg) !important;
+            border-color: var(--diff-med-border) !important;
+            color: var(--diff-med-text) !important;
+        }
+        .chip-diff-guia:hover {
+            border-color: #f59e0b !important;
+            box-shadow: 0 3px 12px var(--diff-med-glow);
+        }
+        .chip-diff-guia.selected,
+        .chip-diff-guia.active {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+            border-color: #d97706 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 16px var(--diff-med-glow), inset 0 1px 1px rgba(255, 255, 255, 0.45) !important;
+        }
+
+        .chip-diff-experto {
+            background: var(--diff-hard-bg) !important;
+            border-color: var(--diff-hard-border) !important;
+            color: var(--diff-hard-text) !important;
+        }
+        .chip-diff-experto:hover {
+            border-color: #ef4444 !important;
+            box-shadow: 0 3px 12px var(--diff-hard-glow);
+        }
+        .chip-diff-experto.selected,
+        .chip-diff-experto.active {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+            border-color: #b91c1c !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 16px var(--diff-hard-glow), inset 0 1px 1px rgba(255, 255, 255, 0.45) !important;
         }
 
         .state-select-container {
@@ -375,11 +532,11 @@
             flex: 1;
             flex-direction: column;
             gap: 4px;
-            background: radial-gradient(circle at 50% 12%, #f1f5f9 0%, #e2e8f0 45%, #cbd5e1 100%);
+            background: var(--game-bg);
             border-radius: 16px;
             padding: 6px 8px;
-            box-shadow: inset 0 2px 10px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.05);
-            border: 1px solid rgba(203, 213, 225, 0.7);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.08), var(--ios-shadow-sm);
+            border: 1px solid var(--border-light);
             overflow: hidden;
             box-sizing: border-box;
         }
@@ -387,7 +544,9 @@
         .game-top-hud {
             height: 48px;
             flex-shrink: 0;
-            background: #ffffff;
+            background: var(--bg-surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-light);
             border-radius: 14px;
             padding: 4px 12px;
@@ -471,7 +630,7 @@
             white-space: nowrap;
         }
         .clock-container-pill .clock-time {
-            color: #0f172a;
+            color: var(--text-title);
             letter-spacing: 0.5px;
             font-variant-numeric: tabular-nums;
         }
@@ -480,12 +639,32 @@
             font-size: 0.74rem;
             font-weight: 700;
             padding-left: 5px;
-            border-left: 1px solid #cbd5e1;
+            border-left: 1px solid var(--border-light);
             margin-left: 2px;
         }
 
         .hud-actions {
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-hud-theme {
+            background: var(--bg-subtle);
+            border: 1.5px solid var(--border-light);
+            border-radius: var(--radius-pill);
+            padding: 6px 9px;
+            font-size: 0.82rem;
+            color: var(--text-title);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .btn-hud-theme:hover {
+            border-color: var(--vzla-yellow);
+            box-shadow: 0 2px 8px var(--vzla-yellow-glow);
         }
         .btn-hud-menu {
             background: var(--bg-subtle);
@@ -535,6 +714,10 @@
             .clock-container-pill .prog-split {
                 padding-left: 3px;
                 font-size: 0.7rem;
+            }
+            .btn-hud-theme {
+                padding: 4px 6px;
+                font-size: 0.74rem;
             }
             .btn-hud-menu {
                 padding: 4px 8px;
@@ -707,7 +890,9 @@
         }
 
         .side-panel-box {
-            background: #ffffff;
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-light);
             border-radius: 12px;
             padding: 10px 12px;
@@ -813,13 +998,17 @@
         }
         .modal-backdrop.open { display: flex; }
         .modal-box {
-            background: #ffffff;
+            background: var(--bg-surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--border-light);
             border-radius: 18px;
             padding: 22px;
             max-width: 460px;
             width: 100%;
             box-shadow: var(--ios-shadow-lg);
             text-align: center;
+            color: var(--text-body);
         }
         .modal-box h2 {
             font-size: 1.3rem;
@@ -980,12 +1169,23 @@
 
     <!-- BARRA SUPERIOR DE ACCIONES (DESPLEGABLE ELEGANTE) -->
     <header class="top-action-bar">
+        <button class="theme-toggle-btn" id="btn-theme-toggle" title="Alternar Modo Oscuro / Claro">
+            <span>🌙</span> <span class="theme-label-txt" style="font-size:0.75rem; font-weight:700;">Oscuro</span>
+        </button>
         <div class="dropdown-wrapper" id="top-dropdown-wrapper">
             <button class="dropdown-toggle-btn" id="btn-top-dropdown-toggle" title="Opciones del Juego">
                 <span>⚙️ Opciones</span>
                 <span class="dropdown-arrow">▾</span>
             </button>
             <div class="dropdown-popover" id="top-dropdown-menu">
+                <button class="dropdown-item" id="btn-dropdown-theme-toggle">
+                    <span class="item-icon" id="theme-dropdown-icon">🌙</span>
+                    <div class="item-text">
+                        <strong>Modo Oscuro / Claro</strong>
+                        <small id="theme-dropdown-subtext">Alternar tema visual</small>
+                    </div>
+                    <span class="item-badge" id="theme-dropdown-badge">Claro</span>
+                </button>
                 <button class="dropdown-item" id="btn-open-instructions">
                     <span class="item-icon">📖</span>
                     <div class="item-text">
@@ -1067,9 +1267,9 @@
                 <div class="setting-box" id="box-difficulty">
                     <h3>Dificultad de Canaibot 🤖</h3>
                     <div class="chip-group" id="group-diff">
-                        <button class="chip-btn" data-diff="Facil">🟢 Novato</button>
-                        <button class="chip-btn selected" data-diff="Medio">🟡 Guía</button>
-                        <button class="chip-btn" data-diff="Experto">🔴 Experto</button>
+                        <button class="chip-btn chip-diff-novato" data-diff="Facil">🟢 Novato</button>
+                        <button class="chip-btn chip-diff-guia selected" data-diff="Medio">🟡 Guía</button>
+                        <button class="chip-btn chip-diff-experto" data-diff="Experto">🔴 Experto</button>
                     </div>
                 </div>
 
@@ -1127,8 +1327,11 @@
                     </div>
                 </div>
 
-                <!-- Menú de Pausa -->
+                <!-- Menú de Pausa y Tema -->
                 <div class="hud-actions">
+                    <button class="btn-hud-theme" id="btn-hud-theme-toggle" title="Alternar Modo Oscuro / Claro">
+                        <span>🌙</span>
+                    </button>
                     <button class="btn-hud-menu" id="btn-open-game-menu" title="Pausa y Opciones">
                         <span>☰</span> <span>Menú</span>
                     </button>
@@ -1165,9 +1368,9 @@
                         <div style="margin-top:6px;">
                             <span style="font-size:0.65rem; color:var(--text-muted); font-weight:800; text-transform:uppercase;">Dificultad en Vivo:</span>
                             <div class="live-diff-chips" id="live-diff-group">
-                                <button class="chip-live-diff" data-level="Facil">Novato</button>
-                                <button class="chip-live-diff active" data-level="Medio">Guía</button>
-                                <button class="chip-live-diff" data-level="Experto">Experto</button>
+                                <button class="chip-live-diff chip-diff-novato" data-level="Facil">Novato</button>
+                                <button class="chip-live-diff chip-diff-guia active" data-level="Medio">Guía</button>
+                                <button class="chip-live-diff chip-diff-experto" data-level="Experto">Experto</button>
                             </div>
                         </div>
                     </div>
@@ -1223,39 +1426,44 @@
                         🤖 Dificultad de Canaibot:
                     </div>
                     <div class="live-diff-chips" id="menu-modal-diff-group">
-                        <button class="chip-live-diff" data-level="Facil">🟢 Novato</button>
-                        <button class="chip-live-diff active" data-level="Medio">🟡 Guía</button>
-                        <button class="chip-live-diff" data-level="Experto">🔴 Experto</button>
+                        <button class="chip-live-diff chip-diff-novato" data-level="Facil">🟢 Novato</button>
+                        <button class="chip-live-diff chip-diff-guia active" data-level="Medio">🟡 Guía</button>
+                        <button class="chip-live-diff chip-diff-experto" data-level="Experto">🔴 Experto</button>
                     </div>
                 </div>
 
+                <!-- Selector de Modo Oscuro / Claro en Pausa -->
+                <button class="btn-game-action" style="background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.78rem; padding:8px; color:var(--text-title);" id="btn-menu-theme-toggle">
+                    <span>🌙</span> Tema: <strong>Oscuro / Claro</strong>
+                </button>
+
                 <!-- Controles de Sonido en Partida -->
                 <div style="display:flex; gap:6px;">
-                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-music-toggle">
+                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px; color:var(--text-title);" id="btn-menu-music-toggle">
                         <span id="menu-music-icon">🎵</span> Música: <strong id="menu-music-txt">Off</strong>
                     </button>
-                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-sound-toggle">
+                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px; color:var(--text-title);" id="btn-menu-sound-toggle">
                         <span id="menu-sound-icon">🔊</span> Efectos: <strong id="menu-sound-txt">On</strong>
                     </button>
                 </div>
 
                 <!-- Controles de Accesibilidad en Partida -->
                 <div style="display:flex; gap:6px;">
-                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-camera-toggle">
+                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px; color:var(--text-title);" id="btn-menu-camera-toggle">
                         <span>📷</span> Cámara IA: <strong id="menu-camera-txt">Off</strong>
                     </button>
-                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px;" id="btn-menu-voice-toggle">
+                    <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px; color:var(--text-title);" id="btn-menu-voice-toggle">
                         <span>🎙️</span> Voz: <strong id="menu-voice-txt">Off</strong>
                     </button>
                 </div>
 
                 <!-- Instructivo de Juego -->
-                <button class="btn-game-action" style="background:#ffffff; border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-instructions">
+                <button class="btn-game-action" style="background:var(--bg-surface); border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-instructions">
                     📖 ¿Cómo Jugar? (Instructivo)
                 </button>
 
                 <!-- Formulación PL HiGHS -->
-                <button class="btn-game-action" style="background:#ffffff; border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-view-lp">
+                <button class="btn-game-action" style="background:var(--bg-surface); border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-view-lp">
                     📐 Formulación Matemática (PLB)
                 </button>
 
@@ -1293,7 +1501,7 @@
                 </div>
 
                 <!-- Sección 2: Dinámica Paso a Paso -->
-                <div style="background:#ffffff; padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
+                <div style="background:var(--bg-surface); padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
                     <div style="font-weight:800; color:var(--vzla-yellow); text-transform:uppercase; font-size:0.72rem; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
                         🔄 Dinámica Turno a Turno
                     </div>
@@ -1326,7 +1534,7 @@
                 </div>
 
                 <!-- Sección 4: Investigación de Operaciones -->
-                <div style="background:#ffffff; padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
+                <div style="background:var(--bg-surface); padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
                     <div style="font-weight:800; color:var(--vzla-emerald); text-transform:uppercase; font-size:0.72rem; margin-bottom:4px; display:flex; align-items:center; gap:5px;">
                         📐 Investigación de Operaciones (El Secreto Detrás del Tablero)
                     </div>
@@ -1987,6 +2195,83 @@
     }
     const voiceController = new VoiceCommandManager();
 
+    // ─── GESTOR DE TEMA CLARO / OSCURO CON PERSISTENCIA ─
+    class ThemeManager {
+        constructor() {
+            const saved = localStorage.getItem('tepuymatch_theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            this.theme = saved || (prefersDark ? 'dark' : 'light');
+            this.applyTheme(this.theme);
+        }
+
+        initListeners() {
+            const toggleButtons = [
+                document.getElementById('btn-theme-toggle'),
+                document.getElementById('btn-dropdown-theme-toggle'),
+                document.getElementById('btn-hud-theme-toggle'),
+                document.getElementById('btn-menu-theme-toggle')
+            ];
+
+            toggleButtons.forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.toggle();
+                    });
+                }
+            });
+        }
+
+        toggle() {
+            const nextTheme = this.theme === 'dark' ? 'light' : 'dark';
+            this.applyTheme(nextTheme);
+            if (typeof audio !== 'undefined' && audio.playFlip) audio.playFlip();
+        }
+
+        applyTheme(theme) {
+            this.theme = theme;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('tepuymatch_theme', theme);
+
+            const isDark = theme === 'dark';
+            const icon = isDark ? '☀️' : '🌙';
+            const label = isDark ? 'Claro' : 'Oscuro';
+            const subtext = isDark ? 'Activar tema diurno' : 'Activar tema nocturno';
+
+            // Botón en barra superior
+            const btnTop = document.getElementById('btn-theme-toggle');
+            if (btnTop) {
+                btnTop.innerHTML = `<span>${icon}</span> <span class="theme-label-txt" style="font-size:0.75rem; font-weight:700;">${label}</span>`;
+                btnTop.title = `Cambiar a Modo ${label}`;
+            }
+
+            // Elementos en desplegable
+            const dropIcon = document.getElementById('theme-dropdown-icon');
+            const dropBadge = document.getElementById('theme-dropdown-badge');
+            const dropSub = document.getElementById('theme-dropdown-subtext');
+            if (dropIcon) dropIcon.textContent = icon;
+            if (dropBadge) {
+                dropBadge.textContent = isDark ? 'Oscuro' : 'Claro';
+                dropBadge.className = isDark ? 'item-badge on' : 'item-badge';
+            }
+            if (dropSub) dropSub.textContent = subtext;
+
+            // Botón en HUD durante la partida
+            const btnHud = document.getElementById('btn-hud-theme-toggle');
+            if (btnHud) {
+                btnHud.innerHTML = `<span>${icon}</span>`;
+                btnHud.title = `Cambiar a Modo ${label}`;
+            }
+
+            // Botón en modal de pausa
+            const btnMenu = document.getElementById('btn-menu-theme-toggle');
+            if (btnMenu) {
+                btnMenu.innerHTML = `<span>${icon}</span> Tema: <strong>${isDark ? 'Oscuro' : 'Claro'}</strong>`;
+            }
+        }
+    }
+    const themeManager = new ThemeManager();
+
     // ─── ESTADO GLOBAL ─────────────────────────────────
     let currentConfig = {
         mode: 'Vs_IA',
@@ -2090,6 +2375,7 @@
             voiceController.toggle();
         });
 
+        themeManager.initListeners();
         setupLiveDifficultyChips();
         updateAudioUI();
         updateGestureUI();
@@ -2220,6 +2506,10 @@
         document.querySelectorAll('#live-diff-group .chip-live-diff, #menu-modal-diff-group .chip-live-diff').forEach(chip => {
             if (chip.dataset.level === level) chip.classList.add('active');
             else chip.classList.remove('active');
+        });
+        document.querySelectorAll('#group-diff .chip-btn').forEach(chip => {
+            if (chip.dataset.diff === level) chip.classList.add('selected');
+            else chip.classList.remove('selected');
         });
     }
 

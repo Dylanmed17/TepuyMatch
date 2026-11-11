@@ -192,6 +192,22 @@ class MemoryGame:
         if card is None or not card.is_face_down:
             return None
 
+        # PREVENCIÓN DE BUGS:
+        # 1. Si la primera carta registrada ya no está disponible o no está boca arriba, resetear
+        if self.first_card_flipped is not None:
+            if not self.first_card_flipped.is_face_up or self.first_card_flipped.is_matched:
+                self.first_card_flipped = None
+            elif self.first_card_flipped.position == position:
+                # No se puede emparejar una carta consigo misma
+                return None
+
+        # 2. Si es la primera carta de un nuevo turno pero quedaron cartas boca arriba de un fallo anterior,
+        # limpiarlas antes de iniciar este turno
+        if self.first_card_flipped is None:
+            stale_cards = [c for c in self.board if c.is_face_up and not c.is_matched]
+            if len(stale_cards) >= 2:
+                self.hide_unmatched()
+
         card.flip_up()
 
         # ¿Es la primera carta del turno?
@@ -205,7 +221,8 @@ class MemoryGame:
         self.first_card_flipped = None
         self.turn_number += 1
 
-        is_match = first.landscape_id == second.landscape_id
+        # Validación estricta: deben ser dos posiciones distintas y el mismo paisaje
+        is_match = (first.position != second.position) and (first.landscape_id == second.landscape_id)
 
         if is_match:
             # ¡Pareja encontrada!
@@ -214,8 +231,7 @@ class MemoryGame:
             self.scores[self.current_player] += 1
             # Regla tradicional: si acierta, REPITE turno (no cambia current_player)
         else:
-            # No es pareja: las cartas deben voltearse boca abajo.
-            # La UI se encargará del delay visual antes de llamar a hide_unmatched().
+            # No es pareja: las cartas quedan temporalmente boca arriba hasta hide_unmatched()
             pass
 
         result = TurnResult(
@@ -243,8 +259,9 @@ class MemoryGame:
         Voltea boca abajo todas las cartas que están face_up pero no matched.
         Debe llamarse desde la UI después de mostrar brevemente las cartas fallidas.
         """
+        self.first_card_flipped = None
         for card in self.board:
-            if card.is_face_up:
+            if card.is_face_up and not card.is_matched:
                 card.flip_down()
 
     def _switch_turn(self) -> None:

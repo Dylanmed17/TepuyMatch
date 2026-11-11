@@ -2255,16 +2255,20 @@
         }
 
         triggerClickAt(x, y) {
+            if (isLocked || isFlipInProgress) return;
             const el = document.elementFromPoint(x, y);
             const slot = el ? el.closest('.card-slot:not(.flipped):not(.matched)') : null;
             if (slot) {
-                audio.playFlip();
                 slot.click();
                 this.resetHover();
             }
         }
 
         checkCardHover(x, y) {
+            if (isLocked || isFlipInProgress) {
+                this.resetHover();
+                return;
+            }
             const el = document.elementFromPoint(x, y);
             const slot = el ? el.closest('.card-slot:not(.flipped):not(.matched)') : null;
 
@@ -2281,7 +2285,6 @@
 
                 if (elapsed >= 800) {
                     if (this.cursorEl) this.cursorEl.classList.add('pinching');
-                    audio.playFlip();
                     slot.click();
                     this.resetHover();
                     setTimeout(() => {
@@ -2404,6 +2407,7 @@
                 if (matchDigit) pos = parseInt(matchDigit[0]);
 
                 if (pos !== null) {
+                    if (isLocked || isFlipInProgress) return;
                     const cards = Array.from(document.querySelectorAll('.card-slot'));
                     const target = cards[pos - 1];
                     if (target && !target.classList.contains('flipped') && !target.classList.contains('matched')) {
@@ -2502,6 +2506,8 @@
     };
     let activeMatch = null;
     let isLocked = false;
+    let isFlipInProgress = false;
+    let currentTurnPositions = [];
     let timerRef = null;
     let timerStart = null;
     let elapsedSeconds = 0;
@@ -2807,6 +2813,8 @@
 
             activeMatch = data;
             isLocked = false;
+            isFlipInProgress = false;
+            currentTurnPositions = [];
 
             document.getElementById('menu-view').style.display = 'none';
             document.getElementById('game-view').style.display = 'flex';
@@ -2839,6 +2847,9 @@
         stopConfetti();
         closeModal('modal-victory');
         closeInGameMenu();
+        isLocked = false;
+        isFlipInProgress = false;
+        currentTurnPositions = [];
         await startNewGame();
     }
 
@@ -2874,14 +2885,26 @@
 
     // ─── CLIC EN CARTA ─────────────────────────────────
     async function handleCardClick(position) {
-        if (isLocked) return;
-        if (activeMatch && activeMatch.current_player !== 'Jugador') return;
+        // Candados estrictos de concurrencia y turno
+        if (isLocked || isFlipInProgress) return;
+        if (!activeMatch || activeMatch.game_over) return;
+        if (activeMatch.current_player !== 'Jugador') return;
+        if (currentTurnPositions.includes(position)) return;
+        if (currentTurnPositions.length >= 2) return;
 
         const slot = document.querySelector(`.card-slot[data-pos="${position}"]`);
         if (!slot || slot.classList.contains('flipped') || slot.classList.contains('matched')) return;
 
-        audio.playFlip();
+        // Registrar inmediatamente antes de la llamada de red
+        currentTurnPositions.push(position);
         slot.classList.add('flipped');
+        audio.playFlip();
+
+        // Si ya van 2 cartas en este turno, bloquear cualquier otro clic de inmediato
+        if (currentTurnPositions.length >= 2) {
+            isLocked = true;
+        }
+        isFlipInProgress = true;
 
         try {
             const res = await fetch('/api/flip', {
@@ -2890,8 +2913,13 @@
                 body: JSON.stringify({ position })
             });
             const data = await res.json();
+
             if (data.error) {
                 slot.classList.remove('flipped');
+                const idx = currentTurnPositions.indexOf(position);
+                if (idx !== -1) currentTurnPositions.splice(idx, 1);
+                if (currentTurnPositions.length < 2) isLocked = false;
+                isFlipInProgress = false;
                 return;
             }
 
@@ -2899,48 +2927,80 @@
             updateHUD(data);
 
             if (data.turn_result) {
+                // Se completó el turno de 2 cartas
                 if (data.turn_result.is_match) {
                     audio.playMatch();
                     markMatched(data.turn_result.card1, data.turn_result.card2);
                     showLandscapeToast(data.turn_result);
+                    currentTurnPositions = [];
+                    isFlipInProgress = false;
 
                     if (data.game_over) {
+                        isLocked = true;
                         setTimeout(() => triggerVictory(data), 600);
+                    } else {
+                        // El jugador acertó: repite turno
+                        isLocked = false;
                     }
                 } else {
+                    // Fallo: mostrar brevemente y luego ocultar
                     audio.playMismatch();
                     isLocked = true;
                     setTimeout(async () => {
-                        await fetch('/api/hide-unmatched', { method: 'POST' });
+                        try {
+                            await fetch('/api/hide-unmatched', { method: 'POST' });
+                        } catch (err) {
+                            console.warn('Error hide-unmatched:', err);
+                        }
                         document.querySelectorAll('.card-slot.flipped:not(.matched)').forEach(s => s.classList.remove('flipped'));
-                        isLocked = false;
+                        currentTurnPositions = [];
+                        isFlipInProgress = false;
 
                         if (data.current_player === 'IA') {
                             triggerAITurn();
+                        } else {
+                            isLocked = false;
                         }
                     }, 850);
                 }
+            } else {
+                // Fue la 1ra carta del turno: desbloquear para que seleccione la 2da
+                isFlipInProgress = false;
+                isLocked = false;
             }
         } catch (e) {
             console.error('Error flip:', e);
             slot.classList.remove('flipped');
+            const idx = currentTurnPositions.indexOf(position);
+            if (idx !== -1) currentTurnPositions.splice(idx, 1);
+            if (currentTurnPositions.length < 2) isLocked = false;
+            isFlipInProgress = false;
         }
     }
 
     // ─── TURNO IA (CANAIBOT) ───────────────────────────
     async function triggerAITurn() {
-        if (!activeMatch || activeMatch.game_over) return;
+        if (!activeMatch || activeMatch.game_over) {
+            isLocked = false;
+            return;
+        }
         isLocked = true;
+        isFlipInProgress = true;
+        currentTurnPositions = [];
 
         const monitor = document.getElementById('ai-status-label');
-        monitor.textContent = 'Canaibot pensando...';
+        if (monitor) monitor.textContent = 'Canaibot pensando...';
 
         await wait(650);
 
         try {
             const res = await fetch('/api/ai-turn', { method: 'POST' });
             const data = await res.json();
-            if (data.error) { isLocked = false; return; }
+            if (data.error) {
+                isLocked = false;
+                isFlipInProgress = false;
+                return;
+            }
             activeMatch = { ...activeMatch, ...data };
 
             const s1 = document.querySelector(`.card-slot[data-pos="${data.ai_move.pos1}"]`);
@@ -2959,10 +3019,11 @@
                     audio.playMatch();
                     markMatched(data.turn_result.card1, data.turn_result.card2);
                     showLandscapeToast(data.turn_result);
-                    monitor.textContent = '¡Canaibot acertó!';
+                    if (monitor) monitor.textContent = '¡Canaibot acertó!';
 
                     if (data.game_over) {
-                        isLocked = false;
+                        isLocked = true;
+                        isFlipInProgress = false;
                         setTimeout(() => triggerVictory(data), 600);
                         return;
                     }
@@ -2970,26 +3031,40 @@
                     setTimeout(() => triggerAITurn(), 750);
                 } else {
                     audio.playMismatch();
-                    await fetch('/api/hide-unmatched', { method: 'POST' });
+                    try {
+                        await fetch('/api/hide-unmatched', { method: 'POST' });
+                    } catch (e) {}
                     document.querySelectorAll('.card-slot.flipped:not(.matched)').forEach(s => s.classList.remove('flipped'));
-                    monitor.textContent = 'Tu turno';
+                    if (monitor) monitor.textContent = 'Tu turno';
+                    currentTurnPositions = [];
                     isLocked = false;
+                    isFlipInProgress = false;
                     updateHUD(data);
                 }
             } else {
+                currentTurnPositions = [];
                 isLocked = false;
+                isFlipInProgress = false;
             }
         } catch (e) {
             console.error('Error IA:', e);
+            currentTurnPositions = [];
             isLocked = false;
+            isFlipInProgress = false;
         }
     }
 
     function markMatched(c1, c2) {
         const s1 = document.querySelector(`.card-slot[data-pos="${c1}"]`);
         const s2 = document.querySelector(`.card-slot[data-pos="${c2}"]`);
-        if (s1) s1.classList.add('matched');
-        if (s2) s2.classList.add('matched');
+        if (s1) {
+            s1.classList.add('flipped');
+            s1.classList.add('matched');
+        }
+        if (s2) {
+            s2.classList.add('flipped');
+            s2.classList.add('matched');
+        }
     }
 
     function updateHUD(data) {
@@ -3211,6 +3286,11 @@
     function returnToMenu() {
         stopTimer();
         stopConfetti();
+        closeModal('modal-victory');
+        closeInGameMenu();
+        isLocked = false;
+        isFlipInProgress = false;
+        currentTurnPositions = [];
         document.getElementById('menu-view').style.display = 'flex';
         document.getElementById('game-view').style.display = 'none';
         document.querySelector('.top-action-bar').style.display = 'flex';

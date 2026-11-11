@@ -32,6 +32,7 @@ game_state = {
     "ai": None,
     "optimizer_result": None,
 }
+game_lock = threading.Lock()
 
 
 @app.route("/")
@@ -90,9 +91,10 @@ def new_game():
         if game_mode == GameMode.VS_IA:
             ai = AIPlayer(difficulty=ai_difficulty)
 
-        game_state["game"] = game
-        game_state["ai"] = ai
-        game_state["optimizer_result"] = result
+        with game_lock:
+            game_state["game"] = game
+            game_state["ai"] = ai
+            game_state["optimizer_result"] = result
 
         # Serializar tablero
         board = [
@@ -126,45 +128,48 @@ def new_game():
 def flip_card():
     """Voltea una carta seleccionada por el jugador."""
     try:
-        game = game_state["game"]
-        ai = game_state["ai"]
-        if not game or game.game_over:
-            return jsonify({"error": "No hay partida activa"}), 400
+        with game_lock:
+            game = game_state["game"]
+            ai = game_state["ai"]
+            if not game or game.game_over:
+                return jsonify({"error": "No hay partida activa"}), 400
 
-        data = request.json or {}
-        position = data.get("position")
-        if position is None:
-            return jsonify({"error": "Posición requerida"}), 400
+            data = request.json or {}
+            position = data.get("position")
+            if position is None:
+                return jsonify({"error": "Posición requerida"}), 400
 
-        if game.current_player != "Jugador":
-            return jsonify({"error": "No es tu turno"}), 400
+            if game.current_player != "Jugador":
+                return jsonify({"error": "No es tu turno"}), 400
 
-        card = game.get_card(position)
-        if not card or not card.is_face_down:
-            return jsonify({"error": "Carta no disponible"}), 400
+            card = game.get_card(position)
+            if not card or not card.is_face_down:
+                return jsonify({"error": "Carta no disponible"}), 400
 
-        result = game.flip_card(position)
+            result = game.flip_card(position)
+            if result is None and game.first_card_flipped is None:
+                return jsonify({"error": "Movimiento inválido"}), 400
 
-        # La IA observa la carta volteada por el jugador
-        if ai:
-            ai.observe_card(position, card.landscape_id)
+            # La IA observa la carta volteada por el jugador
+            if ai:
+                ai.observe_card(position, card.landscape_id)
 
-        response = _build_board_state()
+            response = _build_board_state()
 
-        if result:
-            response["turn_result"] = {
-                "is_match": result.is_match,
-                "card1": result.card1.position,
-                "card2": result.card2.position,
-                "landscape_name": result.landscape_name,
-                "landscape_state": result.landscape_state,
-                "landscape_description": result.landscape_description,
-                "player": result.player,
-            }
-            if result.is_match and ai:
-                ai.forget_matched(result.card1.position, result.card2.position)
+            if result:
+                response["turn_result"] = {
+                    "is_match": result.is_match,
+                    "card1": result.card1.position,
+                    "card2": result.card2.position,
+                    "landscape_name": result.landscape_name,
+                    "landscape_state": result.landscape_state,
+                    "landscape_description": result.landscape_description,
+                    "player": result.player,
+                }
+                if result.is_match and ai:
+                    ai.forget_matched(result.card1.position, result.card2.position)
 
-        return jsonify(response)
+            return jsonify(response)
     except Exception as e:
         print(f"[Error en /api/flip]: {e}")
         return jsonify({"error": str(e)}), 500
@@ -174,10 +179,11 @@ def flip_card():
 def hide_unmatched():
     """Oculta las cartas que no coincidieron."""
     try:
-        game = game_state["game"]
-        if game:
-            game.hide_unmatched()
-        return jsonify(_build_board_state())
+        with game_lock:
+            game = game_state["game"]
+            if game:
+                game.hide_unmatched()
+            return jsonify(_build_board_state())
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -186,49 +192,50 @@ def hide_unmatched():
 def ai_turn():
     """Ejecuta el turno del agente de Inteligencia Artificial."""
     try:
-        game = game_state["game"]
-        ai = game_state["ai"]
-        if not game or not ai or game.game_over:
-            return jsonify({"error": "No disponible"}), 400
+        with game_lock:
+            game = game_state["game"]
+            ai = game_state["ai"]
+            if not game or not ai or game.game_over:
+                return jsonify({"error": "No disponible"}), 400
 
-        if game.current_player != "IA":
-            return jsonify({"error": "No es turno de la IA"}), 400
+            if game.current_player != "IA":
+                return jsonify({"error": "No es turno de la IA"}), 400
 
-        available = game.get_flippable_positions()
-        if len(available) < 2:
-            return jsonify(_build_board_state())
+            available = game.get_flippable_positions()
+            if len(available) < 2:
+                return jsonify(_build_board_state())
 
-        pos1, pos2 = ai.choose_move(available)
+            pos1, pos2 = ai.choose_move(available)
 
-        # Voltear primera carta
-        game.flip_card(pos1)
-        card1 = game.get_card(pos1)
-        if card1:
-            ai.observe_card(pos1, card1.landscape_id)
+            # Voltear primera carta
+            game.flip_card(pos1)
+            card1 = game.get_card(pos1)
+            if card1:
+                ai.observe_card(pos1, card1.landscape_id)
 
-        # Voltear segunda carta
-        result = game.flip_card(pos2)
-        card2 = game.get_card(pos2)
-        if card2:
-            ai.observe_card(pos2, card2.landscape_id)
+            # Voltear segunda carta
+            result = game.flip_card(pos2)
+            card2 = game.get_card(pos2)
+            if card2:
+                ai.observe_card(pos2, card2.landscape_id)
 
-        response = _build_board_state()
-        response["ai_move"] = {"pos1": pos1, "pos2": pos2}
+            response = _build_board_state()
+            response["ai_move"] = {"pos1": pos1, "pos2": pos2}
 
-        if result:
-            response["turn_result"] = {
-                "is_match": result.is_match,
-                "card1": result.card1.position,
-                "card2": result.card2.position,
-                "landscape_name": result.landscape_name,
-                "landscape_state": result.landscape_state,
-                "landscape_description": result.landscape_description,
-                "player": result.player,
-            }
-            if result.is_match:
-                ai.forget_matched(result.card1.position, result.card2.position)
+            if result:
+                response["turn_result"] = {
+                    "is_match": result.is_match,
+                    "card1": result.card1.position,
+                    "card2": result.card2.position,
+                    "landscape_name": result.landscape_name,
+                    "landscape_state": result.landscape_state,
+                    "landscape_description": result.landscape_description,
+                    "player": result.player,
+                }
+                if result.is_match:
+                    ai.forget_matched(result.card1.position, result.card2.position)
 
-        return jsonify(response)
+            return jsonify(response)
     except Exception as e:
         print(f"[Error en /api/ai-turn]: {e}")
         return jsonify({"error": str(e)}), 500

@@ -531,10 +531,10 @@
             min-height: 0;
             flex: 1;
             flex-direction: column;
-            gap: 4px;
+            gap: 8px;
             background: var(--game-bg);
             border-radius: 16px;
-            padding: 6px 8px;
+            padding: 8px 8px max(4px, env(safe-area-inset-bottom, 4px));
             box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.08), var(--ios-shadow-sm);
             border: 1px solid var(--border-light);
             overflow: hidden;
@@ -542,29 +542,40 @@
         }
 
         .game-top-hud {
-            height: 48px;
+            height: 46px;
             flex-shrink: 0;
             background: var(--bg-surface);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-light);
             border-radius: 14px;
-            padding: 4px 12px;
+            padding: 4px 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             box-shadow: var(--ios-shadow-sm);
             gap: 6px;
+            margin-bottom: 2px;
         }
 
         /* Grupos del HUD estructurados para CERO desborde */
         .hud-group {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
         .hud-scores {
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .hud-vs-divider {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            padding: 0 1px;
         }
         .stat-badge {
             display: inline-flex;
@@ -575,8 +586,9 @@
             font-size: 0.8rem;
             font-weight: 700;
             background: var(--bg-subtle);
-            border: 1px solid var(--border-light);
+            border: 1.5px solid var(--border-light);
             white-space: nowrap;
+            transition: var(--transition);
         }
         .stat-badge .num {
             font-weight: 800;
@@ -591,6 +603,18 @@
             color: var(--vzla-red);
             background: #fef2f2;
             border-color: #fecaca;
+        }
+        .stat-badge.p-badge.active-turn {
+            border-color: var(--vzla-blue) !important;
+            background: rgba(37, 99, 235, 0.16) !important;
+            box-shadow: 0 0 12px var(--vzla-blue-glow);
+            transform: scale(1.04);
+        }
+        .stat-badge.ai-badge.active-turn {
+            border-color: var(--vzla-red) !important;
+            background: rgba(220, 38, 38, 0.16) !important;
+            box-shadow: 0 0 12px var(--vzla-red-glow);
+            transform: scale(1.04);
         }
 
         /* Centro: Turno y Reloj + Progreso bien integrados */
@@ -692,22 +716,22 @@
         @media (max-width: 520px) {
             .game-top-hud {
                 padding: 2px 6px;
-                height: 44px;
-                gap: 4px;
+                height: 40px;
+                gap: 5px;
+                margin-bottom: 2px;
             }
             .stat-badge {
-                padding: 3px 5px;
-                font-size: 0.75rem;
+                padding: 3px 6px;
+                font-size: 0.76rem;
             }
             .stat-badge .badge-label {
                 display: none;
             }
             .turn-indicator-pill {
-                padding: 3px 6px;
-                font-size: 0.68rem;
+                display: none !important;
             }
             .clock-container-pill {
-                padding: 3px 6px;
+                padding: 3px 7px;
                 font-size: 0.78rem;
                 gap: 3px;
             }
@@ -716,12 +740,15 @@
                 font-size: 0.7rem;
             }
             .btn-hud-theme {
-                padding: 4px 6px;
-                font-size: 0.74rem;
+                padding: 4px 7px;
+                font-size: 0.78rem;
             }
             .btn-hud-menu {
                 padding: 4px 8px;
                 font-size: 0.74rem;
+            }
+            .btn-hud-menu-txt {
+                display: none;
             }
         }
 
@@ -730,7 +757,7 @@
             display: grid;
             grid-template-columns: 1fr 240px;
             gap: 10px;
-            height: calc(100% - 46px);
+            height: 100%;
             min-height: 0;
             overflow: hidden;
             box-sizing: border-box;
@@ -748,7 +775,7 @@
             align-items: center;
             justify-content: center;
             min-height: 0;
-            padding: 0;
+            padding: 2px 0;
             overflow: hidden;
             box-sizing: border-box;
         }
@@ -845,6 +872,12 @@
             border-color: var(--vzla-blue);
             transform: scale(1.02);
             box-shadow: 0 8px 16px var(--vzla-blue-glow);
+        }
+        .card-slot.gesture-aimed {
+            transform: scale(1.05) translateY(-3px) !important;
+            border-color: var(--vzla-yellow) !important;
+            box-shadow: 0 0 20px var(--vzla-yellow-glow), 0 8px 18px rgba(0,0,0,0.25) !important;
+            z-index: 20;
         }
 
         /* Frente con ilustración nítida */
@@ -1020,10 +1053,10 @@
         /* ─── GESTICULACIÓN: CÁMARA, VOZ, CURSOR Y TOUCH ─── */
         #webcam-floating-dock {
             position: fixed;
-            bottom: 14px;
-            right: 14px;
-            width: 145px;
-            height: 110px;
+            bottom: 12px;
+            right: 12px;
+            width: 135px;
+            height: 100px;
             background: rgba(15, 23, 42, 0.94);
             backdrop-filter: blur(14px);
             border: 2px solid var(--vzla-blue);
@@ -1034,8 +1067,23 @@
             display: none;
             flex-direction: column;
             transition: var(--transition);
+            pointer-events: none;
         }
         #webcam-floating-dock.active { display: flex; }
+        #webcam-floating-dock .webcam-header-pill,
+        #webcam-floating-dock .webcam-close-btn,
+        #webcam-floating-dock .webcam-guide-btn {
+            pointer-events: auto;
+        }
+        @media (max-width: 600px) {
+            #webcam-floating-dock {
+                width: 105px;
+                height: 78px;
+                bottom: 8px;
+                right: 8px;
+                opacity: 0.92;
+            }
+        }
         #webcam-feed {
             width: 100%;
             height: 100%;
@@ -1057,6 +1105,20 @@
             gap: 4px;
             z-index: 10;
         }
+        .webcam-guide-btn {
+            background: rgba(37, 99, 235, 0.85);
+            border: none;
+            color: #ffffff;
+            font-size: 0.58rem;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 2px;
+        }
+        .webcam-guide-btn:hover {
+            background: #2563eb;
+        }
         .webcam-close-btn {
             position: absolute;
             top: 4px;
@@ -1071,6 +1133,48 @@
             cursor: pointer;
             z-index: 10;
             display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Tarjetas de la Guía de Gestos */
+        .gesture-guide-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 10px 12px;
+            box-shadow: var(--ios-shadow-sm);
+        }
+        .gesture-icon-badge {
+            font-size: 1.5rem;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .gesture-card-text {
+            flex: 1;
+        }
+        .gesture-card-text strong {
+            font-size: 0.82rem;
+            color: var(--text-title);
+            display: block;
+            margin-bottom: 2px;
+        }
+        .gesture-card-text p {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+            margin: 0;
+        }
             align-items: center;
             justify-content: center;
         }
@@ -1161,9 +1265,10 @@
     <div id="webcam-floating-dock">
         <div class="webcam-header-pill">
             <span style="font-size:0.55rem;">🟢</span> <span id="webcam-status-label">MediaPipe IA</span>
+            <button class="webcam-guide-btn" id="btn-dock-camera-guide" title="Ver Guía de Gestos">❓ Guía</button>
         </div>
         <button class="webcam-close-btn" id="btn-close-webcam" title="Cerrar Cámara">✕</button>
-        <video id="webcam-feed" playsinline autoplay muted style="display:none;"></video>
+        <video id="webcam-feed" playsinline webkit-playsinline autoplay muted style="display:none;"></video>
         <canvas id="webcam-canvas" style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1);"></canvas>
     </div>
 
@@ -1191,6 +1296,13 @@
                     <div class="item-text">
                         <strong>¿Cómo Jugar?</strong>
                         <small>Instructivo y modalidades</small>
+                    </div>
+                </button>
+                <button class="dropdown-item" id="btn-open-camera-guide">
+                    <span class="item-icon">📸</span>
+                    <div class="item-text">
+                        <strong>Guía de Cámara (Gestos)</strong>
+                        <small>Aprende a apuntar y voltear cartas</small>
                     </div>
                 </button>
                 <button class="dropdown-item" id="btn-music-toggle">
@@ -1301,16 +1413,17 @@
         <section id="game-view">
             <!-- HUD Superior Compacto: Cero desborde en móvil y escritorio -->
             <div class="game-top-hud">
-                <!-- Marcador de Parejas -->
+                <!-- Marcador de Parejas Inteligente con Resalte de Turno -->
                 <div class="hud-group hud-scores">
-                    <div class="stat-badge p-badge" title="Tus Parejas">
+                    <div class="stat-badge p-badge active-turn" id="hud-player-box" title="Tus Parejas">
                         <span>👤</span>
                         <span class="badge-label">Tú:</span>
                         <span class="num" id="val-player-score">0</span>
                     </div>
+                    <span class="hud-vs-divider" id="hud-vs-divider">vs</span>
                     <div class="stat-badge ai-badge" id="hud-ai-box" title="Parejas de Canaibot">
                         <span>🤖</span>
-                        <span class="badge-label">Canaibot:</span>
+                        <span class="badge-label">IA:</span>
                         <span class="num" id="val-ai-score">0</span>
                     </div>
                 </div>
@@ -1333,7 +1446,7 @@
                         <span>🌙</span>
                     </button>
                     <button class="btn-hud-menu" id="btn-open-game-menu" title="Pausa y Opciones">
-                        <span>☰</span> <span>Menú</span>
+                        <span>☰</span> <span class="btn-hud-menu-txt">Menú</span>
                     </button>
                 </div>
             </div>
@@ -1457,6 +1570,11 @@
                     </button>
                 </div>
 
+                <!-- Guía de Gestos de Cámara -->
+                <button class="btn-game-action" style="background:var(--bg-surface); border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-camera-guide">
+                    📸 Guía de Gestos con Cámara
+                </button>
+
                 <!-- Instructivo de Juego -->
                 <button class="btn-game-action" style="background:var(--bg-surface); border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-instructions">
                     📖 ¿Cómo Jugar? (Instructivo)
@@ -1480,7 +1598,84 @@
         </div>
     </div>
 
-    <!-- MODAL DE INSTRUCTIVO Y DINÁMICA DE JUEGO -->
+    <!-- MODAL DE GUÍA INTERACTIVA DE CÁMARA GESTUAL -->
+    <div class="modal-backdrop" id="modal-camera-guide">
+        <div class="modal-box" style="max-width: 500px; max-height: 85vh; display:flex; flex-direction:column; text-align:left; padding: 18px 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-shrink:0;">
+                <h2 style="color:var(--vzla-blue); margin-bottom:0; font-size:1.18rem; display:flex; align-items:center; gap:8px;">
+                    <span>📷</span> Guía de Gestos con Cámara (IA)
+                </h2>
+                <button class="pill-dock-btn" id="btn-close-camera-guide" style="padding:4px 8px; font-size:0.9rem;">✕</button>
+            </div>
+
+            <div style="overflow-y:auto; flex:1; padding-right:4px; font-size:0.82rem; line-height:1.5; color:var(--text-body); display:flex; flex-direction:column; gap:10px;">
+                
+                <!-- Intro breve -->
+                <div style="background:var(--bg-subtle); padding:9px 12px; border-radius:12px; border:1px solid var(--border-light); font-size:0.78rem;">
+                    💡 La IA de <strong>Google MediaPipe</strong> detecta 21 articulaciones de tu mano en 3D en tiempo real para voltear cartas sin tocar la pantalla.
+                </div>
+
+                <!-- Paso 1: Apuntar -->
+                <div class="gesture-guide-card">
+                    <div class="gesture-icon-badge">☝️</div>
+                    <div class="gesture-card-text">
+                        <strong>1. Apuntar con el Dedo Índice</strong>
+                        <p>Extiende tu dedo índice hacia la cámara. Un puntero flotante seguirá tu dedo y la carta a la que apuntes se <strong>iluminará en dorado</strong> elevándose suavemente.</p>
+                    </div>
+                </div>
+
+                <!-- Paso 2: Pellizco (Pinch) -->
+                <div class="gesture-guide-card">
+                    <div class="gesture-icon-badge">🤏</div>
+                    <div class="gesture-card-text">
+                        <strong>2. Voltear con Pellizco (Pinch Clic)</strong>
+                        <p>Junta la punta del pulgar con la del índice como haciendo un pellizco en el aire. La carta se volteará al instante.</p>
+                    </div>
+                </div>
+
+                <!-- Paso 3: Mantenimiento (Dwell Click) -->
+                <div class="gesture-guide-card">
+                    <div class="gesture-icon-badge">⏱️</div>
+                    <div class="gesture-card-text">
+                        <strong>3. Voltear por Mantenimiento (Sin esfuerzo)</strong>
+                        <p>Si prefieres no pellizcar, simplemente mantén el dedo apuntando a la carta durante <strong>0.8 segundos</strong> y se volteará automáticamente.</p>
+                    </div>
+                </div>
+
+                <!-- Paso 4: Pausa con Palma -->
+                <div class="gesture-guide-card">
+                    <div class="gesture-icon-badge">✋</div>
+                    <div class="gesture-card-text">
+                        <strong>4. Pausar con Palma Abierta</strong>
+                        <p>Muestra la palma extendida hacia la cámara durante 1 segundo para pausar el juego y abrir el menú.</p>
+                    </div>
+                </div>
+
+                <!-- Consejos para Teléfono Móvil -->
+                <div style="background:var(--diff-easy-bg); padding:10px 12px; border-radius:12px; border:1px solid var(--diff-easy-border);">
+                    <div style="font-weight:800; color:var(--diff-easy-text); font-size:0.75rem; text-transform:uppercase; margin-bottom:4px;">
+                        📱 Consejos Clave para Teléfonos Móviles:
+                    </div>
+                    <ul style="padding-left:16px; margin:0; font-size:0.74rem; display:flex; flex-direction:column; gap:3px; color:var(--diff-easy-text);">
+                        <li>Coloca el teléfono apoyado en una base o sostenlo a <strong>30-40 cm</strong> de distancia.</li>
+                        <li>El sistema activa automáticamente la <strong>cámara frontal (selfie)</strong>.</li>
+                        <li>Procura tener <strong>buena iluminación</strong> en tu rostro y manos.</li>
+                        <li>No necesitas mover el brazo entero: movimientos cortos del dedo alcanzan cualquier rincón del tablero.</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div style="display:flex; gap:8px; margin-top:12px; flex-shrink:0;">
+                <button class="btn-launch" style="flex:1; padding:10px; font-size:0.85rem;" id="btn-camera-guide-try">
+                    📷 Activar Cámara y Probar
+                </button>
+                <button class="btn-game-action" style="padding:10px 16px; font-size:0.85rem; background:var(--bg-subtle); border:1px solid var(--border-light); color:var(--text-title);" id="btn-camera-guide-ok">
+                    ¡Entendido!
+                </button>
+            </div>
+        </div>
+    </div>
     <div class="modal-backdrop" id="modal-instructions">
         <div class="modal-box" style="max-width: 520px; max-height: 85vh; display:flex; flex-direction:column; text-align:left; padding: 20px 22px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-shrink:0;">
@@ -1860,8 +2055,13 @@
             }
 
             try {
-                if (this.statusLabel) this.statusLabel.textContent = 'Iniciando IA...';
+                if (this.statusLabel) this.statusLabel.textContent = 'Iniciando cámara...';
                 if (this.dockEl) this.dockEl.classList.add('active');
+
+                // Configuración de video para compatibilidad total con Safari iOS y Android
+                this.video.setAttribute('playsinline', 'true');
+                this.video.setAttribute('webkit-playsinline', 'true');
+                this.video.muted = true;
 
                 if (!this.hands) {
                     this.hands = new Hands({
@@ -1869,7 +2069,7 @@
                     });
                     this.hands.setOptions({
                         maxNumHands: 1,
-                        modelComplexity: 0, // Lite: óptimo para 60 FPS en móvil y PC
+                        modelComplexity: 0, // Lite: 60 FPS en móvil y PC
                         minDetectionConfidence: 0.55,
                         minTrackingConfidence: 0.5
                     });
@@ -1877,14 +2077,16 @@
                 }
 
                 if (!this.camera) {
+                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
                     this.camera = new Camera(this.video, {
                         onFrame: async () => {
                             if (this.active && this.hands) {
                                 await this.hands.send({ image: this.video });
                             }
                         },
-                        width: 320,
-                        height: 240
+                        facingMode: 'user', // Forzar siempre cámara frontal
+                        width: isMobile ? 320 : 480,
+                        height: isMobile ? 240 : 360
                     });
                 }
 
@@ -1896,14 +2098,14 @@
 
                 const toast = document.getElementById('landscape-toast');
                 if (toast) {
-                    document.getElementById('toast-title').textContent = '📷 ¡Cámara Gestual con IA Activa!';
-                    document.getElementById('toast-body').textContent = 'MediaPipe detecta tu mano en 3D: apunta con tu índice y une pulgar con índice (pellizco 🤏) para voltear cartas.';
+                    document.getElementById('toast-title').textContent = '📷 ¡Cámara Gestual Activa!';
+                    document.getElementById('toast-body').textContent = 'Apunta con tu índice hacia una carta y pellizca (🤏) o mantén 0.8s para voltear.';
                     toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 5500);
+                    setTimeout(() => toast.classList.remove('show'), 5000);
                 }
             } catch (err) {
                 console.error('Error al iniciar MediaPipe:', err);
-                alert('No se pudo acceder a la cámara o cargar la IA MediaPipe:\n' + err.message + '\n\nVerifica haber otorgado permisos de cámara en tu navegador.');
+                alert('No se pudo acceder a la cámara o inicializar MediaPipe:\n' + err.message + '\n\nPor favor verifica haber otorgado permisos de cámara al navegador.');
                 this.stop();
             }
         }
@@ -1937,38 +2139,48 @@
             if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
                 const landmarks = results.multiHandLandmarks[0];
 
-                // Dibujar esqueleto de 21 puntos en color verde/dorado sobre la mano
+                // Dibujar esqueleto de 21 articulaciones
                 this.drawSkeleton(landmarks);
 
                 const indexTip = landmarks[8];
                 const thumbTip = landmarks[4];
 
-                // Coordenadas con efecto espejo invertido
-                const rawX = (1 - indexTip.x) * window.innerWidth;
-                const rawY = indexTip.y * window.innerHeight;
+                // Calibración adaptativa (Deadzone Expansion):
+                // Mapea la región central [0.15, 0.85] de la cámara al 100% de la pantalla
+                // para que pequeños movimientos cómodos en móvil alcancen todos los bordes
+                const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+                const normX = clamp(((1 - indexTip.x) - 0.15) / 0.70, 0, 1);
+                const normY = clamp((indexTip.y - 0.16) / 0.68, 0, 1);
 
-                // Suavizado exponencial del cursor
-                this.cursorX += (rawX - this.cursorX) * 0.38;
-                this.cursorY += (rawY - this.cursorY) * 0.38;
+                const targetX = normX * window.innerWidth;
+                const targetY = normY * window.innerHeight;
+
+                // Suavizado Lerp anti-jitter
+                this.cursorX += (targetX - this.cursorX) * 0.42;
+                this.cursorY += (targetY - this.cursorY) * 0.42;
 
                 if (this.cursorEl) {
                     this.cursorEl.style.left = `${this.cursorX}px`;
                     this.cursorEl.style.top = `${this.cursorY}px`;
                 }
 
-                // Detección de Pellizco (Pinch 🤏)
+                // Detección de Pellizco (Pinch 🤏) Invariante a Escala y Distancia
                 const dx = thumbTip.x - indexTip.x;
                 const dy = thumbTip.y - indexTip.y;
                 const dz = (thumbTip.z || 0) - (indexTip.z || 0);
-                const pinchDist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-                const isPinchingNow = pinchDist < 0.085;
+                const pinchDist = Math.hypot(dx, dy, dz);
+
+                // Escala de la palma (muñeca a nudillo medio)
+                const palmScale = Math.hypot(landmarks[9].x - landmarks[0].x, landmarks[9].y - landmarks[0].y) || 0.25;
+                const relativePinch = pinchDist / palmScale;
+                const isPinchingNow = (relativePinch < 0.32) || (pinchDist < 0.088);
 
                 // Detección de Palma Abierta (Open Palm ✋) para Pausa
                 const isPalm = this.checkPalmOpen(landmarks);
                 if (isPalm) {
                     if (!this.palmStartTime) this.palmStartTime = Date.now();
-                    else if (Date.now() - this.palmStartTime > 900) {
-                        if (this.statusLabel) this.statusLabel.textContent = '✋ Menú / Pausa';
+                    else if (Date.now() - this.palmStartTime > 850) {
+                        if (this.statusLabel) this.statusLabel.textContent = '✋ Pausa';
                         this.palmStartTime = 0;
                         openInGameMenu();
                     }
@@ -1981,7 +2193,7 @@
                     if (this.statusLabel) this.statusLabel.textContent = '🤏 Pellizco (Clic)';
 
                     const now = Date.now();
-                    if (!this.isPinching && (now - this.lastPinchTime > 500)) {
+                    if (!this.isPinching && (now - this.lastPinchTime > 450)) {
                         this.lastPinchTime = now;
                         this.triggerClickAt(this.cursorX, this.cursorY);
                     }
@@ -2056,23 +2268,30 @@
             const el = document.elementFromPoint(x, y);
             const slot = el ? el.closest('.card-slot:not(.flipped):not(.matched)') : null;
 
+            // Iluminar la carta a la que se apunta
+            document.querySelectorAll('.card-slot.gesture-aimed').forEach(c => {
+                if (c !== slot) c.classList.remove('gesture-aimed');
+            });
+
             if (slot && slot === this.hoveredCard) {
+                slot.classList.add('gesture-aimed');
                 const elapsed = Date.now() - this.hoverStart;
-                const progress = Math.min(100, (elapsed / 1000) * 100);
+                const progress = Math.min(100, (elapsed / 800) * 100);
                 if (this.cursorFill) this.cursorFill.style.width = `${progress}%`;
 
-                if (elapsed >= 1000) {
+                if (elapsed >= 800) {
                     if (this.cursorEl) this.cursorEl.classList.add('pinching');
                     audio.playFlip();
                     slot.click();
                     this.resetHover();
                     setTimeout(() => {
                         if (this.cursorEl) this.cursorEl.classList.remove('pinching');
-                    }, 350);
+                    }, 300);
                 }
             } else if (slot) {
                 this.hoveredCard = slot;
                 this.hoverStart = Date.now();
+                slot.classList.add('gesture-aimed');
                 if (this.cursorFill) this.cursorFill.style.width = '0%';
             } else {
                 this.resetHover();
@@ -2082,6 +2301,7 @@
         resetHover() {
             this.hoveredCard = null;
             if (this.cursorFill) this.cursorFill.style.width = '0%';
+            document.querySelectorAll('.card-slot.gesture-aimed').forEach(c => c.classList.remove('gesture-aimed'));
         }
     }
     const webcamController = new MediaPipeGestureController();
@@ -2329,6 +2549,18 @@
         });
         document.getElementById('btn-close-instructions').addEventListener('click', closeInstructionsModal);
         document.getElementById('btn-x-instructions').addEventListener('click', closeInstructionsModal);
+
+        // Guía de Gestos por Cámara
+        document.getElementById('btn-open-camera-guide').addEventListener('click', openCameraGuideModal);
+        document.getElementById('btn-menu-camera-guide').addEventListener('click', openCameraGuideModal);
+        const dockGuideBtn = document.getElementById('btn-dock-camera-guide');
+        if (dockGuideBtn) dockGuideBtn.addEventListener('click', openCameraGuideModal);
+        document.getElementById('btn-close-camera-guide').addEventListener('click', closeCameraGuideModal);
+        document.getElementById('btn-camera-guide-ok').addEventListener('click', closeCameraGuideModal);
+        document.getElementById('btn-camera-guide-try').addEventListener('click', () => {
+            closeCameraGuideModal();
+            webcamController.start();
+        });
 
         // Desplegable de Opciones
         const dropdownWrap = document.getElementById('top-dropdown-wrapper');
@@ -2580,8 +2812,13 @@
             document.getElementById('game-view').style.display = 'flex';
             document.querySelector('.top-action-bar').style.display = 'none';
 
-            document.getElementById('hud-ai-box').style.display = currentConfig.mode === 'Vs_IA' ? 'flex' : 'none';
-            document.getElementById('ai-monitor-card').style.display = currentConfig.mode === 'Vs_IA' ? 'block' : 'none';
+            const isVsIA = currentConfig.mode === 'Vs_IA';
+            document.getElementById('hud-ai-box').style.display = isVsIA ? 'inline-flex' : 'none';
+            const vsDiv = document.getElementById('hud-vs-divider');
+            if (vsDiv) vsDiv.style.display = isVsIA ? 'inline-block' : 'none';
+            const turnPill = document.getElementById('hud-turn-pill');
+            if (turnPill) turnPill.style.display = isVsIA ? 'inline-flex' : 'none';
+            document.getElementById('ai-monitor-card').style.display = isVsIA ? 'block' : 'none';
 
             syncLiveDiffChips(currentConfig.ai_difficulty);
 
@@ -2763,13 +3000,17 @@
         if (data.current_player) {
             const isMe = data.current_player === 'Jugador';
             const el = document.getElementById('val-current-turn');
-            el.textContent = isMe ? 'Tú 👤' : 'Canaibot 🤖';
+            if (el) el.textContent = isMe ? 'Tú 👤' : 'Canaibot 🤖';
             const pill = document.getElementById('hud-turn-pill');
             if (pill) {
-                pill.style.background = isMe ? '#eff6ff' : '#fef2f2';
+                pill.style.background = isMe ? 'rgba(37,99,235,0.12)' : 'rgba(220,38,38,0.12)';
                 pill.style.color = isMe ? 'var(--vzla-blue)' : 'var(--vzla-red)';
                 pill.style.borderColor = isMe ? '#bfdbfe' : '#fecaca';
             }
+            const pBox = document.getElementById('hud-player-box');
+            const aiBox = document.getElementById('hud-ai-box');
+            if (pBox) pBox.classList.toggle('active-turn', isMe);
+            if (aiBox) aiBox.classList.toggle('active-turn', !isMe);
         }
         if (data.matched_pairs !== undefined) {
             document.getElementById('val-progress').textContent = `${data.matched_pairs}/${data.total_pairs}`;
@@ -2839,6 +3080,25 @@
     }
     function closeInstructionsModal() {
         closeModal('modal-instructions');
+        if (activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex') {
+            if (!document.getElementById('modal-game-menu').classList.contains('open')) {
+                startTimer(true);
+            }
+        }
+    }
+
+    // ─── GUÍA DE CÁMARA GESTUAL ─────────────────────────
+    function openCameraGuideModal() {
+        const wrap = document.getElementById('top-dropdown-wrapper');
+        if (wrap) wrap.classList.remove('open');
+        closeInGameMenu();
+        if (activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex') {
+            pauseTimer();
+        }
+        openModal('modal-camera-guide');
+    }
+    function closeCameraGuideModal() {
+        closeModal('modal-camera-guide');
         if (activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex') {
             if (!document.getElementById('modal-game-menu').classList.contains('open')) {
                 startTimer(true);

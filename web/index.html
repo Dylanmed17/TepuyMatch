@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>⛰️ TepuyMatch — Paisajes de Venezuela</title>
+    <title>TepuyMatch — Paisajes de Venezuela</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
     <!-- Google MediaPipe Hands & Camera Utils para Reconocimiento Gestual con IA en Navegador -->
@@ -805,25 +805,34 @@
         /* En teléfonos: cero scroll, cero corte en la 6ta fila, adaptado a cualquier pantalla */
         @media (max-width: 640px) {
             .stage-container {
-                padding: 0 4px max(4px, env(safe-area-inset-bottom, 4px));
+                padding: 0 4px max(6px, env(safe-area-inset-bottom, 6px));
             }
             #game-view {
-                padding: 4px;
+                padding: 4px 6px max(14px, env(safe-area-inset-bottom, 14px)) 6px;
                 border-radius: 12px;
-                gap: 4px;
+                gap: 6px;
+                height: 100%;
+                min-height: 0;
+                overflow: hidden;
             }
             .game-top-hud {
                 height: 38px;
                 padding: 2px 6px;
                 border-radius: 10px;
+                margin-bottom: 6px;
+                flex-shrink: 0;
             }
             .game-main-split {
                 flex: 1;
                 min-height: 0;
-                height: auto;
+                height: 100%;
+                overflow: hidden;
             }
             .board-stage {
-                padding: 2px 0;
+                padding: 4px;
+                height: 100%;
+                min-height: 0;
+                overflow: hidden;
             }
         }
         .card-flipper {
@@ -1281,6 +1290,28 @@
 
 
 
+        /* ─── SISTEMA DE ICONOGRAFÍA VECTORIAL PROFESIONAL (ESTILO LUCIDE) ─── */
+        .ui-icon {
+            width: 1.15em;
+            height: 1.15em;
+            stroke: currentColor;
+            stroke-width: 2.2px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            vertical-align: -0.18em;
+            display: inline-block;
+            flex-shrink: 0;
+            transition: transform 0.18s ease;
+        }
+        .ui-icon-sm { width: 0.95em; height: 0.95em; stroke-width: 2.2px; }
+        .ui-icon-lg { width: 1.45em; height: 1.45em; stroke-width: 2px; }
+        .ui-icon-fill { fill: currentColor; stroke: none; }
+        .rank-medal-icon { width: 1.35em; height: 1.35em; }
+        .rank-gold { color: #f59e0b; filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5)); }
+        .rank-silver { color: #94a3b8; filter: drop-shadow(0 0 6px rgba(148, 163, 184, 0.4)); }
+        .rank-bronze { color: #b45309; filter: drop-shadow(0 0 6px rgba(180, 83, 9, 0.4)); }
+
         #confetti-canvas {
             position: fixed;
             inset: 0;
@@ -1293,27 +1324,79 @@
 </head>
 <body>
 
+    <!-- REPOSITORIO DE ICONOS VECTORIALES SVG EMBEBIDOS (ZERO DEPENDENCIAS, ZERO LATENCIA) -->
+    <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+            <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+            <symbol id="icon-settings" viewBox="0 0 24 24"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></symbol>
+            <symbol id="icon-menu" viewBox="0 0 24 24"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></symbol>
+            <symbol id="icon-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+            <symbol id="icon-bot" viewBox="0 0 24 24"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></symbol>
+            <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+            <symbol id="icon-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol>
+            <symbol id="icon-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></symbol>
+            <symbol id="icon-book-open" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+            <symbol id="icon-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+            <symbol id="icon-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></symbol>
+            <symbol id="icon-volume" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></symbol>
+            <symbol id="icon-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+            <symbol id="icon-binary" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 8h2v8"/><path d="M7 16h4"/><circle cx="15" cy="12" r="2.5"/></symbol>
+            <symbol id="icon-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+            <symbol id="icon-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+            <symbol id="icon-rotate-ccw" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+            <symbol id="icon-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></symbol>
+            <symbol id="icon-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+            <symbol id="icon-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+            <symbol id="icon-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+            <symbol id="icon-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+            <symbol id="icon-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></symbol>
+            <symbol id="icon-mouse-pointer" viewBox="0 0 24 24"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="m13 13 6 6"/></symbol>
+            <symbol id="icon-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></symbol>
+            <symbol id="icon-move-horizontal" viewBox="0 0 24 24"><polyline points="18 8 22 12 18 16"/><polyline points="6 8 2 12 6 16"/><line x1="2" x2="22" y1="12" y2="12"/></symbol>
+            <symbol id="icon-move-vertical" viewBox="0 0 24 24"><polyline points="8 18 12 22 16 18"/><polyline points="8 6 12 2 16 6"/><line x1="12" x2="12" y1="2" y2="22"/></symbol>
+            <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+            <symbol id="icon-smartphone" viewBox="0 0 24 24"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></symbol>
+            <symbol id="icon-help-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></symbol>
+            <symbol id="icon-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></symbol>
+            <symbol id="icon-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol>
+            <symbol id="icon-x" viewBox="0 0 24 24"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></symbol>
+            <symbol id="icon-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+            <symbol id="icon-arrow-right" viewBox="0 0 24 24"><line x1="5" x2="19" y1="12" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+            <symbol id="icon-arrow-left" viewBox="0 0 24 24"><line x1="19" x2="5" y1="12" y2="12"/><polyline points="12 19 5 12 12 5"/></symbol>
+            <symbol id="icon-refresh-cw" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+            <symbol id="icon-log-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></symbol>
+        </defs>
+    </svg>
+
     <div class="venezuela-ribbon"></div>
     <canvas id="confetti-canvas"></canvas>
 
     <!-- INDICADORES FLOTANTES: VOZ, CURSOR VIRTUAL Y CÁMARA MEDIAPIPE -->
     <div id="gesture-action-pill">
-        <span id="gesture-action-icon" style="font-size:1.1rem;">👉</span>
+        <span id="gesture-action-icon" style="display:flex; align-items:center;">
+            <svg class="ui-icon"><use href="#icon-arrow-right"/></svg>
+        </span>
         <span id="gesture-action-text">Siguiente Carta</span>
     </div>
     <div id="voice-indicator-pill">
-        <span>🎙️</span> <span id="voice-recognized-word">Escuchando comando de voz...</span>
+        <svg class="ui-icon" style="color:var(--vzla-blue);"><use href="#icon-mic"/></svg>
+        <span id="voice-recognized-word">Escuchando comando de voz...</span>
     </div>
     <div id="virtual-hand-cursor">
         <div id="virtual-cursor-bar"><div id="virtual-cursor-fill"></div></div>
     </div>
     <div id="webcam-floating-dock">
         <div class="webcam-header-pill">
-            <span style="font-size:0.55rem;">🟢</span>
-            <button class="webcam-guide-btn" id="btn-dock-camera-guide" title="Ver Guía de Gestos">❓ Guía</button>
+            <span class="live-dot" style="width:7px; height:7px; border-radius:50%; background:#10b981; display:inline-block; box-shadow:0 0 6px #10b981;"></span>
+            <button class="webcam-guide-btn" id="btn-dock-camera-guide" title="Ver Guía de Gestos">
+                <svg class="ui-icon ui-icon-sm"><use href="#icon-help-circle"/></svg> Guía
+            </button>
             <span id="webcam-status-label" style="display:none;"></span>
         </div>
-        <button class="webcam-close-btn" id="btn-close-webcam" title="Cerrar Cámara">✕</button>
+        <button class="webcam-close-btn" id="btn-close-webcam" title="Cerrar Cámara">
+            <svg class="ui-icon ui-icon-sm"><use href="#icon-x"/></svg>
+        </button>
         <video id="webcam-feed" playsinline webkit-playsinline autoplay muted style="display:none;"></video>
         <canvas id="webcam-canvas" style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1);"></canvas>
     </div>
@@ -1321,16 +1404,18 @@
     <!-- BARRA SUPERIOR DE ACCIONES (DESPLEGABLE ELEGANTE) -->
     <header class="top-action-bar">
         <button class="theme-toggle-btn" id="btn-theme-toggle" title="Alternar Modo Oscuro / Claro">
-            <span>🌙</span> <span class="theme-label-txt" style="font-size:0.75rem; font-weight:700;">Oscuro</span>
+            <svg class="ui-icon" id="theme-btn-svg"><use href="#icon-moon"/></svg> <span class="theme-label-txt" style="font-size:0.75rem; font-weight:700;">Oscuro</span>
         </button>
         <div class="dropdown-wrapper" id="top-dropdown-wrapper">
             <button class="dropdown-toggle-btn" id="btn-top-dropdown-toggle" title="Opciones del Juego">
-                <span>⚙️ Opciones</span>
+                <svg class="ui-icon"><use href="#icon-settings"/></svg> <span>Opciones</span>
                 <span class="dropdown-arrow">▾</span>
             </button>
             <div class="dropdown-popover" id="top-dropdown-menu">
                 <button class="dropdown-item" id="btn-dropdown-theme-toggle">
-                    <span class="item-icon" id="theme-dropdown-icon">🌙</span>
+                    <span class="item-icon">
+                        <svg class="ui-icon" id="theme-dropdown-svg"><use href="#icon-moon"/></svg>
+                    </span>
                     <div class="item-text">
                         <strong>Modo Oscuro / Claro</strong>
                         <small id="theme-dropdown-subtext">Alternar tema visual</small>
@@ -1338,29 +1423,37 @@
                     <span class="item-badge" id="theme-dropdown-badge">Claro</span>
                 </button>
                 <button class="dropdown-item" id="btn-open-instructions">
-                    <span class="item-icon">📖</span>
+                    <span class="item-icon">
+                        <svg class="ui-icon"><use href="#icon-book-open"/></svg>
+                    </span>
                     <div class="item-text">
                         <strong>¿Cómo Jugar?</strong>
-                        <small>Instructivo y modalidades</small>
+                        <small>Instructivo y dinámicas</small>
                     </div>
                 </button>
                 <button class="dropdown-item" id="btn-open-camera-guide">
-                    <span class="item-icon">📸</span>
+                    <span class="item-icon">
+                        <svg class="ui-icon"><use href="#icon-camera"/></svg>
+                    </span>
                     <div class="item-text">
                         <strong>Guía de Cámara (Gestos)</strong>
-                        <small>Aprende a apuntar y voltear cartas</small>
+                        <small>Apuntar, pellizcar y swipes en el aire</small>
                     </div>
                 </button>
                 <button class="dropdown-item" id="btn-music-toggle">
-                    <span class="item-icon" id="music-icon">🎵</span>
+                    <span class="item-icon">
+                        <svg class="ui-icon" id="music-svg"><use href="#icon-music"/></svg>
+                    </span>
                     <div class="item-text">
-                        <strong>Música Criolla</strong>
-                        <small id="music-status-text">Desactivada (6/8)</small>
+                        <strong>Música Tradicional</strong>
+                        <small id="music-status-text">Cuatro venezolano (6/8)</small>
                     </div>
                     <span class="item-badge" id="music-badge">Off</span>
                 </button>
                 <button class="dropdown-item" id="btn-sound-toggle">
-                    <span class="item-icon" id="sound-icon">🔊</span>
+                    <span class="item-icon">
+                        <svg class="ui-icon" id="sound-svg"><use href="#icon-volume"/></svg>
+                    </span>
                     <div class="item-text">
                         <strong>Efectos de Sonido</strong>
                         <small id="sound-status-text">Activados</small>
@@ -1368,23 +1461,29 @@
                     <span class="item-badge on" id="sound-badge">On</span>
                 </button>
                 <button class="dropdown-item" id="btn-camera-toggle">
-                    <span class="item-icon">📷</span>
+                    <span class="item-icon">
+                        <svg class="ui-icon"><use href="#icon-camera"/></svg>
+                    </span>
                     <div class="item-text">
                         <strong>Cámara Gestual (IA)</strong>
-                        <small id="camera-status-text">MediaPipe: Apunta y Pellizca 🤏</small>
+                        <small id="camera-status-text">MediaPipe: Apunta y Pellizca</small>
                     </div>
                     <span class="item-badge" id="camera-badge">Off</span>
                 </button>
                 <button class="dropdown-item" id="btn-voice-toggle">
-                    <span class="item-icon">🎙️</span>
+                    <span class="item-icon">
+                        <svg class="ui-icon"><use href="#icon-mic"/></svg>
+                    </span>
                     <div class="item-text">
                         <strong>Control por Voz</strong>
-                        <small id="voice-status-text">Comandos en español</small>
+                        <small id="voice-status-text">Reconocimiento por micrófono</small>
                     </div>
                     <span class="item-badge" id="voice-badge">Off</span>
                 </button>
                 <button class="dropdown-item" id="btn-open-leaderboard">
-                    <span class="item-icon">🏆</span>
+                    <span class="item-icon">
+                        <svg class="ui-icon" style="color:#f59e0b;"><use href="#icon-trophy"/></svg>
+                    </span>
                     <div class="item-text">
                         <strong>Salón de la Fama</strong>
                         <small>Récords y mejores tiempos</small>
@@ -1402,7 +1501,7 @@
             <!-- LOGO PROTAGÓNICO -->
             <div class="hero-branding">
                 <div class="app-icon-squircle" onclick="location.reload();" title="TepuyMatch Venezuela">
-                    <span class="app-icon-symbol">⛰️</span>
+                    <svg class="ui-icon" style="width:2.2rem; height:2.2rem; color:#ffffff;"><use href="#icon-mountain"/></svg>
                 </div>
                 <h1 class="brand-title">TepuyMatch</h1>
                 <div class="brand-tag-pill">
@@ -1416,18 +1515,28 @@
                 <div class="setting-box">
                     <h3>Modo de Juego</h3>
                     <div class="chip-group" id="group-mode">
-                        <button class="chip-btn" data-mode="Solitario">🧩 Solitario</button>
-                        <button class="chip-btn selected" data-mode="Vs_IA">🤖 Jugador vs Canaibot</button>
+                        <button class="chip-btn" data-mode="Solitario">
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-user"/></svg> Solitario
+                        </button>
+                        <button class="chip-btn selected" data-mode="Vs_IA">
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-bot"/></svg> Jugador vs Canaibot
+                        </button>
                     </div>
                 </div>
 
                 <!-- Dificultad IA -->
                 <div class="setting-box" id="box-difficulty">
-                    <h3>Dificultad de Canaibot 🤖</h3>
+                    <h3>Dificultad de Canaibot</h3>
                     <div class="chip-group" id="group-diff">
-                        <button class="chip-btn chip-diff-novato" data-diff="Facil">🟢 Novato</button>
-                        <button class="chip-btn chip-diff-guia selected" data-diff="Medio">🟡 Guía</button>
-                        <button class="chip-btn chip-diff-experto" data-diff="Experto">🔴 Experto</button>
+                        <button class="chip-btn chip-diff-novato" data-diff="Facil">
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-zap"/></svg> Novato
+                        </button>
+                        <button class="chip-btn chip-diff-guia selected" data-diff="Medio">
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-compass"/></svg> Guía
+                        </button>
+                        <button class="chip-btn chip-diff-experto" data-diff="Experto">
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-flame"/></svg> Experto
+                        </button>
                     </div>
                 </div>
 
@@ -1450,7 +1559,7 @@
                 </div>
 
                 <button class="btn-launch" id="btn-start-game">
-                    ▶ Iniciar Partida
+                    <svg class="ui-icon ui-icon-fill" style="margin-right:6px;"><use href="#icon-play"/></svg> Iniciar Partida
                 </button>
             </div>
         </section>
@@ -1462,13 +1571,13 @@
                 <!-- Marcador de Parejas Inteligente con Resalte de Turno -->
                 <div class="hud-group hud-scores">
                     <div class="stat-badge p-badge active-turn" id="hud-player-box" title="Tus Parejas">
-                        <span>👤</span>
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-user"/></svg>
                         <span class="badge-label">Tú:</span>
                         <span class="num" id="val-player-score">0</span>
                     </div>
                     <span class="hud-vs-divider" id="hud-vs-divider">vs</span>
                     <div class="stat-badge ai-badge" id="hud-ai-box" title="Parejas de Canaibot">
-                        <span>🤖</span>
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-bot"/></svg>
                         <span class="badge-label">IA:</span>
                         <span class="num" id="val-ai-score">0</span>
                     </div>
@@ -1477,10 +1586,10 @@
                 <!-- Centro: Turno Activo y Reloj con Progreso Prominente -->
                 <div class="hud-center">
                     <div class="turn-indicator-pill" id="hud-turn-pill" title="Turno actual">
-                        <span id="val-current-turn">Tú 👤</span>
+                        <span id="val-current-turn">Tú</span>
                     </div>
                     <div class="clock-container-pill" title="Tiempo y Progreso">
-                        <span>⏱️</span>
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-clock"/></svg>
                         <span class="clock-time" id="val-timer">00:00</span>
                         <span class="prog-split" id="val-progress">0/8</span>
                     </div>
@@ -1489,10 +1598,10 @@
                 <!-- Menú de Pausa y Tema -->
                 <div class="hud-actions">
                     <button class="btn-hud-theme" id="btn-hud-theme-toggle" title="Alternar Modo Oscuro / Claro">
-                        <span>🌙</span>
+                        <svg class="ui-icon ui-icon-sm" id="hud-theme-svg"><use href="#icon-moon"/></svg>
                     </button>
                     <button class="btn-hud-menu" id="btn-open-game-menu" title="Pausa y Opciones">
-                        <span>☰</span> <span class="btn-hud-menu-txt">Menú</span>
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-menu"/></svg> <span class="btn-hud-menu-txt">Menú</span>
                     </button>
                 </div>
             </div>
@@ -1514,7 +1623,7 @@
 
                     <!-- Monitor Canaibot con ajuste en vivo -->
                     <div class="side-panel-box" id="ai-monitor-card">
-                        <h4>🤖 Canaibot (IA)</h4>
+                        <h4><svg class="ui-icon ui-icon-sm" style="color:var(--vzla-red);"><use href="#icon-bot"/></svg> Canaibot (IA)</h4>
                         <div class="kv-row">
                             <span class="k">Estado:</span>
                             <span class="v" id="ai-status-label" style="color:var(--vzla-blue);">Observando</span>
@@ -1527,16 +1636,22 @@
                         <div style="margin-top:6px;">
                             <span style="font-size:0.65rem; color:var(--text-muted); font-weight:800; text-transform:uppercase;">Dificultad en Vivo:</span>
                             <div class="live-diff-chips" id="live-diff-group">
-                                <button class="chip-live-diff chip-diff-novato" data-level="Facil">Novato</button>
-                                <button class="chip-live-diff chip-diff-guia active" data-level="Medio">Guía</button>
-                                <button class="chip-live-diff chip-diff-experto" data-level="Experto">Experto</button>
+                                <button class="chip-live-diff chip-diff-novato" data-level="Facil">
+                                    <svg class="ui-icon ui-icon-sm"><use href="#icon-zap"/></svg> Novato
+                                </button>
+                                <button class="chip-live-diff chip-diff-guia active" data-level="Medio">
+                                    <svg class="ui-icon ui-icon-sm"><use href="#icon-compass"/></svg> Guía
+                                </button>
+                                <button class="chip-live-diff chip-diff-experto" data-level="Experto">
+                                    <svg class="ui-icon ui-icon-sm"><use href="#icon-flame"/></svg> Experto
+                                </button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Optimización de Tablero -->
                     <div class="side-panel-box">
-                        <h4>📐 Optimización</h4>
+                        <h4><svg class="ui-icon ui-icon-sm" style="color:var(--vzla-emerald);"><use href="#icon-binary"/></svg> Optimización PLB</h4>
                         <div class="kv-row">
                             <span class="k">Solver:</span>
                             <span class="v">SciPy HiGHS</span>
@@ -1546,17 +1661,17 @@
                             <span class="v" style="color:var(--vzla-yellow);" id="lp-z-label">0.0</span>
                         </div>
                         <button class="pill-dock-btn" style="width:100%; margin-top:6px; justify-content:center; border:1px solid var(--border-light);" id="btn-view-lp-modal">
-                            🔍 Formulación PL
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-binary"/></svg> Formulación PL
                         </button>
                     </div>
 
                     <!-- Botones de Acción -->
                     <div class="bottom-actions">
                         <button class="btn-game-action btn-game-restart" id="btn-restart-game">
-                            🔄 Reiniciar Partida
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-rotate-ccw"/></svg> Reiniciar Partida
                         </button>
                         <button class="btn-game-action btn-game-quit" id="btn-quit-game">
-                            🚪 Menú Principal
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-home"/></svg> Menú Principal
                         </button>
                     </div>
                 </div>
@@ -1568,7 +1683,9 @@
     <!-- MODAL DE MENÚ EN JUEGO (PAUSA AUTOMÁTICA) -->
     <div class="modal-backdrop" id="modal-game-menu">
         <div class="modal-box">
-            <h2 style="color:var(--vzla-blue);">⏸️ Menú de Partida</h2>
+            <h2 style="color:var(--vzla-blue); display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg class="ui-icon"><use href="#icon-pause"/></svg> Menú de Partida
+            </h2>
             <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">
                 El tiempo se encuentra pausado. Selecciona una opción:
             </p>
@@ -1576,69 +1693,75 @@
             <div style="display:flex; flex-direction:column; gap:8px;">
                 <!-- Reanudar -->
                 <button class="btn-launch" style="padding:11px;" id="btn-menu-resume">
-                    ▶ Reanudar Partida
+                    <svg class="ui-icon ui-icon-fill" style="margin-right:6px;"><use href="#icon-play"/></svg> Reanudar Partida
                 </button>
 
                 <!-- Dificultad Canaibot en vivo -->
                 <div style="background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:10px; padding:8px 12px; text-align:left;">
-                    <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--text-title); margin-bottom:4px;">
-                        🤖 Dificultad de Canaibot:
+                    <div style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--text-title); margin-bottom:4px; display:flex; align-items:center; gap:5px;">
+                        <svg class="ui-icon ui-icon-sm" style="color:var(--vzla-red);"><use href="#icon-bot"/></svg> Dificultad de Canaibot:
                     </div>
                     <div class="live-diff-chips" id="menu-modal-diff-group">
-                        <button class="chip-live-diff chip-diff-novato" data-level="Facil">🟢 Novato</button>
-                        <button class="chip-live-diff chip-diff-guia active" data-level="Medio">🟡 Guía</button>
-                        <button class="chip-live-diff chip-diff-experto" data-level="Experto">🔴 Experto</button>
+                        <button class="chip-live-diff chip-diff-novato" data-level="Facil">
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-zap"/></svg> Novato
+                        </button>
+                        <button class="chip-live-diff chip-diff-guia active" data-level="Medio">
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-compass"/></svg> Guía
+                        </button>
+                        <button class="chip-live-diff chip-diff-experto" data-level="Experto">
+                            <svg class="ui-icon ui-icon-sm"><use href="#icon-flame"/></svg> Experto
+                        </button>
                     </div>
                 </div>
 
                 <!-- Selector de Modo Oscuro / Claro en Pausa -->
                 <button class="btn-game-action" style="background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.78rem; padding:8px; color:var(--text-title);" id="btn-menu-theme-toggle">
-                    <span>🌙</span> Tema: <strong>Oscuro / Claro</strong>
+                    <svg class="ui-icon ui-icon-sm" id="menu-theme-svg"><use href="#icon-moon"/></svg> Tema: <strong>Oscuro / Claro</strong>
                 </button>
 
                 <!-- Controles de Sonido en Partida -->
                 <div style="display:flex; gap:6px;">
                     <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px; color:var(--text-title);" id="btn-menu-music-toggle">
-                        <span id="menu-music-icon">🎵</span> Música: <strong id="menu-music-txt">Off</strong>
+                        <svg class="ui-icon ui-icon-sm" id="menu-music-svg"><use href="#icon-music"/></svg> Música: <strong id="menu-music-txt">Off</strong>
                     </button>
                     <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px; color:var(--text-title);" id="btn-menu-sound-toggle">
-                        <span id="menu-sound-icon">🔊</span> Efectos: <strong id="menu-sound-txt">On</strong>
+                        <svg class="ui-icon ui-icon-sm" id="menu-sound-svg"><use href="#icon-volume"/></svg> Efectos: <strong id="menu-sound-txt">On</strong>
                     </button>
                 </div>
 
                 <!-- Controles de Accesibilidad en Partida -->
                 <div style="display:flex; gap:6px;">
                     <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px; color:var(--text-title);" id="btn-menu-camera-toggle">
-                        <span>📷</span> Cámara IA: <strong id="menu-camera-txt">Off</strong>
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-camera"/></svg> Cámara IA: <strong id="menu-camera-txt">Off</strong>
                     </button>
                     <button class="btn-game-action" style="flex:1; background:var(--bg-subtle); border:1px solid var(--border-light); font-size:0.75rem; padding:8px; color:var(--text-title);" id="btn-menu-voice-toggle">
-                        <span>🎙️</span> Voz: <strong id="menu-voice-txt">Off</strong>
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-mic"/></svg> Voz: <strong id="menu-voice-txt">Off</strong>
                     </button>
                 </div>
 
                 <!-- Guía de Gestos de Cámara -->
                 <button class="btn-game-action" style="background:var(--bg-surface); border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-camera-guide">
-                    📸 Guía de Gestos con Cámara
+                    <svg class="ui-icon ui-icon-sm"><use href="#icon-camera"/></svg> Guía de Gestos con Cámara
                 </button>
 
                 <!-- Instructivo de Juego -->
                 <button class="btn-game-action" style="background:var(--bg-surface); border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-instructions">
-                    📖 ¿Cómo Jugar? (Instructivo)
+                    <svg class="ui-icon ui-icon-sm"><use href="#icon-book-open"/></svg> ¿Cómo Jugar? (Instructivo)
                 </button>
 
                 <!-- Formulación PL HiGHS -->
                 <button class="btn-game-action" style="background:var(--bg-surface); border:1.5px solid var(--border-light); color:var(--text-title);" id="btn-menu-view-lp">
-                    📐 Formulación Matemática (PLB)
+                    <svg class="ui-icon ui-icon-sm"><use href="#icon-binary"/></svg> Formulación Matemática (PLB)
                 </button>
 
                 <!-- Reiniciar partida -->
                 <button class="btn-game-action btn-game-restart" id="btn-menu-restart">
-                    🔄 Reiniciar Partida
+                    <svg class="ui-icon ui-icon-sm"><use href="#icon-rotate-ccw"/></svg> Reiniciar Partida
                 </button>
 
                 <!-- Salir al menú principal -->
                 <button class="btn-game-action btn-game-quit" id="btn-menu-quit">
-                    🚪 Volver al Menú Principal
+                    <svg class="ui-icon ui-icon-sm"><use href="#icon-home"/></svg> Volver al Menú Principal
                 </button>
             </div>
         </div>
@@ -1649,21 +1772,26 @@
         <div class="modal-box" style="max-width: 500px; max-height: 85vh; display:flex; flex-direction:column; text-align:left; padding: 18px 20px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-shrink:0;">
                 <h2 style="color:var(--vzla-blue); margin-bottom:0; font-size:1.18rem; display:flex; align-items:center; gap:8px;">
-                    <span>📷</span> Guía de Gestos con Cámara (IA)
+                    <svg class="ui-icon" style="color:var(--vzla-blue);"><use href="#icon-camera"/></svg> Guía de Gestos con Cámara (IA)
                 </h2>
-                <button class="pill-dock-btn" id="btn-close-camera-guide" style="padding:4px 8px; font-size:0.9rem;">✕</button>
+                <button class="pill-dock-btn" id="btn-close-camera-guide" style="padding:4px 8px; font-size:0.9rem;">
+                    <svg class="ui-icon ui-icon-sm"><use href="#icon-x"/></svg>
+                </button>
             </div>
 
             <div style="overflow-y:auto; flex:1; padding-right:4px; font-size:0.82rem; line-height:1.5; color:var(--text-body); display:flex; flex-direction:column; gap:10px;">
                 
                 <!-- Intro breve -->
-                <div style="background:var(--bg-subtle); padding:10px 14px; border-radius:12px; border:1.5px solid var(--border-light); font-size:0.78rem; color:var(--text-body);">
-                    💡 La IA de <strong>Google MediaPipe</strong> detecta 21 puntos articulares 3D de tu mano a 30 FPS para jugar en el aire con máxima precisión.
+                <div style="background:var(--bg-subtle); padding:10px 14px; border-radius:12px; border:1.5px solid var(--border-light); font-size:0.78rem; color:var(--text-body); display:flex; align-items:center; gap:8px;">
+                    <svg class="ui-icon" style="color:var(--vzla-yellow);"><use href="#icon-sparkles"/></svg>
+                    <span>La IA de <strong>Google MediaPipe</strong> detecta 21 puntos articulares 3D de tu mano a 30 FPS para jugar en el aire con máxima precisión.</span>
                 </div>
 
                 <!-- Paso 1: Apuntar con Imán -->
                 <div class="gesture-guide-card">
-                    <div class="gesture-icon-badge">☝️</div>
+                    <div class="gesture-icon-badge">
+                        <svg class="ui-icon" style="color:var(--vzla-blue);"><use href="#icon-mouse-pointer"/></svg>
+                    </div>
                     <div class="gesture-card-text">
                         <strong>1. Apuntar con Imán Inteligente (Magnetic Snap)</strong>
                         <p>Extiende tu dedo índice hacia la cámara. Un puntero neón seguirá tu dedo y <strong>se anclará magnéticamente</strong> al centro de la carta más cercana, evitando temblores en teléfonos móviles.</p>
@@ -1672,7 +1800,9 @@
 
                 <!-- Paso 2: Pellizco Seguro Anti-Salto -->
                 <div class="gesture-guide-card">
-                    <div class="gesture-icon-badge">🤏</div>
+                    <div class="gesture-icon-badge">
+                        <svg class="ui-icon" style="color:var(--vzla-yellow);"><use href="#icon-hand"/></svg>
+                    </div>
                     <div class="gesture-card-text">
                         <strong>2. Voltear con Pellizco Estable (Anti-Desplazamiento)</strong>
                         <p>Une el pulgar y el índice en el aire. <strong>Biomecánica asistida:</strong> al comenzar el pellizco, la posición se congela en la carta seleccionada para que el dedo no salte de casilla.</p>
@@ -1681,7 +1811,9 @@
 
                 <!-- Paso 3: Deslizar Horizontal -->
                 <div class="gesture-guide-card">
-                    <div class="gesture-icon-badge">👈👉</div>
+                    <div class="gesture-icon-badge">
+                        <svg class="ui-icon" style="color:var(--vzla-emerald);"><use href="#icon-move-horizontal"/></svg>
+                    </div>
                     <div class="gesture-card-text">
                         <strong>3. Deslizar en el Aire (Air Swipe Horizontal)</strong>
                         <p>Mueve tu mano rápido a la izquierda o derecha: en el tablero navega entre cartas; en el menú principal cambia de dificultad.</p>
@@ -1690,7 +1822,9 @@
 
                 <!-- Paso 4: Deslizar Vertical -->
                 <div class="gesture-guide-card">
-                    <div class="gesture-icon-badge">👇👆</div>
+                    <div class="gesture-icon-badge">
+                        <svg class="ui-icon" style="color:var(--vzla-red);"><use href="#icon-move-vertical"/></svg>
+                    </div>
                     <div class="gesture-card-text">
                         <strong>4. Deslizar Vertical (Menú y Reanudación)</strong>
                         <p>Desliza tu mano hacia <strong>Abajo</strong> para pausar y abrir el menú. Desliza hacia <strong>Arriba</strong> para reanudar la partida al instante.</p>
@@ -1699,7 +1833,9 @@
 
                 <!-- Paso 5: Mantenimiento -->
                 <div class="gesture-guide-card">
-                    <div class="gesture-icon-badge">⏱️</div>
+                    <div class="gesture-icon-badge">
+                        <svg class="ui-icon"><use href="#icon-clock"/></svg>
+                    </div>
                     <div class="gesture-card-text">
                         <strong>5. Volteo por Mantenimiento (Dwell Click)</strong>
                         <p>Si prefieres no pellizcar, mantén el puntero inmóvil sobre una carta durante <strong>0.8 segundos</strong> y se volteará automáticamente.</p>
@@ -1708,7 +1844,9 @@
 
                 <!-- Paso 6: Palma Abierta -->
                 <div class="gesture-guide-card">
-                    <div class="gesture-icon-badge">✋</div>
+                    <div class="gesture-icon-badge">
+                        <svg class="ui-icon"><use href="#icon-shield"/></svg>
+                    </div>
                     <div class="gesture-card-text">
                         <strong>6. Pausa con Palma Abierta</strong>
                         <p>Muestra la palma abierta y quieta hacia la cámara durante 1 segundo para pausar con enfriamiento seguro.</p>
@@ -1717,8 +1855,8 @@
 
                 <!-- Consejos para Teléfono Móvil -->
                 <div style="background:var(--bg-subtle); padding:10px 14px; border-radius:12px; border:1.5px solid var(--border-light); color:var(--text-body);">
-                    <div style="font-weight:800; color:var(--vzla-blue); font-size:0.75rem; text-transform:uppercase; margin-bottom:6px;">
-                        📱 Consejos Clave para Teléfonos Móviles:
+                    <div style="font-weight:800; color:var(--vzla-blue); font-size:0.75rem; text-transform:uppercase; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-smartphone"/></svg> Consejos Clave para Teléfonos Móviles:
                     </div>
                     <ul style="padding-left:16px; margin:0; font-size:0.75rem; display:flex; flex-direction:column; gap:4px; color:var(--text-body);">
                         <li>Coloca el teléfono apoyado en una base o sostenlo a <strong>30-40 cm</strong> de distancia.</li>
@@ -1732,19 +1870,25 @@
 
             <div style="display:flex; gap:8px; margin-top:12px; flex-shrink:0;">
                 <button class="btn-launch" style="flex:1; padding:10px; font-size:0.85rem;" id="btn-camera-guide-try">
-                    📷 Activar Cámara y Probar
+                    <svg class="ui-icon ui-icon-sm" style="margin-right:5px;"><use href="#icon-camera"/></svg> Activar Cámara y Probar
                 </button>
                 <button class="btn-game-action" style="padding:10px 16px; font-size:0.85rem; background:var(--bg-subtle); border:1px solid var(--border-light); color:var(--text-title);" id="btn-camera-guide-ok">
-                    ¡Entendido!
+                    Entendido
                 </button>
             </div>
         </div>
     </div>
+
+    <!-- MODAL DE INSTRUCTIVO Y DINÁMICA -->
     <div class="modal-backdrop" id="modal-instructions">
         <div class="modal-box" style="max-width: 520px; max-height: 85vh; display:flex; flex-direction:column; text-align:left; padding: 20px 22px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-shrink:0;">
-                <h2 style="color:var(--vzla-blue); margin-bottom:0; font-size:1.25rem;">📖 Instructivo y Dinámica</h2>
-                <button class="pill-dock-btn" id="btn-x-instructions" style="padding:4px 8px; font-size:0.9rem;">✕</button>
+                <h2 style="color:var(--vzla-blue); margin-bottom:0; font-size:1.25rem; display:flex; align-items:center; gap:8px;">
+                    <svg class="ui-icon"><use href="#icon-book-open"/></svg> Instructivo y Dinámica
+                </h2>
+                <button class="pill-dock-btn" id="btn-x-instructions" style="padding:4px 8px; font-size:0.9rem;">
+                    <svg class="ui-icon ui-icon-sm"><use href="#icon-x"/></svg>
+                </button>
             </div>
             
             <div style="overflow-y:auto; flex:1; padding-right:6px; font-size:0.82rem; line-height:1.55; color:var(--text-body); display:flex; flex-direction:column; gap:12px;">
@@ -1752,7 +1896,7 @@
                 <!-- Sección 1: Objetivo -->
                 <div style="background:var(--bg-subtle); padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
                     <div style="font-weight:800; color:var(--vzla-blue); text-transform:uppercase; font-size:0.72rem; margin-bottom:4px; display:flex; align-items:center; gap:5px;">
-                        🎯 Objetivo del Juego
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-target"/></svg> Objetivo del Juego
                     </div>
                     <p>
                         Encuentra y empareja todos los <strong>paisajes emblemáticos de Venezuela</strong> (Salto Ángel, Roraima, Los Roques, Médanos de Coro, etc.) en el menor tiempo y turnos posibles.
@@ -1762,7 +1906,7 @@
                 <!-- Sección 2: Dinámica Paso a Paso -->
                 <div style="background:var(--bg-surface); padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
                     <div style="font-weight:800; color:var(--vzla-yellow); text-transform:uppercase; font-size:0.72rem; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
-                        🔄 Dinámica Turno a Turno
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-refresh-cw"/></svg> Dinámica Turno a Turno
                     </div>
                     <ul style="padding-left:18px; margin:0; display:flex; flex-direction:column; gap:4px;">
                         <li><strong>Voltea 2 cartas:</strong> Haz clic o toca dos casillas para revelar sus paisajes.</li>
@@ -1774,7 +1918,7 @@
                 <!-- Sección 3: Modos de Juego y Canaibot -->
                 <div style="background:var(--bg-subtle); padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
                     <div style="font-weight:800; color:var(--vzla-red); text-transform:uppercase; font-size:0.72rem; margin-bottom:4px; display:flex; align-items:center; gap:5px;">
-                        🤖 Modos y Rival Canaibot
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-bot"/></svg> Modos y Rival Canaibot
                     </div>
                     <p style="margin-bottom:6px;">
                         <strong>• Solitario:</strong> Desafía tu propia memoria y velocidad para alcanzar el top del Salón de la Fama.
@@ -1782,20 +1926,20 @@
                     <p style="margin-bottom:6px;">
                         <strong>• Jugador vs Canaibot:</strong> Enfréntate a la IA. Canaibot memoriza cartas vistas según su dificultad:
                     </p>
-                    <div style="display:flex; flex-direction:column; gap:3px; padding-left:8px; font-size:0.78rem;">
-                        <div>🟢 <strong>Novato (30% retención):</strong> Memoria corta, comete errores frecuentemente.</div>
-                        <div>🟡 <strong>Guía (70% retención):</strong> Dificultad equilibrada, recuerda la mayoría.</div>
-                        <div>🔴 <strong>Experto (100% retención):</strong> Memoria fotográfica exacta. ¡Si una carta se mostró, no fallará!</div>
+                    <div style="display:flex; flex-direction:column; gap:4px; padding-left:8px; font-size:0.78rem;">
+                        <div><svg class="ui-icon ui-icon-sm" style="color:var(--vzla-emerald);"><use href="#icon-zap"/></svg> <strong>Novato (30% retención):</strong> Memoria corta, comete errores frecuentemente.</div>
+                        <div><svg class="ui-icon ui-icon-sm" style="color:var(--vzla-yellow);"><use href="#icon-compass"/></svg> <strong>Guía (70% retención):</strong> Dificultad equilibrada, recuerda la mayoría.</div>
+                        <div><svg class="ui-icon ui-icon-sm" style="color:var(--vzla-red);"><use href="#icon-flame"/></svg> <strong>Experto (100% retención):</strong> Memoria fotográfica exacta. ¡Si una carta se mostró, no fallará!</div>
                     </div>
-                    <div style="margin-top:6px; font-size:0.74rem; color:var(--vzla-red); font-weight:700;">
-                        ⚠️ Regla de honor: Si Canaibot te gana, no se permite registrar récord.
+                    <div style="margin-top:6px; font-size:0.74rem; color:var(--vzla-red); font-weight:700; display:flex; align-items:center; gap:4px;">
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-shield"/></svg> Regla de honor: Si Canaibot te gana, no se permite registrar récord.
                     </div>
                 </div>
 
                 <!-- Sección 4: Investigación de Operaciones -->
                 <div style="background:var(--bg-surface); padding:10px 12px; border-radius:12px; border:1px solid var(--border-light);">
                     <div style="font-weight:800; color:var(--vzla-emerald); text-transform:uppercase; font-size:0.72rem; margin-bottom:4px; display:flex; align-items:center; gap:5px;">
-                        📐 Investigación de Operaciones (El Secreto Detrás del Tablero)
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-binary"/></svg> Investigación de Operaciones (El Secreto Detrás del Tablero)
                     </div>
                     <p>
                         A diferencia de un juego común, el tablero <strong>no es aleatorio</strong>. Cada partida resuelve en milisegundos un modelo de <strong>Programación Lineal Binaria (PLB)</strong> usando el solver <code>SciPy HiGHS</code>:
@@ -1808,25 +1952,25 @@
                 <!-- Sección 5: Modalidades de Control y Accesibilidad -->
                 <div style="background:var(--bg-subtle); padding:12px; border-radius:14px; border:1.5px solid var(--border-light); box-shadow:var(--ios-shadow-sm);">
                     <div style="font-weight:800; color:var(--vzla-emerald); text-transform:uppercase; font-size:0.75rem; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-                        🖐️ Modalidades de Control y Accesibilidad
+                        <svg class="ui-icon ui-icon-sm"><use href="#icon-hand"/></svg> Modalidades de Control y Accesibilidad
                     </div>
                     <ul style="padding-left:16px; margin:0; display:flex; flex-direction:column; gap:8px; font-size:0.78rem; color:var(--text-body);">
                         <li>
-                            <strong style="color:var(--text-title);">👆 Control Táctil / Clic Inmediato:</strong>
+                            <strong style="color:var(--text-title);"><svg class="ui-icon ui-icon-sm"><use href="#icon-mouse-pointer"/></svg> Control Táctil / Clic Inmediato:</strong>
                             <span style="color:var(--text-body);">Toca cualquier carta para voltearla. En teléfonos la cuadrícula se auto-escala analíticamente para encajar el 100% en pantalla (cero scroll y cero corte).</span>
                         </li>
                         <li>
-                            <strong style="color:var(--text-title);">📷 Control Gestual por Cámara (Google MediaPipe IA):</strong>
+                            <strong style="color:var(--text-title);"><svg class="ui-icon ui-icon-sm"><use href="#icon-camera"/></svg> Control Gestual por Cámara (Google MediaPipe IA):</strong>
                             <div style="margin-top:4px; padding-left:8px; display:flex; flex-direction:column; gap:4px; color:var(--text-body);">
-                                <div>• <strong style="color:var(--text-title);">☝️ Apunta con Imán:</strong> Mueve el dedo índice; el puntero se ancla magnéticamente a la carta más cercana.</div>
-                                <div>• <strong style="color:var(--text-title);">🤏 Pellizca Seguro:</strong> Une pulgar e índice. La posición se congela en la carta objetivo para no desviar el cursor.</div>
-                                <div>• <strong style="color:var(--text-title);">👈 / 👉 Desliza en el Aire:</strong> Haz swipe lateral rápido para navegar cartas o alternar dificultad.</div>
-                                <div>• <strong style="color:var(--text-title);">👇 / 👆 Desliza Vertical:</strong> Swipe abajo para pausar y abrir menú; swipe arriba para reanudar.</div>
-                                <div>• <strong style="color:var(--text-title);">✋ Palma Abierta:</strong> Abre la palma para pausar o reanudar el juego.</div>
+                                <div>• <strong style="color:var(--text-title);">Apunta con Imán:</strong> Mueve el dedo índice; el puntero se ancla magnéticamente a la carta más cercana.</div>
+                                <div>• <strong style="color:var(--text-title);">Pellizca Seguro:</strong> Une pulgar e índice. La posición se congela en la carta objetivo para no desviar el cursor.</div>
+                                <div>• <strong style="color:var(--text-title);">Desliza en el Aire:</strong> Haz swipe lateral rápido para navegar cartas o alternar dificultad.</div>
+                                <div>• <strong style="color:var(--text-title);">Desliza Vertical:</strong> Swipe abajo para pausar y abrir menú; swipe arriba para reanudar.</div>
+                                <div>• <strong style="color:var(--text-title);">Palma Abierta:</strong> Abre la palma para pausar o reanudar el juego.</div>
                             </div>
                         </li>
                         <li>
-                            <strong style="color:var(--text-title);">🎙️ Comandos por Voz (Micrófono):</strong>
+                            <strong style="color:var(--text-title);"><svg class="ui-icon ui-icon-sm"><use href="#icon-mic"/></svg> Comandos por Voz (Micrófono):</strong>
                             <span style="color:var(--text-body);">Di en voz alta <em>«Carta 1»</em>, <em>«Reiniciar»</em>, <em>«Música»</em> o <em>«Menú»</em>.</span>
                         </li>
                     </ul>
@@ -1843,7 +1987,9 @@
     <!-- MODAL DE FORMULACIÓN MATEMÁTICA -->
     <div class="modal-backdrop" id="modal-lp">
         <div class="modal-box">
-            <h2 style="color:var(--vzla-blue);">📐 Optimización de Tablero</h2>
+            <h2 style="color:var(--vzla-blue); display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg class="ui-icon"><use href="#icon-binary"/></svg> Optimización de Tablero
+            </h2>
             <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
                 El tablero se generó resolviendo un modelo de <strong>Programación Lineal Binaria (SciPy HiGHS)</strong> garantizando equilibrio de dificultad y diversidad regional.
             </p>
@@ -1852,26 +1998,30 @@
         </div>
     </div>
 
-    <!-- MODAL DE FIN DE PARTIDA: SI GANA CANAIBOT, NO PERMITE PONER NOMBRE -->
+    <!-- MODAL DE FIN DE PARTIDA -->
     <div class="modal-backdrop" id="modal-victory">
         <div class="modal-box">
-            <h2 id="victory-title" style="color:var(--vzla-yellow);">🏆 ¡PARTIDA COMPLETADA!</h2>
+            <h2 id="victory-title" style="color:var(--vzla-yellow); display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg class="ui-icon"><use href="#icon-award"/></svg> ¡PARTIDA COMPLETADA!
+            </h2>
             <div id="victory-stats" style="margin:14px 0; font-size:0.95rem; line-height:1.8;"></div>
             
             <!-- Contenedor para registrar récord (SOLO si gana el jugador) -->
             <div id="player-record-input-section" style="margin: 12px 0; text-align: left;">
                 <label style="font-size:0.8rem; color:var(--text-muted); font-weight:700;">¡Ganaste! Registra tu nombre en el Salón de la Fama:</label>
                 <input type="text" id="victory-player-name" placeholder="Tu nombre..." maxlength="20" style="width:100%; padding:10px 12px; border:1.5px solid var(--border-light); border-radius:10px; font-family:inherit; margin-top:6px; font-weight:700; background:var(--bg-subtle); color:var(--text-title); font-size:0.95rem; box-sizing:border-box;">
-                <button class="btn-launch" style="padding:12px; margin-top:10px;" id="btn-save-victory">💾 Guardar Récord</button>
+                <button class="btn-launch" style="padding:12px; margin-top:10px;" id="btn-save-victory">
+                    <svg class="ui-icon ui-icon-sm" style="margin-right:5px;"><use href="#icon-save"/></svg> Guardar Récord
+                </button>
             </div>
 
             <!-- Contenedor si gana Canaibot (NO deja poner nombre) -->
             <div id="ai-defeat-section" style="display:none; margin: 12px 0;">
                 <p style="color:var(--vzla-red); font-weight:700; font-size:0.95rem; margin-bottom:14px;">
-                    🤖 Canaibot ha ganado la partida. No puedes registrar un récord tras una derrota.
+                    Canaibot ha ganado la partida. No puedes registrar un récord tras una derrota.
                 </p>
                 <button class="btn-launch" style="padding:12px; background:linear-gradient(135deg, #f59e0b, #d97706);" id="btn-rematch-defeat">
-                    🔄 Jugar Revancha
+                    <svg class="ui-icon ui-icon-sm" style="margin-right:5px;"><use href="#icon-rotate-ccw"/></svg> Jugar Revancha
                 </button>
             </div>
         </div>
@@ -1880,7 +2030,9 @@
     <!-- MODAL DE SALÓN DE LA FAMA (RÉCORDS) -->
     <div class="modal-backdrop" id="modal-records">
         <div class="modal-box">
-            <h2 style="color:var(--vzla-blue);">🏆 Salón de la Fama</h2>
+            <h2 style="color:var(--vzla-blue); display:flex; align-items:center; justify-content:center; gap:8px;">
+                <svg class="ui-icon" style="color:#f59e0b;"><use href="#icon-trophy"/></svg> Salón de la Fama
+            </h2>
             <div id="records-table-container" style="max-height:240px; overflow-y:auto; font-size:0.82rem; margin:12px 0; text-align:left;">
                 <span style="color:var(--text-muted);">Cargando récords...</span>
             </div>
@@ -2171,13 +2323,14 @@
                 swipeCooldownMs: 650
             };
 
-            // Estados temporales de control
+            // Estados temporales de control y cinemática
             this.handDetectedSince = 0;
             this.lastPinchTime = 0;
             this.isPinching = false;
             this.palmStartTime = 0;
             this.lastPalmToggleTime = 0;
             this.lastSwipeTime = 0;
+            this.swipeLockoutUntil = 0;
             this.palmHistory = [];
             this._pillTimer = null;
         }
@@ -2244,8 +2397,8 @@
 
                 const toast = document.getElementById('landscape-toast');
                 if (toast) {
-                    document.getElementById('toast-title').textContent = '📷 ¡Cámara Gestual Activa!';
-                    document.getElementById('toast-body').textContent = 'Apunta a una carta con el puntero neón. Pellizca (🤏) o mantén 0.7s para voltear.';
+                    document.getElementById('toast-title').textContent = '¡Cámara Gestual Activa!';
+                    document.getElementById('toast-body').textContent = 'Apunta a una carta con el puntero neón. Pellizca o mantén 0.7s para voltear.';
                     toast.classList.add('show');
                     setTimeout(() => toast.classList.remove('show'), 5000);
                 }
@@ -2303,6 +2456,13 @@
                 // ─── 1. DETECCIÓN DE DESLIZAMIENTO EN EL AIRE (SWIPE GESTURE) ───
                 this.detectSwipe(now, palmCenter);
 
+                // Si estamos en período de estabilización post-swipe, congelamos la posición
+                // en la carta objetivo para que el frenado de la mano no desvíe el cursor
+                if (now < this.swipeLockoutUntil) {
+                    this.ctx.restore();
+                    return;
+                }
+
                 // ─── 2. CALIBRACIÓN CINEMÁTICA Y EXPANSIÓN DE ZONA MUERTA ───
                 // Mapea la región central [0.12, 0.88] de la cámara al 100% de la pantalla
                 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -2312,7 +2472,7 @@
                 const targetX = normX * window.innerWidth;
                 const targetY = normY * window.innerHeight;
 
-                // ─── 3. CÁLCULO DE PELLIZCO (PINCH 🤏) INVARIANTE A ESCALA ───
+                // ─── 3. CÁLCULO DE PELLIZCO (PINCH) INVARIANTE A ESCALA ───
                 const dx = thumbTip.x - indexTip.x;
                 const dy = thumbTip.y - indexTip.y;
                 const dz = (thumbTip.z || 0) - (indexTip.z || 0);
@@ -2349,7 +2509,7 @@
                     return;
                 }
 
-                // ─── 5. GESTO DE PAUSA / REANUDACIÓN CON PALMA ABIERTA (✋) ───
+                // ─── 5. GESTO DE PAUSA / REANUDACIÓN CON PALMA ABIERTA ───
                 const isPalm = this.checkPalmOpen(landmarks);
                 if (isPalm) {
                     if (now - this.lastPalmToggleTime > this.config.palmToggleCooldownMs) {
@@ -2385,7 +2545,7 @@
                     if (this.cursorEl) this.cursorEl.classList.remove('pinching');
                     this.isPinching = false;
 
-                    // ─── 7. VOLTEO POR MANTENIMIENTO (DWELL CLICK ⏱️) ───
+                    // ─── 7. VOLTEO POR MANTENIMIENTO (DWELL CLICK) ───
                     if (!isPalm && !isClosingPinch) {
                         this.checkCardHover(this.cursorX, this.cursorY);
                     }
@@ -2403,37 +2563,36 @@
         // ─── DETECCIÓN DE VELOCIDAD Y DESLIZAMIENTO (SWIPE) ───
         detectSwipe(now, palmPoint) {
             this.palmHistory.push({ x: 1 - palmPoint.x, y: palmPoint.y, time: now });
-            if (this.palmHistory.length > 8) this.palmHistory.shift();
+            if (this.palmHistory.length > 10) this.palmHistory.shift();
 
             if (this.palmHistory.length >= 4 && (now - this.lastSwipeTime > this.config.swipeCooldownMs)) {
                 const oldest = this.palmHistory[0];
                 const newest = this.palmHistory[this.palmHistory.length - 1];
                 const dt = (newest.time - oldest.time) / 1000;
 
-                if (dt > 0.06 && dt < 0.35) {
+                if (dt >= 0.05 && dt <= 0.45) {
                     const dx = newest.x - oldest.x;
                     const dy = newest.y - oldest.y;
                     const vx = dx / dt;
                     const vy = dy / dt;
 
-                    const minDist = 0.16; // 16% del encuadre
-                    const minSpeed = 0.70;
+                    // Umbrales calibrados para teléfonos móviles y webcam
+                    const minDistX = 0.08; // 8% del encuadre horizontal (muy sensible y natural)
+                    const minSpeedX = 0.38;
+                    const minDistY = 0.10; // 10% del encuadre vertical
+                    const minSpeedY = 0.44;
 
-                    if (Math.abs(dx) > minDist && Math.abs(vx) > minSpeed && Math.abs(dx) > Math.abs(dy) * 1.4) {
-                        if (dx > 0) {
-                            this.handleSwipeAction('right');
-                        } else {
-                            this.handleSwipeAction('left');
-                        }
+                    if (Math.abs(dx) >= minDistX && Math.abs(vx) >= minSpeedX && Math.abs(dx) > Math.abs(dy) * 1.15) {
+                        const dir = dx > 0 ? 'right' : 'left';
+                        this.handleSwipeAction(dir);
                         this.lastSwipeTime = now;
+                        this.swipeLockoutUntil = now + 850;
                         this.palmHistory = [];
-                    } else if (Math.abs(dy) > minDist && Math.abs(vy) > minSpeed && Math.abs(dy) > Math.abs(dx) * 1.4) {
-                        if (dy > 0) {
-                            this.handleSwipeAction('down');
-                        } else {
-                            this.handleSwipeAction('up');
-                        }
+                    } else if (Math.abs(dy) >= minDistY && Math.abs(vy) >= minSpeedY && Math.abs(dy) > Math.abs(dx) * 1.15) {
+                        const dir = dy > 0 ? 'down' : 'up';
+                        this.handleSwipeAction(dir);
                         this.lastSwipeTime = now;
+                        this.swipeLockoutUntil = now + 850;
                         this.palmHistory = [];
                     }
                 }
@@ -2447,47 +2606,85 @@
 
             if (dir === 'down') {
                 if (isPlaying && !isMenuOpen) {
-                    this.showGesturePill('👇', 'Pausa');
+                    this.showGesturePill('#icon-pause', 'Pausa');
                     this.toggleGamePause();
                 }
             } else if (dir === 'up') {
                 if (isMenuOpen) {
-                    this.showGesturePill('👆', 'Reanudado');
+                    this.showGesturePill('#icon-play', 'Reanudado');
                     this.toggleGamePause();
                 }
             } else if (dir === 'right') {
                 if (isPlaying && !isMenuOpen) {
                     this.selectNextCard(1);
-                    this.showGesturePill('👉', 'Siguiente Carta');
+                    this.showGesturePill('#icon-arrow-right', 'Siguiente Carta');
                 } else if (document.getElementById('menu-view').style.display !== 'none') {
                     this.cycleDifficulty(1);
-                    this.showGesturePill('👉', 'Dificultad Cambiada');
+                    this.showGesturePill('#icon-compass', 'Dificultad Cambiada');
                 }
             } else if (dir === 'left') {
                 if (isPlaying && !isMenuOpen) {
                     this.selectNextCard(-1);
-                    this.showGesturePill('👈', 'Carta Anterior');
+                    this.showGesturePill('#icon-arrow-left', 'Carta Anterior');
                 } else if (document.getElementById('menu-view').style.display !== 'none') {
                     this.cycleDifficulty(-1);
-                    this.showGesturePill('👈', 'Dificultad Cambiada');
+                    this.showGesturePill('#icon-compass', 'Dificultad Cambiada');
                 }
             }
         }
 
+        // Navegación espacial bidimensional por la cuadrícula de cartas
         selectNextCard(step) {
             const flippable = Array.from(document.querySelectorAll('.card-slot:not(.matched)'));
             if (!flippable.length) return;
 
-            let currentIndex = flippable.findIndex(s => s === this.hoveredCard);
-            if (currentIndex === -1) {
-                currentIndex = step > 0 ? 0 : flippable.length - 1;
+            const cardCenters = flippable.map(slot => {
+                const r = slot.getBoundingClientRect();
+                return { slot, x: r.left + r.width / 2, y: r.top + r.height / 2 };
+            });
+
+            let current = cardCenters.find(c => c.slot === this.hoveredCard);
+            let nextSlot = null;
+
+            if (current) {
+                if (step > 0) {
+                    // Buscar carta adyacente a la derecha en la misma fila (umbral Y de 32px)
+                    const sameRowRight = cardCenters
+                        .filter(c => Math.abs(c.y - current.y) < 32 && c.x > current.x + 8)
+                        .sort((a, b) => a.x - b.x);
+
+                    if (sameRowRight.length > 0) {
+                        nextSlot = sameRowRight[0].slot;
+                    } else {
+                        // Pasar a la primera carta de la siguiente fila
+                        const below = cardCenters
+                            .filter(c => c.y > current.y + 20)
+                            .sort((a, b) => (a.y - b.y) || (a.x - b.x));
+                        nextSlot = below.length > 0 ? below[0].slot : cardCenters[0].slot;
+                    }
+                } else {
+                    // Buscar carta adyacente a la izquierda en la misma fila
+                    const sameRowLeft = cardCenters
+                        .filter(c => Math.abs(c.y - current.y) < 32 && c.x < current.x - 8)
+                        .sort((a, b) => b.x - a.x);
+
+                    if (sameRowLeft.length > 0) {
+                        nextSlot = sameRowLeft[0].slot;
+                    } else {
+                        // Pasar a la última carta de la fila superior
+                        const above = cardCenters
+                            .filter(c => c.y < current.y - 20)
+                            .sort((a, b) => (b.y - a.y) || (b.x - a.x));
+                        nextSlot = above.length > 0 ? above[0].slot : cardCenters[cardCenters.length - 1].slot;
+                    }
+                }
             } else {
-                currentIndex = (currentIndex + step + flippable.length) % flippable.length;
+                nextSlot = step > 0 ? flippable[0] : flippable[flippable.length - 1];
             }
 
-            const targetSlot = flippable[currentIndex];
-            if (targetSlot) {
-                const rect = targetSlot.getBoundingClientRect();
+            if (nextSlot) {
+                this.lockedTargetCard = nextSlot;
+                const rect = nextSlot.getBoundingClientRect();
                 this.cursorX = rect.left + rect.width / 2;
                 this.cursorY = rect.top + rect.height / 2;
                 if (this.cursorEl) {
@@ -2506,18 +2703,20 @@
             idx = (idx + step + diffs.length) % diffs.length;
             const newDiff = diffs[idx];
             currentConfig.ai_difficulty = newDiff;
-            document.querySelectorAll('.difficulty-chip').forEach(c => {
-                c.classList.toggle('active', c.dataset.diff === newDiff);
+            document.querySelectorAll('#group-diff .chip-btn').forEach(c => {
+                c.classList.toggle('selected', c.dataset.diff === newDiff);
             });
             audio.playSwipe();
         }
 
-        showGesturePill(icon, text) {
+        showGesturePill(iconId, text) {
             const pill = document.getElementById('gesture-action-pill');
             if (!pill) return;
             const iconEl = document.getElementById('gesture-action-icon');
             const txtEl = document.getElementById('gesture-action-text');
-            if (iconEl) iconEl.textContent = icon;
+            if (iconEl) {
+                iconEl.innerHTML = `<svg class="ui-icon ui-icon-sm"><use href="${iconId}"/></svg>`;
+            }
             if (txtEl) txtEl.textContent = text;
             pill.classList.add('show');
             clearTimeout(this._pillTimer);
@@ -2736,7 +2935,7 @@
         }
 
         processCommand(text) {
-            this.label.textContent = `🗣️ "${text}"`;
+            this.label.textContent = `"${text}"`;
             setTimeout(() => {
                 if (this.active) this.label.textContent = 'Escuchando comandos...';
             }, 3000);
@@ -2814,14 +3013,14 @@
             localStorage.setItem('tepuymatch_theme', theme);
 
             const isDark = theme === 'dark';
-            const icon = isDark ? '☀️' : '🌙';
+            const iconId = isDark ? '#icon-sun' : '#icon-moon';
             const label = isDark ? 'Claro' : 'Oscuro';
             const subtext = isDark ? 'Activar tema diurno' : 'Activar tema nocturno';
 
             // Botón en barra superior
             const btnTop = document.getElementById('btn-theme-toggle');
             if (btnTop) {
-                btnTop.innerHTML = `<span>${icon}</span> <span class="theme-label-txt" style="font-size:0.75rem; font-weight:700;">${label}</span>`;
+                btnTop.innerHTML = `<svg class="ui-icon"><use href="${iconId}"/></svg> <span class="theme-label-txt" style="font-size:0.75rem; font-weight:700;">${label}</span>`;
                 btnTop.title = `Cambiar a Modo ${label}`;
             }
 
@@ -2829,7 +3028,7 @@
             const dropIcon = document.getElementById('theme-dropdown-icon');
             const dropBadge = document.getElementById('theme-dropdown-badge');
             const dropSub = document.getElementById('theme-dropdown-subtext');
-            if (dropIcon) dropIcon.textContent = icon;
+            if (dropIcon) dropIcon.innerHTML = `<svg class="ui-icon"><use href="${iconId}"/></svg>`;
             if (dropBadge) {
                 dropBadge.textContent = isDark ? 'Oscuro' : 'Claro';
                 dropBadge.className = isDark ? 'item-badge on' : 'item-badge';
@@ -2839,14 +3038,14 @@
             // Botón en HUD durante la partida
             const btnHud = document.getElementById('btn-hud-theme-toggle');
             if (btnHud) {
-                btnHud.innerHTML = `<span>${icon}</span>`;
+                btnHud.innerHTML = `<svg class="ui-icon ui-icon-sm"><use href="${iconId}"/></svg>`;
                 btnHud.title = `Cambiar a Modo ${label}`;
             }
 
             // Botón en modal de pausa
             const btnMenu = document.getElementById('btn-menu-theme-toggle');
             if (btnMenu) {
-                btnMenu.innerHTML = `<span>${icon}</span> Tema: <strong>${isDark ? 'Oscuro' : 'Claro'}</strong>`;
+                btnMenu.innerHTML = `<svg class="ui-icon ui-icon-sm"><use href="${iconId}"/></svg> Tema: <strong>${isDark ? 'Oscuro' : 'Claro'}</strong>`;
             }
         }
     }
@@ -3035,7 +3234,7 @@
 
         const camStatus = document.getElementById('camera-status-text');
         if (camStatus) {
-            camStatus.textContent = isCam ? 'Activo: MediaPipe IA 🤏' : 'MediaPipe: Apunta y Pellizca 🤏';
+            camStatus.textContent = isCam ? 'Activo: MediaPipe IA' : 'MediaPipe: Apunta y Pellizca';
         }
 
         const voiceBadge = document.getElementById('voice-badge');
@@ -3140,7 +3339,7 @@
     async function startNewGame() {
         const btn = document.getElementById('btn-start-game');
         btn.disabled = true;
-        btn.innerHTML = '<span>⚡ Optimizando Tablero...</span>';
+        btn.innerHTML = '<span><svg class="ui-icon ui-icon-sm" style="animation:spin 1s linear infinite; margin-right:6px;"><use href="#icon-refresh-cw"/></svg> Optimizando Tablero...</span>';
 
         // Auto-orientación según el dispositivo:
         // En teléfonos verticales (pantalla alta y estrecha), orientar las cartas verticalmente
@@ -3275,9 +3474,12 @@
         const isNarrow = window.innerWidth <= 640;
         const gap = isNarrow ? (rows >= 6 ? 4 : 5) : (rows >= 6 ? 6 : 8);
 
-        // Espacio disponible descontando la suma de gaps y margen de respiro
-        const availW = Math.max(80, stageW - (cols - 1) * gap - (isNarrow ? 4 : 12));
-        const availH = Math.max(100, stageH - (rows - 1) * gap - (isNarrow ? 6 : 14));
+        // Margen de seguridad estricto para evitar colisión con el HUD superior y recorte en Safari/Chrome
+        const marginX = isNarrow ? 8 : 16;
+        const marginY = isNarrow ? (rows >= 6 ? 26 : 18) : 22;
+
+        const availW = Math.max(80, stageW - (cols - 1) * gap - marginX);
+        const availH = Math.max(100, stageH - (rows - 1) * gap - marginY);
 
         // Aspect ratio exacto de tarjetas: 3 ancho por 4 alto (3/4 = 0.75)
         const ratio = 3 / 4;
@@ -3303,8 +3505,8 @@
         }
 
         // Límites seguros mínimos
-        finalCardW = Math.max(28, finalCardW);
-        finalCardH = Math.max(38, finalCardH);
+        finalCardW = Math.max(26, finalCardW);
+        finalCardH = Math.max(34, finalCardH);
 
         const totalGridW = finalCardW * cols + (cols - 1) * gap;
         const totalGridH = finalCardH * rows + (rows - 1) * gap;
@@ -3508,7 +3710,11 @@
         if (data.current_player) {
             const isMe = data.current_player === 'Jugador';
             const el = document.getElementById('val-current-turn');
-            if (el) el.textContent = isMe ? 'Tú 👤' : 'Canaibot 🤖';
+            if (el) {
+                el.innerHTML = isMe 
+                    ? '<svg class="ui-icon ui-icon-sm" style="margin-right:3px;"><use href="#icon-user"/></svg> Tú' 
+                    : '<svg class="ui-icon ui-icon-sm" style="margin-right:3px;"><use href="#icon-bot"/></svg> Canaibot';
+            }
             const pill = document.getElementById('hud-turn-pill');
             if (pill) {
                 pill.style.background = isMe ? 'rgba(37,99,235,0.12)' : 'rgba(220,38,38,0.12)';
@@ -3536,7 +3742,7 @@
 
     function showLandscapeToast(res) {
         const toast = document.getElementById('landscape-toast');
-        document.getElementById('toast-title').textContent = `✅ ${res.landscape_name} (${res.landscape_state})`;
+        document.getElementById('toast-title').textContent = `${res.landscape_name} (${res.landscape_state})`;
         document.getElementById('toast-body').textContent = res.landscape_description;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 4000);
@@ -3639,14 +3845,20 @@
         const defeatSection = document.getElementById('ai-defeat-section');
 
         statsEl.innerHTML = `
-            <div>👤 Tus parejas: <strong>${data.scores.Jugador}</strong> | 🤖 Canaibot: <strong>${data.scores.IA || 0}</strong></div>
-            <div>🔄 Turnos: <strong>${data.turn_number}</strong> | ⏱️ Tiempo: <strong>${data.elapsed_time?.toFixed(1)}s</strong></div>
+            <div style="display:flex; justify-content:center; gap:16px; align-items:center;">
+                <span><svg class="ui-icon ui-icon-sm" style="margin-right:4px;"><use href="#icon-user"/></svg> Tus parejas: <strong>${data.scores.Jugador}</strong></span>
+                <span><svg class="ui-icon ui-icon-sm" style="margin-right:4px;"><use href="#icon-bot"/></svg> Canaibot: <strong>${data.scores.IA || 0}</strong></span>
+            </div>
+            <div style="display:flex; justify-content:center; gap:16px; align-items:center; margin-top:5px;">
+                <span><svg class="ui-icon ui-icon-sm" style="margin-right:4px;"><use href="#icon-refresh-cw"/></svg> Turnos: <strong>${data.turn_number}</strong></span>
+                <span><svg class="ui-icon ui-icon-sm" style="margin-right:4px;"><use href="#icon-clock"/></svg> Tiempo: <strong>${data.elapsed_time?.toFixed(1)}s</strong></span>
+            </div>
         `;
 
         if (data.winner === 'IA') {
             // ¡GANA LA IA (CANAIBOT)! NO SE PERMITE PONER NOMBRE
             audio.playMismatch();
-            titleEl.textContent = '🤖 ¡VICTORIA DE CANAIBOT!';
+            titleEl.innerHTML = '<svg class="ui-icon ui-icon-lg" style="color:var(--vzla-red); margin-right:6px;"><use href="#icon-bot"/></svg> ¡VICTORIA DE CANAIBOT!';
             titleEl.style.color = 'var(--vzla-red)';
             recordSection.style.display = 'none';
             defeatSection.style.display = 'block';
@@ -3654,8 +3866,10 @@
             // GANA EL JUGADOR (O EMPATE)
             audio.playFanfare();
             startConfetti();
-            titleEl.textContent = data.winner === 'Empate' ? '🤝 ¡EMPATE TÉCNICO!' : '🏆 ¡HAS GANADO!';
-            titleEl.style.color = 'var(--vzla-yellow)';
+            titleEl.innerHTML = data.winner === 'Empate' 
+                ? '<svg class="ui-icon ui-icon-lg" style="color:var(--vzla-blue); margin-right:6px;"><use href="#icon-award"/></svg> ¡EMPATE TÉCNICO!' 
+                : '<svg class="ui-icon ui-icon-lg" style="color:#f59e0b; margin-right:6px;"><use href="#icon-trophy"/></svg> ¡HAS GANADO!';
+            titleEl.style.color = data.winner === 'Empate' ? 'var(--vzla-blue)' : 'var(--vzla-yellow)';
             recordSection.style.display = 'block';
             defeatSection.style.display = 'none';
         }
@@ -3689,11 +3903,17 @@
             }
             let html = '<div style="display:flex; flex-direction:column; gap:8px;">';
             list.forEach((r, idx) => {
-                const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}º`;
+                const medal = idx === 0 
+                    ? '<svg class="ui-icon rank-medal-icon rank-gold"><use href="#icon-award"/></svg>' 
+                    : idx === 1 
+                    ? '<svg class="ui-icon rank-medal-icon rank-silver"><use href="#icon-award"/></svg>' 
+                    : idx === 2 
+                    ? '<svg class="ui-icon rank-medal-icon rank-bronze"><use href="#icon-award"/></svg>' 
+                    : `<span style="font-size:0.82rem; font-weight:800; color:var(--text-muted); width:1.35em; text-align:center; display:inline-block;">#${idx + 1}</span>`;
                 html += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 15px; background:var(--bg-surface); border-radius:14px; border:1.5px solid var(--border-light); box-shadow:var(--ios-shadow-sm);">
                         <div style="display:flex; align-items:center; gap:11px; min-width:0;">
-                            <span style="font-size:1.3rem; flex-shrink:0;">${medal}</span>
+                            <span style="font-size:1.15rem; flex-shrink:0; display:inline-flex; align-items:center;">${medal}</span>
                             <span style="font-size:0.95rem; font-weight:800; color:var(--text-title); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                                 ${r.player_name}
                             </span>
@@ -3702,8 +3922,8 @@
                             <span style="font-size:0.82rem; font-weight:800; color:var(--vzla-blue); background:rgba(37,99,235,0.12); padding:4px 10px; border-radius:8px; border:1px solid rgba(37,99,235,0.25);">
                                 ${r.score} pts
                             </span>
-                            <span style="font-size:0.76rem; font-weight:700; color:var(--text-muted);">
-                                ⏱️ ${r.time_seconds}s
+                            <span style="font-size:0.76rem; font-weight:700; color:var(--text-muted); display:inline-flex; align-items:center; gap:4px;">
+                                <svg class="ui-icon ui-icon-sm"><use href="#icon-clock"/></svg> ${r.time_seconds}s
                             </span>
                         </div>
                     </div>

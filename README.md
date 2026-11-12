@@ -130,10 +130,10 @@ El sistema implementa control gestual mediante **Google MediaPipe Hands**:
 
 | Gesto | Formulación Matemática / Criterio de Activación | Acción en el Juego |
 |---|---|---|
-| **Apunta (Anclaje Magnético)** | Coordenadas del índice Landmark #8 filtradas con Lerp y radio magnético ($r = 75\text{ px}$) con histéresis ($r_h = 90\text{ px}$). El cursor se **ancla de forma fija al centro de la carta**, eliminando el temblor natural de la mano. | Apunta y resalta la carta con efecto neón sin jitter. |
-| **Mantenimiento (Dwell Click)** | Permanencia del puntero en la carta durante $t \ge 0.45\text{ s}$ sin necesidad de contorsionar los dedos. Se muestra barra de carga circular/inferior en tiempo real. | Voltea la carta automáticamente de forma ultra ágil y descansada. |
-| **Pellizco Inmediato (Pinch)** | Distancia relativa pulgar-índice $\frac{d_{\text{thumb-index}}}{\text{escala}_{\text{palma}}} < 0.38$ o $d_{\text{euclidea}} < 0.095$. Al estar anclado en la carta, se ejecuta sin saltos ni desvíos. | Volteo inmediato (en 0 ms) para usuarios que prefieren interacción táctil en el aire. |
-| **Palma Abierta** | Extensión de los 4 dedos respecto a la muñeca sostenida por $\ge 0.5\text{ s}$. | Pausa la partida y abre el menú (o reanuda el juego). |
+| **Apunta (Puntero Estable)** | Coordenadas del índice Landmark #8 filtradas con suavizado exponencial pasa-bajas ($\alpha = 0.32$). Movimiento suave y continuo sin temblores ni saltos bruscos. | Apunta libremente y resalta con efecto neón la carta bajo el cursor. |
+| **Mantenimiento (Dwell Click)** | Permanencia del puntero sobre una carta durante $t \ge 0.70\text{ s}$ sin necesidad de contorsionar los dedos. Se muestra barra de carga en tiempo real. | Voltea la carta automáticamente de forma descansada y predecible. |
+| **Pellizco (Pinch Click)** | Distancia relativa pulgar-índice $\frac{d_{\text{thumb-index}}}{\text{escala}_{\text{palma}}} < 0.25$ o $d_{\text{euclidea}} < 0.062$ (unión real de yemas). | Volteo inmediato (en 0 ms) al juntar pulgar e índice intencionalmente. |
+| **Palma Abierta** | Extensión de los 4 dedos respecto a la muñeca sostenida por $\ge 0.6\text{ s}$. | Pausa la partida y abre el menú (o reanuda el juego). |
 
 * **Ubicación en el Código:** `web/index.html` (Líneas 2280–2550: clase `MediaPipeGestureController`).
 

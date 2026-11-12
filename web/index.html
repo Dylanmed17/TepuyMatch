@@ -1259,7 +1259,7 @@
         }
         #voice-indicator-pill.active { display: flex; }
 
-        /* Banner flotante de feedback para Gestos de Deslizamiento (Swipe) */
+        /* Banner flotante de feedback de gestos (Pausa / Reanudar) */
         #gesture-action-pill {
             position: fixed;
             top: 16px;
@@ -1375,9 +1375,9 @@
     <!-- INDICADORES FLOTANTES: VOZ, CURSOR VIRTUAL Y CÁMARA MEDIAPIPE -->
     <div id="gesture-action-pill">
         <span id="gesture-action-icon" style="display:flex; align-items:center;">
-            <svg class="ui-icon"><use href="#icon-arrow-right"/></svg>
+            <svg class="ui-icon"><use href="#icon-pause"/></svg>
         </span>
-        <span id="gesture-action-text">Siguiente Carta</span>
+        <span id="gesture-action-text">Pausa</span>
     </div>
     <div id="voice-indicator-pill">
         <svg class="ui-icon" style="color:var(--vzla-blue);"><use href="#icon-mic"/></svg>
@@ -1437,7 +1437,7 @@
                     </span>
                     <div class="item-text">
                         <strong>Guía de Cámara (Gestos)</strong>
-                        <small>Apuntar, pellizcar y swipes en el aire</small>
+                        <small>Apuntar, pellizcar y palma abierta</small>
                     </div>
                 </button>
                 <button class="dropdown-item" id="btn-music-toggle">
@@ -1809,47 +1809,25 @@
                     </div>
                 </div>
 
-                <!-- Paso 3: Deslizar Horizontal -->
+                <!-- Paso 3: Mantenimiento -->
                 <div class="gesture-guide-card">
                     <div class="gesture-icon-badge">
-                        <svg class="ui-icon" style="color:var(--vzla-emerald);"><use href="#icon-move-horizontal"/></svg>
+                        <svg class="ui-icon" style="color:var(--vzla-emerald);"><use href="#icon-clock"/></svg>
                     </div>
                     <div class="gesture-card-text">
-                        <strong>3. Deslizar en el Aire (Air Swipe Horizontal)</strong>
-                        <p>Mueve tu mano rápido a la izquierda o derecha: en el tablero navega entre cartas; en el menú principal cambia de dificultad.</p>
+                        <strong>3. Volteo por Mantenimiento (Dwell Click)</strong>
+                        <p>Si prefieres no pellizcar, mantén el puntero inmóvil sobre una carta durante <strong>0.7 segundos</strong> y se volteará automáticamente.</p>
                     </div>
                 </div>
 
-                <!-- Paso 4: Deslizar Vertical -->
+                <!-- Paso 4: Palma Abierta -->
                 <div class="gesture-guide-card">
                     <div class="gesture-icon-badge">
-                        <svg class="ui-icon" style="color:var(--vzla-red);"><use href="#icon-move-vertical"/></svg>
+                        <svg class="ui-icon" style="color:var(--vzla-red);"><use href="#icon-shield"/></svg>
                     </div>
                     <div class="gesture-card-text">
-                        <strong>4. Deslizar Vertical (Menú y Reanudación)</strong>
-                        <p>Desliza tu mano hacia <strong>Abajo</strong> para pausar y abrir el menú. Desliza hacia <strong>Arriba</strong> para reanudar la partida al instante.</p>
-                    </div>
-                </div>
-
-                <!-- Paso 5: Mantenimiento -->
-                <div class="gesture-guide-card">
-                    <div class="gesture-icon-badge">
-                        <svg class="ui-icon"><use href="#icon-clock"/></svg>
-                    </div>
-                    <div class="gesture-card-text">
-                        <strong>5. Volteo por Mantenimiento (Dwell Click)</strong>
-                        <p>Si prefieres no pellizcar, mantén el puntero inmóvil sobre una carta durante <strong>0.8 segundos</strong> y se volteará automáticamente.</p>
-                    </div>
-                </div>
-
-                <!-- Paso 6: Palma Abierta -->
-                <div class="gesture-guide-card">
-                    <div class="gesture-icon-badge">
-                        <svg class="ui-icon"><use href="#icon-shield"/></svg>
-                    </div>
-                    <div class="gesture-card-text">
-                        <strong>6. Pausa con Palma Abierta</strong>
-                        <p>Muestra la palma abierta y quieta hacia la cámara durante 1 segundo para pausar con enfriamiento seguro.</p>
+                        <strong>4. Pausa y Menú con Palma Abierta</strong>
+                        <p>Muestra la palma abierta y quieta hacia la cámara durante 0.6 segundos para pausar la partida y abrir el menú (o para reanudar).</p>
                     </div>
                 </div>
 
@@ -1962,11 +1940,10 @@
                         <li>
                             <strong style="color:var(--text-title);"><svg class="ui-icon ui-icon-sm"><use href="#icon-camera"/></svg> Control Gestual por Cámara (Google MediaPipe IA):</strong>
                             <div style="margin-top:4px; padding-left:8px; display:flex; flex-direction:column; gap:4px; color:var(--text-body);">
-                                <div>• <strong style="color:var(--text-title);">Apunta con Imán:</strong> Mueve el dedo índice; el puntero se ancla magnéticamente a la carta más cercana.</div>
-                                <div>• <strong style="color:var(--text-title);">Pellizca Seguro:</strong> Une pulgar e índice. La posición se congela en la carta objetivo para no desviar el cursor.</div>
-                                <div>• <strong style="color:var(--text-title);">Desliza en el Aire:</strong> Haz swipe lateral rápido para navegar cartas o alternar dificultad.</div>
-                                <div>• <strong style="color:var(--text-title);">Desliza Vertical:</strong> Swipe abajo para pausar y abrir menú; swipe arriba para reanudar.</div>
-                                <div>• <strong style="color:var(--text-title);">Palma Abierta:</strong> Abre la palma para pausar o reanudar el juego.</div>
+                                <div>• <strong style="color:var(--text-title);">Apunta con Imán:</strong> Mueve el dedo índice; el puntero neón se ancla magnéticamente a la carta más cercana.</div>
+                                <div>• <strong style="color:var(--text-title);">Pellizca para Voltear:</strong> Une pulgar e índice. La posición se congela en la carta objetivo para no desviar el cursor.</div>
+                                <div>• <strong style="color:var(--text-title);">Mantenimiento (Dwell):</strong> Mantén el puntero inmóvil 0.7s sobre una carta para voltearla sin pellizcar.</div>
+                                <div>• <strong style="color:var(--text-title);">Palma Abierta:</strong> Muestra la palma extendida 0.6s para pausar o reanudar el juego.</div>
                             </div>
                         </li>
                         <li>
@@ -2318,9 +2295,7 @@
                 // 3. Volteo por Mantenimiento (Dwell Click): Tiempo apuntando a la carta para voltear (ms)
                 hoverDwellMs: 750,
                 // 4. Período de gracia inicial: Tiempo tras detectar la mano antes de aceptar acciones (ms)
-                handGraceMs: 400,
-                // 5. Enfriamiento entre gestos de deslizamiento (Swipe) (ms)
-                swipeCooldownMs: 650
+                handGraceMs: 400
             };
 
             // Estados temporales de control y cinemática
@@ -2329,9 +2304,7 @@
             this.isPinching = false;
             this.palmStartTime = 0;
             this.lastPalmToggleTime = 0;
-            this.lastSwipeTime = 0;
-            this.swipeLockoutUntil = 0;
-            this.palmHistory = [];
+            this.lockedTargetCard = null;
             this._pillTimer = null;
         }
 
@@ -2451,19 +2424,8 @@
 
                 const indexTip = landmarks[8];
                 const thumbTip = landmarks[4];
-                const palmCenter = landmarks[9]; // Nudillo medio (muy estable)
 
-                // ─── 1. DETECCIÓN DE DESLIZAMIENTO EN EL AIRE (SWIPE GESTURE) ───
-                this.detectSwipe(now, palmCenter);
-
-                // Si estamos en período de estabilización post-swipe, congelamos la posición
-                // en la carta objetivo para que el frenado de la mano no desvíe el cursor
-                if (now < this.swipeLockoutUntil) {
-                    this.ctx.restore();
-                    return;
-                }
-
-                // ─── 2. CALIBRACIÓN CINEMÁTICA Y EXPANSIÓN DE ZONA MUERTA ───
+                // ─── 1. CALIBRACIÓN CINEMÁTICA Y EXPANSIÓN DE ZONA MUERTA ───
                 // Mapea la región central [0.12, 0.88] de la cámara al 100% de la pantalla
                 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
                 const normX = clamp(((1 - indexTip.x) - 0.12) / 0.76, 0, 1);
@@ -2554,159 +2516,9 @@
                 this.handDetectedSince = 0;
                 this.palmStartTime = 0;
                 this.lockedTargetCard = null;
-                this.palmHistory = [];
                 this.resetHover();
             }
             this.ctx.restore();
-        }
-
-        // ─── DETECCIÓN DE VELOCIDAD Y DESLIZAMIENTO (SWIPE) ───
-        detectSwipe(now, palmPoint) {
-            this.palmHistory.push({ x: 1 - palmPoint.x, y: palmPoint.y, time: now });
-            if (this.palmHistory.length > 10) this.palmHistory.shift();
-
-            if (this.palmHistory.length >= 4 && (now - this.lastSwipeTime > this.config.swipeCooldownMs)) {
-                const oldest = this.palmHistory[0];
-                const newest = this.palmHistory[this.palmHistory.length - 1];
-                const dt = (newest.time - oldest.time) / 1000;
-
-                if (dt >= 0.05 && dt <= 0.45) {
-                    const dx = newest.x - oldest.x;
-                    const dy = newest.y - oldest.y;
-                    const vx = dx / dt;
-                    const vy = dy / dt;
-
-                    // Umbrales calibrados para teléfonos móviles y webcam
-                    const minDistX = 0.08; // 8% del encuadre horizontal (muy sensible y natural)
-                    const minSpeedX = 0.38;
-                    const minDistY = 0.10; // 10% del encuadre vertical
-                    const minSpeedY = 0.44;
-
-                    if (Math.abs(dx) >= minDistX && Math.abs(vx) >= minSpeedX && Math.abs(dx) > Math.abs(dy) * 1.15) {
-                        const dir = dx > 0 ? 'right' : 'left';
-                        this.handleSwipeAction(dir);
-                        this.lastSwipeTime = now;
-                        this.swipeLockoutUntil = now + 850;
-                        this.palmHistory = [];
-                    } else if (Math.abs(dy) >= minDistY && Math.abs(vy) >= minSpeedY && Math.abs(dy) > Math.abs(dx) * 1.15) {
-                        const dir = dy > 0 ? 'down' : 'up';
-                        this.handleSwipeAction(dir);
-                        this.lastSwipeTime = now;
-                        this.swipeLockoutUntil = now + 850;
-                        this.palmHistory = [];
-                    }
-                }
-            }
-        }
-
-        handleSwipeAction(dir) {
-            const inGameMenu = document.getElementById('modal-game-menu');
-            const isMenuOpen = inGameMenu && inGameMenu.classList.contains('open');
-            const isPlaying = activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex';
-
-            if (dir === 'down') {
-                if (isPlaying && !isMenuOpen) {
-                    this.showGesturePill('#icon-pause', 'Pausa');
-                    this.toggleGamePause();
-                }
-            } else if (dir === 'up') {
-                if (isMenuOpen) {
-                    this.showGesturePill('#icon-play', 'Reanudado');
-                    this.toggleGamePause();
-                }
-            } else if (dir === 'right') {
-                if (isPlaying && !isMenuOpen) {
-                    this.selectNextCard(1);
-                    this.showGesturePill('#icon-arrow-right', 'Siguiente Carta');
-                } else if (document.getElementById('menu-view').style.display !== 'none') {
-                    this.cycleDifficulty(1);
-                    this.showGesturePill('#icon-compass', 'Dificultad Cambiada');
-                }
-            } else if (dir === 'left') {
-                if (isPlaying && !isMenuOpen) {
-                    this.selectNextCard(-1);
-                    this.showGesturePill('#icon-arrow-left', 'Carta Anterior');
-                } else if (document.getElementById('menu-view').style.display !== 'none') {
-                    this.cycleDifficulty(-1);
-                    this.showGesturePill('#icon-compass', 'Dificultad Cambiada');
-                }
-            }
-        }
-
-        // Navegación espacial bidimensional por la cuadrícula de cartas
-        selectNextCard(step) {
-            const flippable = Array.from(document.querySelectorAll('.card-slot:not(.matched)'));
-            if (!flippable.length) return;
-
-            const cardCenters = flippable.map(slot => {
-                const r = slot.getBoundingClientRect();
-                return { slot, x: r.left + r.width / 2, y: r.top + r.height / 2 };
-            });
-
-            let current = cardCenters.find(c => c.slot === this.hoveredCard);
-            let nextSlot = null;
-
-            if (current) {
-                if (step > 0) {
-                    // Buscar carta adyacente a la derecha en la misma fila (umbral Y de 32px)
-                    const sameRowRight = cardCenters
-                        .filter(c => Math.abs(c.y - current.y) < 32 && c.x > current.x + 8)
-                        .sort((a, b) => a.x - b.x);
-
-                    if (sameRowRight.length > 0) {
-                        nextSlot = sameRowRight[0].slot;
-                    } else {
-                        // Pasar a la primera carta de la siguiente fila
-                        const below = cardCenters
-                            .filter(c => c.y > current.y + 20)
-                            .sort((a, b) => (a.y - b.y) || (a.x - b.x));
-                        nextSlot = below.length > 0 ? below[0].slot : cardCenters[0].slot;
-                    }
-                } else {
-                    // Buscar carta adyacente a la izquierda en la misma fila
-                    const sameRowLeft = cardCenters
-                        .filter(c => Math.abs(c.y - current.y) < 32 && c.x < current.x - 8)
-                        .sort((a, b) => b.x - a.x);
-
-                    if (sameRowLeft.length > 0) {
-                        nextSlot = sameRowLeft[0].slot;
-                    } else {
-                        // Pasar a la última carta de la fila superior
-                        const above = cardCenters
-                            .filter(c => c.y < current.y - 20)
-                            .sort((a, b) => (b.y - a.y) || (b.x - a.x));
-                        nextSlot = above.length > 0 ? above[0].slot : cardCenters[cardCenters.length - 1].slot;
-                    }
-                }
-            } else {
-                nextSlot = step > 0 ? flippable[0] : flippable[flippable.length - 1];
-            }
-
-            if (nextSlot) {
-                this.lockedTargetCard = nextSlot;
-                const rect = nextSlot.getBoundingClientRect();
-                this.cursorX = rect.left + rect.width / 2;
-                this.cursorY = rect.top + rect.height / 2;
-                if (this.cursorEl) {
-                    this.cursorEl.style.left = `${this.cursorX}px`;
-                    this.cursorEl.style.top = `${this.cursorY}px`;
-                }
-                this.checkCardHover(this.cursorX, this.cursorY);
-                audio.playSwipe();
-            }
-        }
-
-        cycleDifficulty(step) {
-            const diffs = ['Facil', 'Medio', 'Experto'];
-            let idx = diffs.indexOf(currentConfig.ai_difficulty);
-            if (idx === -1) idx = 1;
-            idx = (idx + step + diffs.length) % diffs.length;
-            const newDiff = diffs[idx];
-            currentConfig.ai_difficulty = newDiff;
-            document.querySelectorAll('#group-diff .chip-btn').forEach(c => {
-                c.classList.toggle('selected', c.dataset.diff === newDiff);
-            });
-            audio.playSwipe();
         }
 
         showGesturePill(iconId, text) {
@@ -2725,7 +2537,7 @@
             }, 1200);
         }
 
-        // Alterna entre abrir menú (pausa) o cerrarlo (reanudar)
+        // Alterna entre abrir menú (pausa) o cerrarlo (reanudar) con Palma Abierta
         toggleGamePause() {
             const inGameMenu = document.getElementById('modal-game-menu');
             const isMenuOpen = inGameMenu && inGameMenu.classList.contains('open');
@@ -2733,6 +2545,7 @@
             if (isMenuOpen) {
                 // Reanudar partida
                 closeInGameMenu();
+                this.showGesturePill('#icon-play', 'Reanudado');
                 if (activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex') {
                     startTimer(true);
                 }
@@ -2742,6 +2555,7 @@
                 if (activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex') {
                     pauseTimer();
                     openInGameMenu();
+                    this.showGesturePill('#icon-pause', 'Pausa');
                     audio.playFlip();
                 }
             }

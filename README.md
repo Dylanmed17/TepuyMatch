@@ -130,13 +130,12 @@ El sistema implementa control gestual mediante **Google MediaPipe Hands**:
 
 | Gesto | Formulación Matemática / Criterio de Activación | Acción en el Juego |
 |---|---|---|
-| **Apunta (Puntero Neón)** | Coordenadas normalizadas del extremo del dedo índice: Landmark #8 $(x_8, y_8)$, filtradas con suavizado exponencial Lerp: $C_t = C_{t-1} + \alpha (T_t - C_{t-1})$ con $\alpha = 0.32$. | Desplaza el cursor virtual con anclaje magnético a la carta más cercana. |
-| **Pellizco (Pinch Click)** | Distancia euclidiana normalizada entre pulgar (#4) e índice (#8): $d = \sqrt{(x_4 - x_8)^2 + (y_4 - y_8)^2} < 0.08$. Al detectarse, activa un candado espacial que **congela el cursor** en la carta objetivo para evitar saltos. | Voltea la carta seleccionada. |
-| **Swipe Lateral (Deslizamiento)** | Velocidad horizontal instantánea: $v_x = \frac{x_t - x_{t-\Delta t}}{\Delta t} > 0.38 \text{ s}^{-1}$ con desplazamiento total $|\Delta x| > 0.08$. Incluye **bloqueo de desaceleración de 850 ms** (`swipeLockoutUntil`). | Navega espacialmente entre cartas contiguas (izquierda/derecha). |
-| **Swipe Vertical** | Velocidad vertical $v_y > 0.40 \text{ s}^{-1}$ con $|\Delta y| > 0.10$. | Swipe hacia abajo: Pausa y abre menú. Swipe hacia arriba: Reanuda la partida. |
-| **Palma Abierta** | Extensión de los 4 dedos respecto a sus nudillos: $y_{\text{tip}} < y_{\text{pip}}$ sostenida por $> 0.35$ s. | Alterna pausa / reanudación del juego. |
+| **Apunta (Puntero Neón)** | Coordenadas normalizadas del extremo del dedo índice: Landmark #8 $(x_8, y_8)$, filtradas con suavizado exponencial Lerp: $C_t = C_{t-1} + \alpha (T_t - C_{t-1})$ con $\alpha = 0.44$. | Desplaza el cursor virtual con anclaje magnético a la carta más cercana. |
+| **Pellizco (Pinch Click)** | Distancia euclidiana normalizada entre pulgar (#4) e índice (#8): $d = \sqrt{(x_4 - x_8)^2 + (y_4 - y_8)^2} < 0.088$. Al detectarse, activa un candado espacial que **congela el cursor** en el centro de la carta objetivo para evitar saltos indeseados. | Voltea la carta seleccionada. |
+| **Mantenimiento (Dwell Click)** | Permanencia del cursor en el área de una carta durante $t \ge 0.7\text{ s}$ sin necesidad de pellizcar. | Voltea la carta automáticamente por foco sostenido. |
+| **Palma Abierta** | Extensión de los 4 dedos respecto a sus nudillos: $y_{\text{tip}} < y_{\text{pip}}$ sostenida por $\ge 0.6\text{ s}$ con enfriamiento de $1.5\text{ s}$. | Alterna pausa / reanudación del juego y abre/cierra el menú. |
 
-* **Ubicación en el Código:** `web/index.html` (Líneas 2100–2650: clase `MediaPipeGestureController`).
+* **Ubicación en el Código:** `web/index.html` (Líneas 2280–2550: clase `MediaPipeGestureController`).
 
 ---
 
@@ -187,10 +186,11 @@ Guía rápida de respuestas preparadas para las preguntas habituales del profeso
   * **Optimización de Investigación de Operaciones (PLB):** Menos de **0.005 segundos (< 5 ms)** por partida calculada con HiGHS.
   * **Inferencia de Visión Artificial:** **20 a 30 ms por cuadro (30 FPS continuos)** procesados localmente en la GPU del usuario.
 
-### P6: "¿Cómo se calculan el pellizco y los gestos laterales?"
+### P6: "¿Cómo se calculan el pellizco y la interacción gestual?"
 * **Respuesta:**
-  * El **pellizco** calcula la distancia euclidiana entre el Landmark #4 (punta del pulgar) y el Landmark #8 (punta del índice). Si la distancia es menor a 0.08 en espacio normalizado, se activa el clic y se congela el cursor en la carta actual.
-  * El **deslizamiento (swipe)** mide la velocidad diferencial $\Delta x / \Delta t$. Si supera 0.38 s⁻¹, navega a la carta vecina y activa un tiempo de enfriamiento (`swipeLockoutUntil`) de 850 ms para que el frenado de la mano no desplace accidentalmente el cursor.
+  * El **pellizco (pinch)** calcula la distancia euclidiana entre el Landmark #4 (punta del pulgar) y el Landmark #8 (punta del índice) normalizada respecto a la escala de la palma. Si la distancia relativa desciende de 0.32, se dispara el volteo. Además, al iniciar el cierre de dedos (umbral de 0.44), se activa un anclaje que congela las coordenadas en el centro de la carta enfocada para evitar desvíos involuntarios.
+  * Como alternativa ergonómica, se implementó el **volteo por mantenimiento (dwell click)**: sostener el puntero sobre una carta durante 0.7 segundos la voltea sin forzar los dedos.
+  * Para **pausar o reanudar**, basta con abrir la palma extendida durante 0.6 segundos frente a la cámara.
 
 ---
 

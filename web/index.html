@@ -775,31 +775,26 @@
             align-items: center;
             justify-content: center;
             min-height: 0;
-            padding: 2px 0;
+            padding: 4px 0;
             overflow: hidden;
             box-sizing: border-box;
         }
 
-        /* Cuadrícula adaptativa: 100% de la altura sin desborde */
+        /* Cuadrícula adaptativa inteligente: dimensiones calculadas analíticamente vía resizeBoardGrid() */
         .game-grid {
             display: grid;
-            gap: 5px;
-            width: 100%;
-            height: 100%;
-            max-width: 680px;
-            max-height: 100%;
             justify-content: center;
             align-content: center;
             box-sizing: border-box;
+            margin: auto;
+            max-width: 100%;
+            max-height: 100%;
         }
 
         .card-slot {
-            aspect-ratio: 3 / 4;
+            width: 100%;
             height: 100%;
-            width: auto;
-            max-height: 100%;
-            max-width: 100%;
-            margin: 0 auto;
+            margin: 0;
             perspective: 1000px;
             cursor: pointer;
             touch-action: manipulation;
@@ -815,7 +810,7 @@
             #game-view {
                 padding: 4px;
                 border-radius: 12px;
-                gap: 3px;
+                gap: 4px;
             }
             .game-top-hud {
                 height: 38px;
@@ -823,10 +818,12 @@
                 border-radius: 10px;
             }
             .game-main-split {
-                height: calc(100% - 41px);
+                flex: 1;
+                min-height: 0;
+                height: auto;
             }
-            .game-grid {
-                gap: 3px;
+            .board-stage {
+                padding: 2px 0;
             }
         }
         .card-flipper {
@@ -1175,9 +1172,6 @@
             line-height: 1.35;
             margin: 0;
         }
-            align-items: center;
-            justify-content: center;
-        }
 
         #virtual-hand-cursor {
             position: fixed;
@@ -1256,6 +1250,35 @@
         }
         #voice-indicator-pill.active { display: flex; }
 
+        /* Banner flotante de feedback para Gestos de Deslizamiento (Swipe) */
+        #gesture-action-pill {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-22px);
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            color: #ffffff;
+            border: 1.5px solid #00f0ff;
+            box-shadow: 0 0 18px rgba(0, 240, 255, 0.45);
+            padding: 7px 18px;
+            border-radius: var(--radius-pill);
+            font-size: 0.82rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+            z-index: 100000;
+            opacity: 0;
+            transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #gesture-action-pill.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
 
 
         #confetti-canvas {
@@ -1274,6 +1297,10 @@
     <canvas id="confetti-canvas"></canvas>
 
     <!-- INDICADORES FLOTANTES: VOZ, CURSOR VIRTUAL Y CÁMARA MEDIAPIPE -->
+    <div id="gesture-action-pill">
+        <span id="gesture-action-icon" style="font-size:1.1rem;">👉</span>
+        <span id="gesture-action-text">Siguiente Carta</span>
+    </div>
     <div id="voice-indicator-pill">
         <span>🎙️</span> <span id="voice-recognized-word">Escuchando comando de voz...</span>
     </div>
@@ -1630,56 +1657,74 @@
             <div style="overflow-y:auto; flex:1; padding-right:4px; font-size:0.82rem; line-height:1.5; color:var(--text-body); display:flex; flex-direction:column; gap:10px;">
                 
                 <!-- Intro breve -->
-                <div style="background:var(--bg-subtle); padding:9px 12px; border-radius:12px; border:1px solid var(--border-light); font-size:0.78rem;">
-                    💡 La IA de <strong>Google MediaPipe</strong> detecta 21 articulaciones de tu mano en 3D en tiempo real para voltear cartas sin tocar la pantalla.
+                <div style="background:var(--bg-subtle); padding:10px 14px; border-radius:12px; border:1.5px solid var(--border-light); font-size:0.78rem; color:var(--text-body);">
+                    💡 La IA de <strong>Google MediaPipe</strong> detecta 21 puntos articulares 3D de tu mano a 30 FPS para jugar en el aire con máxima precisión.
                 </div>
 
-                <!-- Paso 1: Apuntar -->
+                <!-- Paso 1: Apuntar con Imán -->
                 <div class="gesture-guide-card">
                     <div class="gesture-icon-badge">☝️</div>
                     <div class="gesture-card-text">
-                        <strong>1. Apuntar con el Dedo Índice</strong>
-                        <p>Extiende tu dedo índice hacia la cámara. Un puntero flotante seguirá tu dedo y la carta a la que apuntes se <strong>iluminará en dorado</strong> elevándose suavemente.</p>
+                        <strong>1. Apuntar con Imán Inteligente (Magnetic Snap)</strong>
+                        <p>Extiende tu dedo índice hacia la cámara. Un puntero neón seguirá tu dedo y <strong>se anclará magnéticamente</strong> al centro de la carta más cercana, evitando temblores en teléfonos móviles.</p>
                     </div>
                 </div>
 
-                <!-- Paso 2: Pellizco (Pinch) -->
+                <!-- Paso 2: Pellizco Seguro Anti-Salto -->
                 <div class="gesture-guide-card">
                     <div class="gesture-icon-badge">🤏</div>
                     <div class="gesture-card-text">
-                        <strong>2. Voltear con Pellizco (Pinch Clic)</strong>
-                        <p>Junta la punta del pulgar con la del índice como haciendo un pellizco en el aire. La carta se volteará al instante.</p>
+                        <strong>2. Voltear con Pellizco Estable (Anti-Desplazamiento)</strong>
+                        <p>Une el pulgar y el índice en el aire. <strong>Biomecánica asistida:</strong> al comenzar el pellizco, la posición se congela en la carta seleccionada para que el dedo no salte de casilla.</p>
                     </div>
                 </div>
 
-                <!-- Paso 3: Mantenimiento (Dwell Click) -->
+                <!-- Paso 3: Deslizar Horizontal -->
+                <div class="gesture-guide-card">
+                    <div class="gesture-icon-badge">👈👉</div>
+                    <div class="gesture-card-text">
+                        <strong>3. Deslizar en el Aire (Air Swipe Horizontal)</strong>
+                        <p>Mueve tu mano rápido a la izquierda o derecha: en el tablero navega entre cartas; en el menú principal cambia de dificultad.</p>
+                    </div>
+                </div>
+
+                <!-- Paso 4: Deslizar Vertical -->
+                <div class="gesture-guide-card">
+                    <div class="gesture-icon-badge">👇👆</div>
+                    <div class="gesture-card-text">
+                        <strong>4. Deslizar Vertical (Menú y Reanudación)</strong>
+                        <p>Desliza tu mano hacia <strong>Abajo</strong> para pausar y abrir el menú. Desliza hacia <strong>Arriba</strong> para reanudar la partida al instante.</p>
+                    </div>
+                </div>
+
+                <!-- Paso 5: Mantenimiento -->
                 <div class="gesture-guide-card">
                     <div class="gesture-icon-badge">⏱️</div>
                     <div class="gesture-card-text">
-                        <strong>3. Voltear por Mantenimiento (Sin esfuerzo)</strong>
-                        <p>Si prefieres no pellizcar, simplemente mantén el dedo apuntando a la carta durante <strong>0.8 segundos</strong> y se volteará automáticamente.</p>
+                        <strong>5. Volteo por Mantenimiento (Dwell Click)</strong>
+                        <p>Si prefieres no pellizcar, mantén el puntero inmóvil sobre una carta durante <strong>0.8 segundos</strong> y se volteará automáticamente.</p>
                     </div>
                 </div>
 
-                <!-- Paso 4: Pausa con Palma -->
+                <!-- Paso 6: Palma Abierta -->
                 <div class="gesture-guide-card">
                     <div class="gesture-icon-badge">✋</div>
                     <div class="gesture-card-text">
-                        <strong>4. Pausar con Palma Abierta</strong>
-                        <p>Muestra la palma extendida hacia la cámara durante 1 segundo para pausar el juego y abrir el menú.</p>
+                        <strong>6. Pausa con Palma Abierta</strong>
+                        <p>Muestra la palma abierta y quieta hacia la cámara durante 1 segundo para pausar con enfriamiento seguro.</p>
                     </div>
                 </div>
 
                 <!-- Consejos para Teléfono Móvil -->
-                <div style="background:var(--diff-easy-bg); padding:10px 12px; border-radius:12px; border:1px solid var(--diff-easy-border);">
-                    <div style="font-weight:800; color:var(--diff-easy-text); font-size:0.75rem; text-transform:uppercase; margin-bottom:4px;">
+                <div style="background:var(--bg-subtle); padding:10px 14px; border-radius:12px; border:1.5px solid var(--border-light); color:var(--text-body);">
+                    <div style="font-weight:800; color:var(--vzla-blue); font-size:0.75rem; text-transform:uppercase; margin-bottom:6px;">
                         📱 Consejos Clave para Teléfonos Móviles:
                     </div>
-                    <ul style="padding-left:16px; margin:0; font-size:0.74rem; display:flex; flex-direction:column; gap:3px; color:var(--diff-easy-text);">
+                    <ul style="padding-left:16px; margin:0; font-size:0.75rem; display:flex; flex-direction:column; gap:4px; color:var(--text-body);">
                         <li>Coloca el teléfono apoyado en una base o sostenlo a <strong>30-40 cm</strong> de distancia.</li>
                         <li>El sistema activa automáticamente la <strong>cámara frontal (selfie)</strong>.</li>
                         <li>Procura tener <strong>buena iluminación</strong> en tu rostro y manos.</li>
-                        <li>No necesitas mover el brazo entero: movimientos cortos del dedo alcanzan cualquier rincón del tablero.</li>
+                        <li>No necesitas mover el brazo entero: pequeños movimientos del dedo alcanzan todo el tablero gracias al anclaje magnético.</li>
                     </ul>
                 </div>
 
@@ -1761,20 +1806,29 @@
                 </div>
 
                 <!-- Sección 5: Modalidades de Control y Accesibilidad -->
-                <div style="background:var(--bg-surface); padding:12px; border-radius:12px; border:1px solid var(--border-light);">
+                <div style="background:var(--bg-subtle); padding:12px; border-radius:14px; border:1.5px solid var(--border-light); box-shadow:var(--ios-shadow-sm);">
                     <div style="font-weight:800; color:var(--vzla-emerald); text-transform:uppercase; font-size:0.75rem; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
                         🖐️ Modalidades de Control y Accesibilidad
                     </div>
-                    <ul style="padding-left:16px; margin:0; display:flex; flex-direction:column; gap:6px; font-size:0.78rem; color:var(--text-body);">
-                        <li><strong style="color:var(--text-title);">👆 Control Táctil / Clic:</strong> Toca suavemente cualquier carta para voltearla. En teléfonos móviles la cuadrícula se auto-orienta para encajar el 100% de la altura sin recorte (cero scroll).</li>
-                        <li><strong style="color:var(--text-title);">📷 Control Gestual por Cámara (Google MediaPipe IA):</strong>
-                            <div style="margin-top:4px; padding-left:6px; display:flex; flex-direction:column; gap:3px; color:var(--text-muted);">
-                                <span>• <strong>☝️ Apunta:</strong> Mueve el dedo índice en el aire para mover el puntero neón.</span>
-                                <span>• <strong>🤏 Pellizca:</strong> Une pulgar e índice (o mantén 0.8s fijo) para voltear.</span>
-                                <span>• <strong>✋ Palma Abierta:</strong> Abre la palma para pausar o reanudar el juego.</span>
+                    <ul style="padding-left:16px; margin:0; display:flex; flex-direction:column; gap:8px; font-size:0.78rem; color:var(--text-body);">
+                        <li>
+                            <strong style="color:var(--text-title);">👆 Control Táctil / Clic Inmediato:</strong>
+                            <span style="color:var(--text-body);">Toca cualquier carta para voltearla. En teléfonos la cuadrícula se auto-escala analíticamente para encajar el 100% en pantalla (cero scroll y cero corte).</span>
+                        </li>
+                        <li>
+                            <strong style="color:var(--text-title);">📷 Control Gestual por Cámara (Google MediaPipe IA):</strong>
+                            <div style="margin-top:4px; padding-left:8px; display:flex; flex-direction:column; gap:4px; color:var(--text-body);">
+                                <div>• <strong style="color:var(--text-title);">☝️ Apunta con Imán:</strong> Mueve el dedo índice; el puntero se ancla magnéticamente a la carta más cercana.</div>
+                                <div>• <strong style="color:var(--text-title);">🤏 Pellizca Seguro:</strong> Une pulgar e índice. La posición se congela en la carta objetivo para no desviar el cursor.</div>
+                                <div>• <strong style="color:var(--text-title);">👈 / 👉 Desliza en el Aire:</strong> Haz swipe lateral rápido para navegar cartas o alternar dificultad.</div>
+                                <div>• <strong style="color:var(--text-title);">👇 / 👆 Desliza Vertical:</strong> Swipe abajo para pausar y abrir menú; swipe arriba para reanudar.</div>
+                                <div>• <strong style="color:var(--text-title);">✋ Palma Abierta:</strong> Abre la palma para pausar o reanudar el juego.</div>
                             </div>
                         </li>
-                        <li><strong style="color:var(--text-title);">🎙️ Comandos por Voz (Micrófono):</strong> Di en voz alta <em>«Carta 1»</em>, <em>«Reiniciar»</em>, <em>«Música»</em> o <em>«Menú»</em>.</li>
+                        <li>
+                            <strong style="color:var(--text-title);">🎙️ Comandos por Voz (Micrófono):</strong>
+                            <span style="color:var(--text-body);">Di en voz alta <em>«Carta 1»</em>, <em>«Reiniciar»</em>, <em>«Música»</em> o <em>«Menú»</em>.</span>
+                        </li>
                     </ul>
                 </div>
 
@@ -2006,6 +2060,23 @@
                 }, i * 130);
             });
         }
+        playSwipe() {
+            if (!this.enabled) return;
+            this.init();
+            try {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(320, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(780, this.ctx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.10, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.12);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.12);
+            } catch(e){}
+        }
         playMaraca() {
             if (!this.enabled) return;
             this.init();
@@ -2078,21 +2149,26 @@
             this.cursorY = window.innerHeight / 2;
             this.hoveredCard = null;
             this.hoverStart = 0;
+            this.lockedTargetCard = null;
 
             // ─── CONFIGURACIÓN MODULAR DE GESTOS Y ENFRIAMIENTO ───
             this.config = {
                 // 1. Pellizco (Pinch Clic): Tiempo de enfriamiento entre volteos sucesivos (ms)
-                pinchCooldownMs: 850,
+                pinchCooldownMs: 800,
                 // Umbral relativo: distancia pulgar-índice dividida entre escala de la palma
                 pinchThreshold: 0.32,
+                // Umbral previo al pellizco para congelar cursor y evitar salto de dedo
+                pinchLockThreshold: 0.44,
                 // 2. Palma Abierta (Pausa / Reanudación): Tiempo sosteniendo la palma para activar (ms)
-                palmHoldMs: 700,
+                palmHoldMs: 650,
                 // Tiempo de enfriamiento obligatorio entre alternancias de menú (ms)
-                palmToggleCooldownMs: 1600,
+                palmToggleCooldownMs: 1500,
                 // 3. Volteo por Mantenimiento (Dwell Click): Tiempo apuntando a la carta para voltear (ms)
-                hoverDwellMs: 850,
+                hoverDwellMs: 750,
                 // 4. Período de gracia inicial: Tiempo tras detectar la mano antes de aceptar acciones (ms)
-                handGraceMs: 450
+                handGraceMs: 400,
+                // 5. Enfriamiento entre gestos de deslizamiento (Swipe) (ms)
+                swipeCooldownMs: 650
             };
 
             // Estados temporales de control
@@ -2101,6 +2177,9 @@
             this.isPinching = false;
             this.palmStartTime = 0;
             this.lastPalmToggleTime = 0;
+            this.lastSwipeTime = 0;
+            this.palmHistory = [];
+            this._pillTimer = null;
         }
 
         init() {
@@ -2160,12 +2239,13 @@
                 this.active = true;
                 if (this.cursorEl) this.cursorEl.style.display = 'block';
                 this.handDetectedSince = 0;
+                this.palmHistory = [];
                 updateGestureUI();
 
                 const toast = document.getElementById('landscape-toast');
                 if (toast) {
                     document.getElementById('toast-title').textContent = '📷 ¡Cámara Gestual Activa!';
-                    document.getElementById('toast-body').textContent = 'Mueve tu índice para guiar el puntero neón. Pellizca (🤏) o mantén fijo para voltear.';
+                    document.getElementById('toast-body').textContent = 'Apunta a una carta con el puntero neón. Pellizca (🤏) o mantén 0.7s para voltear.';
                     toast.classList.add('show');
                     setTimeout(() => toast.classList.remove('show'), 5000);
                 }
@@ -2186,6 +2266,8 @@
             this.resetHover();
             this.handDetectedSince = 0;
             this.palmStartTime = 0;
+            this.lockedTargetCard = null;
+            this.palmHistory = [];
             updateGestureUI();
         }
 
@@ -2216,9 +2298,13 @@
 
                 const indexTip = landmarks[8];
                 const thumbTip = landmarks[4];
+                const palmCenter = landmarks[9]; // Nudillo medio (muy estable)
 
-                // ─── 1. CALIBRACIÓN CINEMÁTICA Y EXPANSIÓN DE ZONA MUERTA ───
-                // Mapea la región central [0.12, 0.88] de la cámara al 100% de la pantalla móvil/PC
+                // ─── 1. DETECCIÓN DE DESLIZAMIENTO EN EL AIRE (SWIPE GESTURE) ───
+                this.detectSwipe(now, palmCenter);
+
+                // ─── 2. CALIBRACIÓN CINEMÁTICA Y EXPANSIÓN DE ZONA MUERTA ───
+                // Mapea la región central [0.12, 0.88] de la cámara al 100% de la pantalla
                 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
                 const normX = clamp(((1 - indexTip.x) - 0.12) / 0.76, 0, 1);
                 const normY = clamp((indexTip.y - 0.12) / 0.76, 0, 1);
@@ -2226,9 +2312,31 @@
                 const targetX = normX * window.innerWidth;
                 const targetY = normY * window.innerHeight;
 
-                // Suavizado Lerp anti-jitter
-                this.cursorX += (targetX - this.cursorX) * 0.44;
-                this.cursorY += (targetY - this.cursorY) * 0.44;
+                // ─── 3. CÁLCULO DE PELLIZCO (PINCH 🤏) INVARIANTE A ESCALA ───
+                const dx = thumbTip.x - indexTip.x;
+                const dy = thumbTip.y - indexTip.y;
+                const dz = (thumbTip.z || 0) - (indexTip.z || 0);
+                const pinchDist = Math.hypot(dx, dy, dz);
+                const palmScale = Math.hypot(landmarks[9].x - landmarks[0].x, landmarks[9].y - landmarks[0].y) || 0.25;
+                const relativePinch = pinchDist / palmScale;
+                const isPinchingNow = (relativePinch < this.config.pinchThreshold) || (pinchDist < 0.088);
+                const isClosingPinch = relativePinch < this.config.pinchLockThreshold;
+
+                // ─── 4. ANCLAJE INTELIGENTE ANTIDESLIZAMIENTO PARA TELÉFONOS ───
+                // Si el usuario está cerrando los dedos para pellizcar y ya apuntaba a una carta,
+                // CONGELAMOS la posición en el centro de esa carta para que la flexión natural
+                // del dedo no desvíe el puntero hacia cartas vecinas.
+                if (isClosingPinch && this.hoveredCard) {
+                    this.lockedTargetCard = this.hoveredCard;
+                    const rect = this.hoveredCard.getBoundingClientRect();
+                    this.cursorX = rect.left + rect.width / 2;
+                    this.cursorY = rect.top + rect.height / 2;
+                } else if (!isClosingPinch) {
+                    this.lockedTargetCard = null;
+                    // Suavizado Lerp anti-jitter cuando la mano está abierta y apuntando libremente
+                    this.cursorX += (targetX - this.cursorX) * 0.44;
+                    this.cursorY += (targetY - this.cursorY) * 0.44;
+                }
 
                 if (this.cursorEl) {
                     this.cursorEl.style.left = `${this.cursorX}px`;
@@ -2241,7 +2349,7 @@
                     return;
                 }
 
-                // ─── 2. GESTO DE PAUSA / REANUDACIÓN CON PALMA ABIERTA (✋) ───
+                // ─── 5. GESTO DE PAUSA / REANUDACIÓN CON PALMA ABIERTA (✋) ───
                 const isPalm = this.checkPalmOpen(landmarks);
                 if (isPalm) {
                     if (now - this.lastPalmToggleTime > this.config.palmToggleCooldownMs) {
@@ -2256,40 +2364,166 @@
                     this.palmStartTime = 0;
                 }
 
-                // ─── 3. GESTO DE PELLIZCO (PINCH 🤏) INVARIANTE A ESCALA ───
-                const dx = thumbTip.x - indexTip.x;
-                const dy = thumbTip.y - indexTip.y;
-                const dz = (thumbTip.z || 0) - (indexTip.z || 0);
-                const pinchDist = Math.hypot(dx, dy, dz);
-                const palmScale = Math.hypot(landmarks[9].x - landmarks[0].x, landmarks[9].y - landmarks[0].y) || 0.25;
-                const relativePinch = pinchDist / palmScale;
-                const isPinchingNow = (relativePinch < this.config.pinchThreshold) || (pinchDist < 0.088);
-
+                // ─── 6. DISPARO DEL PELLIZCO ───
                 if (isPinchingNow && !isPalm) {
                     if (this.cursorEl) this.cursorEl.classList.add('pinching');
 
                     if (!this.isPinching && (now - this.lastPinchTime > this.config.pinchCooldownMs)) {
                         this.lastPinchTime = now;
-                        this.triggerClickAt(this.cursorX, this.cursorY);
+                        // Si teníamos la carta fijada, hacemos clic seguro en esa carta
+                        if (this.lockedTargetCard) {
+                            if (!isLocked && !isFlipInProgress) {
+                                this.lockedTargetCard.click();
+                                this.resetHover();
+                            }
+                        } else {
+                            this.triggerClickAt(this.cursorX, this.cursorY);
+                        }
                     }
                     this.isPinching = true;
                 } else {
                     if (this.cursorEl) this.cursorEl.classList.remove('pinching');
                     this.isPinching = false;
 
-                    // ─── 4. VOLTEO POR MANTENIMIENTO (DWELL CLICK ⏱️) ───
-                    if (!isPalm) {
+                    // ─── 7. VOLTEO POR MANTENIMIENTO (DWELL CLICK ⏱️) ───
+                    if (!isPalm && !isClosingPinch) {
                         this.checkCardHover(this.cursorX, this.cursorY);
-                    } else {
-                        this.resetHover();
                     }
                 }
             } else {
                 this.handDetectedSince = 0;
                 this.palmStartTime = 0;
+                this.lockedTargetCard = null;
+                this.palmHistory = [];
                 this.resetHover();
             }
             this.ctx.restore();
+        }
+
+        // ─── DETECCIÓN DE VELOCIDAD Y DESLIZAMIENTO (SWIPE) ───
+        detectSwipe(now, palmPoint) {
+            this.palmHistory.push({ x: 1 - palmPoint.x, y: palmPoint.y, time: now });
+            if (this.palmHistory.length > 8) this.palmHistory.shift();
+
+            if (this.palmHistory.length >= 4 && (now - this.lastSwipeTime > this.config.swipeCooldownMs)) {
+                const oldest = this.palmHistory[0];
+                const newest = this.palmHistory[this.palmHistory.length - 1];
+                const dt = (newest.time - oldest.time) / 1000;
+
+                if (dt > 0.06 && dt < 0.35) {
+                    const dx = newest.x - oldest.x;
+                    const dy = newest.y - oldest.y;
+                    const vx = dx / dt;
+                    const vy = dy / dt;
+
+                    const minDist = 0.16; // 16% del encuadre
+                    const minSpeed = 0.70;
+
+                    if (Math.abs(dx) > minDist && Math.abs(vx) > minSpeed && Math.abs(dx) > Math.abs(dy) * 1.4) {
+                        if (dx > 0) {
+                            this.handleSwipeAction('right');
+                        } else {
+                            this.handleSwipeAction('left');
+                        }
+                        this.lastSwipeTime = now;
+                        this.palmHistory = [];
+                    } else if (Math.abs(dy) > minDist && Math.abs(vy) > minSpeed && Math.abs(dy) > Math.abs(dx) * 1.4) {
+                        if (dy > 0) {
+                            this.handleSwipeAction('down');
+                        } else {
+                            this.handleSwipeAction('up');
+                        }
+                        this.lastSwipeTime = now;
+                        this.palmHistory = [];
+                    }
+                }
+            }
+        }
+
+        handleSwipeAction(dir) {
+            const inGameMenu = document.getElementById('modal-game-menu');
+            const isMenuOpen = inGameMenu && inGameMenu.classList.contains('open');
+            const isPlaying = activeMatch && !activeMatch.game_over && document.getElementById('game-view').style.display === 'flex';
+
+            if (dir === 'down') {
+                if (isPlaying && !isMenuOpen) {
+                    this.showGesturePill('👇', 'Pausa');
+                    this.toggleGamePause();
+                }
+            } else if (dir === 'up') {
+                if (isMenuOpen) {
+                    this.showGesturePill('👆', 'Reanudado');
+                    this.toggleGamePause();
+                }
+            } else if (dir === 'right') {
+                if (isPlaying && !isMenuOpen) {
+                    this.selectNextCard(1);
+                    this.showGesturePill('👉', 'Siguiente Carta');
+                } else if (document.getElementById('menu-view').style.display !== 'none') {
+                    this.cycleDifficulty(1);
+                    this.showGesturePill('👉', 'Dificultad Cambiada');
+                }
+            } else if (dir === 'left') {
+                if (isPlaying && !isMenuOpen) {
+                    this.selectNextCard(-1);
+                    this.showGesturePill('👈', 'Carta Anterior');
+                } else if (document.getElementById('menu-view').style.display !== 'none') {
+                    this.cycleDifficulty(-1);
+                    this.showGesturePill('👈', 'Dificultad Cambiada');
+                }
+            }
+        }
+
+        selectNextCard(step) {
+            const flippable = Array.from(document.querySelectorAll('.card-slot:not(.matched)'));
+            if (!flippable.length) return;
+
+            let currentIndex = flippable.findIndex(s => s === this.hoveredCard);
+            if (currentIndex === -1) {
+                currentIndex = step > 0 ? 0 : flippable.length - 1;
+            } else {
+                currentIndex = (currentIndex + step + flippable.length) % flippable.length;
+            }
+
+            const targetSlot = flippable[currentIndex];
+            if (targetSlot) {
+                const rect = targetSlot.getBoundingClientRect();
+                this.cursorX = rect.left + rect.width / 2;
+                this.cursorY = rect.top + rect.height / 2;
+                if (this.cursorEl) {
+                    this.cursorEl.style.left = `${this.cursorX}px`;
+                    this.cursorEl.style.top = `${this.cursorY}px`;
+                }
+                this.checkCardHover(this.cursorX, this.cursorY);
+                audio.playSwipe();
+            }
+        }
+
+        cycleDifficulty(step) {
+            const diffs = ['Facil', 'Medio', 'Experto'];
+            let idx = diffs.indexOf(currentConfig.ai_difficulty);
+            if (idx === -1) idx = 1;
+            idx = (idx + step + diffs.length) % diffs.length;
+            const newDiff = diffs[idx];
+            currentConfig.ai_difficulty = newDiff;
+            document.querySelectorAll('.difficulty-chip').forEach(c => {
+                c.classList.toggle('active', c.dataset.diff === newDiff);
+            });
+            audio.playSwipe();
+        }
+
+        showGesturePill(icon, text) {
+            const pill = document.getElementById('gesture-action-pill');
+            if (!pill) return;
+            const iconEl = document.getElementById('gesture-action-icon');
+            const txtEl = document.getElementById('gesture-action-text');
+            if (iconEl) iconEl.textContent = icon;
+            if (txtEl) txtEl.textContent = text;
+            pill.classList.add('show');
+            clearTimeout(this._pillTimer);
+            this._pillTimer = setTimeout(() => {
+                pill.classList.remove('show');
+            }, 1200);
         }
 
         // Alterna entre abrir menú (pausa) o cerrarlo (reanudar)
@@ -2370,8 +2604,29 @@
                 this.resetHover();
                 return;
             }
+
+            let slot = null;
             const el = document.elementFromPoint(x, y);
-            const slot = el ? el.closest('.card-slot:not(.flipped):not(.matched)') : null;
+            if (el) {
+                slot = el.closest('.card-slot:not(.flipped):not(.matched)');
+            }
+
+            // Asistente magnético para teléfonos (Magnetic Snap Radius):
+            // Si el puntero cae en el espacio intermedio (gap), atrae a la carta más cercana
+            if (!slot) {
+                const candidates = Array.from(document.querySelectorAll('.card-slot:not(.flipped):not(.matched)'));
+                let minD = 42; // radio de atracción magnética en px
+                for (const cand of candidates) {
+                    const r = cand.getBoundingClientRect();
+                    const cx = r.left + r.width / 2;
+                    const cy = r.top + r.height / 2;
+                    const d = Math.hypot(x - cx, y - cy);
+                    if (d < minD) {
+                        minD = d;
+                        slot = cand;
+                    }
+                }
+            }
 
             // Iluminar la carta a la que se apunta
             document.querySelectorAll('.card-slot.gesture-aimed').forEach(c => {
@@ -2978,10 +3233,10 @@
             slot.innerHTML = `
                 <div class="card-flipper">
                     <div class="side side-back">
-                        <img src="/assets/images/card_back.png?v=8.0" alt="Reverso" loading="lazy">
+                        <img src="/assets/images/card_back.png?v=10.0" alt="Reverso Oficial 7 Estrellas" loading="lazy">
                     </div>
                     <div class="side side-front">
-                        <img src="/assets/images/${card.landscape_id}.png?v=8.0" alt="${card.name}"
+                        <img src="/assets/images/${card.landscape_id}.png?v=10.0" alt="${card.name}"
                              onerror="this.src='/assets/images/card_back.png'">
                     </div>
                 </div>
@@ -2990,6 +3245,75 @@
             slot.addEventListener('click', () => handleCardClick(card.position));
             grid.appendChild(slot);
         });
+
+        // Auto-dimensionar matemáticamente el tablero para cero corte y cero scroll
+        resizeBoardGrid();
+        requestAnimationFrame(() => resizeBoardGrid());
+    }
+
+    /**
+     * AJUSTE GEOMÉTRICO DINÁMICO DE CUADRÍCULA (RESPONSIVE AUTO-FIT)
+     * Resuelve matemáticamente el tamaño de celda idóneo (W x H)
+     * con aspect-ratio 3:4 que garantiza:
+     * 1. 0% desborde / 0% corte en la fila 6 en cualquier teléfono móvil (iPhone/Android).
+     * 2. Espaciado simétrico para que la fila superior nunca choque con el HUD.
+     * 3. Centrado perfecto en viewport vertical y horizontal.
+     */
+    function resizeBoardGrid() {
+        const stage = document.querySelector('.board-stage');
+        const grid = document.getElementById('board-grid');
+        if (!stage || !grid || !activeMatch) return;
+
+        const rows = activeMatch.rows || 6;
+        const cols = activeMatch.cols || 4;
+
+        const stageW = stage.clientWidth;
+        const stageH = stage.clientHeight;
+        if (stageW <= 0 || stageH <= 0) return;
+
+        // Gap adaptativo según densidad de cartas y tamaño de pantalla
+        const isNarrow = window.innerWidth <= 640;
+        const gap = isNarrow ? (rows >= 6 ? 4 : 5) : (rows >= 6 ? 6 : 8);
+
+        // Espacio disponible descontando la suma de gaps y margen de respiro
+        const availW = Math.max(80, stageW - (cols - 1) * gap - (isNarrow ? 4 : 12));
+        const availH = Math.max(100, stageH - (rows - 1) * gap - (isNarrow ? 6 : 14));
+
+        // Aspect ratio exacto de tarjetas: 3 ancho por 4 alto (3/4 = 0.75)
+        const ratio = 3 / 4;
+
+        // Caso 1: Supongamos que el ancho es el factor restrictivo
+        const cardW_byW = availW / cols;
+        const cardH_byW = cardW_byW / ratio;
+
+        // Caso 2: Supongamos que el alto es el factor restrictivo
+        const cardH_byH = availH / rows;
+        const cardW_byH = cardH_byH * ratio;
+
+        let finalCardW, finalCardH;
+
+        if (cardH_byW * rows <= availH) {
+            // Cabe perfectamente en el alto disponible usando el ancho completo
+            finalCardW = Math.floor(cardW_byW);
+            finalCardH = Math.floor(cardH_byW);
+        } else {
+            // La altura de la pantalla es más restrictiva (típico en móviles verticales)
+            finalCardH = Math.floor(cardH_byH);
+            finalCardW = Math.floor(cardW_byH);
+        }
+
+        // Límites seguros mínimos
+        finalCardW = Math.max(28, finalCardW);
+        finalCardH = Math.max(38, finalCardH);
+
+        const totalGridW = finalCardW * cols + (cols - 1) * gap;
+        const totalGridH = finalCardH * rows + (rows - 1) * gap;
+
+        grid.style.width = `${totalGridW}px`;
+        grid.style.height = `${totalGridH}px`;
+        grid.style.gap = `${gap}px`;
+        grid.style.gridTemplateColumns = `repeat(${cols}, ${finalCardW}px)`;
+        grid.style.gridTemplateRows = `repeat(${rows}, ${finalCardH}px)`;
     }
 
     // ─── CLIC EN CARTA ─────────────────────────────────
@@ -3367,18 +3691,18 @@
             list.forEach((r, idx) => {
                 const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}º`;
                 html += `
-                    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg-subtle); border-radius:12px; border:1.5px solid var(--border-light); box-shadow:var(--ios-shadow-sm);">
-                        <div style="display:flex; align-items:center; gap:10px; min-width:0;">
-                            <span style="font-size:1.2rem; flex-shrink:0;">${medal}</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 15px; background:var(--bg-surface); border-radius:14px; border:1.5px solid var(--border-light); box-shadow:var(--ios-shadow-sm);">
+                        <div style="display:flex; align-items:center; gap:11px; min-width:0;">
+                            <span style="font-size:1.3rem; flex-shrink:0;">${medal}</span>
                             <span style="font-size:0.95rem; font-weight:800; color:var(--text-title); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
                                 ${r.player_name}
                             </span>
                         </div>
                         <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-                            <span style="font-size:0.8rem; font-weight:800; color:var(--vzla-blue); background:rgba(37,99,235,0.14); padding:3px 9px; border-radius:6px; border:1px solid rgba(37,99,235,0.25);">
+                            <span style="font-size:0.82rem; font-weight:800; color:var(--vzla-blue); background:rgba(37,99,235,0.12); padding:4px 10px; border-radius:8px; border:1px solid rgba(37,99,235,0.25);">
                                 ${r.score} pts
                             </span>
-                            <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">
+                            <span style="font-size:0.76rem; font-weight:700; color:var(--text-muted);">
                                 ⏱️ ${r.time_seconds}s
                             </span>
                         </div>
@@ -3442,6 +3766,27 @@
         if (confettiTimer) cancelAnimationFrame(confettiTimer);
         const c = document.getElementById('confetti-canvas');
         if (c) c.getContext('2d').clearRect(0, 0, c.width, c.height);
+    }
+
+    // ─── OBSERVER Y LISTENERS RESPONSIVE PARA EL TABLERO ───────────
+    window.addEventListener('resize', () => {
+        if (activeMatch && document.getElementById('game-view').style.display === 'flex') {
+            resizeBoardGrid();
+        }
+    });
+    window.addEventListener('orientationchange', () => {
+        setTimeout(resizeBoardGrid, 120);
+        setTimeout(resizeBoardGrid, 350);
+    });
+    if (typeof ResizeObserver !== 'undefined') {
+        const stageEl = document.querySelector('.board-stage');
+        if (stageEl) {
+            new ResizeObserver(() => {
+                if (activeMatch && document.getElementById('game-view').style.display === 'flex') {
+                    resizeBoardGrid();
+                }
+            }).observe(stageEl);
+        }
     }
     </script>
 </body>

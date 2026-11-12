@@ -130,10 +130,10 @@ El sistema implementa control gestual mediante **Google MediaPipe Hands**:
 
 | Gesto | Formulación Matemática / Criterio de Activación | Acción en el Juego |
 |---|---|---|
-| **Apunta (Puntero Neón)** | Coordenadas normalizadas del extremo del dedo índice: Landmark #8 $(x_8, y_8)$, filtradas con suavizado exponencial Lerp: $C_t = C_{t-1} + \alpha (T_t - C_{t-1})$ con $\alpha = 0.44$. | Desplaza el cursor virtual con anclaje magnético a la carta más cercana. |
-| **Pellizco (Pinch Click)** | Distancia euclidiana normalizada entre pulgar (#4) e índice (#8): $d = \sqrt{(x_4 - x_8)^2 + (y_4 - y_8)^2} < 0.088$. Al detectarse, activa un candado espacial que **congela el cursor** en el centro de la carta objetivo para evitar saltos indeseados. | Voltea la carta seleccionada. |
-| **Mantenimiento (Dwell Click)** | Permanencia del cursor en el área de una carta durante $t \ge 0.7\text{ s}$ sin necesidad de pellizcar. | Voltea la carta automáticamente por foco sostenido. |
-| **Palma Abierta** | Extensión de los 4 dedos respecto a sus nudillos: $y_{\text{tip}} < y_{\text{pip}}$ sostenida por $\ge 0.6\text{ s}$ con enfriamiento de $1.5\text{ s}$. | Alterna pausa / reanudación del juego y abre/cierra el menú. |
+| **Apunta (Anclaje Magnético)** | Coordenadas del índice Landmark #8 filtradas con Lerp y radio magnético ($r = 75\text{ px}$) con histéresis ($r_h = 90\text{ px}$). El cursor se **ancla de forma fija al centro de la carta**, eliminando el temblor natural de la mano. | Apunta y resalta la carta con efecto neón sin jitter. |
+| **Mantenimiento (Dwell Click)** | Permanencia del puntero en la carta durante $t \ge 0.45\text{ s}$ sin necesidad de contorsionar los dedos. Se muestra barra de carga circular/inferior en tiempo real. | Voltea la carta automáticamente de forma ultra ágil y descansada. |
+| **Pellizco Inmediato (Pinch)** | Distancia relativa pulgar-índice $\frac{d_{\text{thumb-index}}}{\text{escala}_{\text{palma}}} < 0.38$ o $d_{\text{euclidea}} < 0.095$. Al estar anclado en la carta, se ejecuta sin saltos ni desvíos. | Volteo inmediato (en 0 ms) para usuarios que prefieren interacción táctil en el aire. |
+| **Palma Abierta** | Extensión de los 4 dedos respecto a la muñeca sostenida por $\ge 0.5\text{ s}$. | Pausa la partida y abre el menú (o reanuda el juego). |
 
 * **Ubicación en el Código:** `web/index.html` (Líneas 2280–2550: clase `MediaPipeGestureController`).
 

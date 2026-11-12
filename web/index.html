@@ -1184,17 +1184,24 @@
 
         #virtual-hand-cursor {
             position: fixed;
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border: 3px solid #00f0ff;
             border-radius: 50%;
-            background: rgba(0, 240, 255, 0.2);
+            background: rgba(0, 240, 255, 0.18);
             box-shadow: 0 0 16px rgba(0, 240, 255, 0.85), inset 0 0 8px rgba(0, 240, 255, 0.5);
             pointer-events: none;
             z-index: 99999;
             display: none;
             transform: translate(-50%, -50%);
-            transition: transform 0.08s ease, border-color 0.15s ease;
+            transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, width 0.15s ease, height 0.15s ease;
+        }
+        #virtual-hand-cursor.snapped {
+            width: 44px;
+            height: 44px;
+            border-color: #38bdf8;
+            background: rgba(56, 189, 248, 0.25);
+            box-shadow: 0 0 24px rgba(56, 189, 248, 0.95), inset 0 0 10px rgba(56, 189, 248, 0.6);
         }
         #virtual-hand-cursor::after {
             content: '';
@@ -1206,35 +1213,35 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 6px #00f0ff;
+            box-shadow: 0 0 8px #00f0ff;
         }
         #virtual-hand-cursor.pinching {
-            border-color: #fbbf24;
-            background: rgba(251, 191, 36, 0.4);
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.9), inset 0 0 8px rgba(251, 191, 36, 0.6);
-            transform: translate(-50%, -50%) scale(0.82);
+            border-color: #fbbf24 !important;
+            background: rgba(251, 191, 36, 0.5) !important;
+            box-shadow: 0 0 26px rgba(251, 191, 36, 1), inset 0 0 10px rgba(251, 191, 36, 0.7) !important;
+            transform: translate(-50%, -50%) scale(0.85);
         }
         #virtual-hand-cursor.pinching::after {
             background: #fef08a;
-            box-shadow: 0 0 8px #fbbf24;
+            box-shadow: 0 0 10px #fbbf24;
         }
         #virtual-cursor-bar {
             position: absolute;
-            bottom: -8px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 32px;
-            height: 4px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 2px;
+            width: 36px;
+            height: 5px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 3px;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
         #virtual-cursor-fill {
             width: 0%;
             height: 100%;
-            background: #00f0ff;
-            transition: width 0.08s linear;
+            background: linear-gradient(90deg, #00f0ff, #38bdf8);
+            transition: width 0.05s linear;
         }
 
         /* Banner de estado de Voz */
@@ -2282,20 +2289,16 @@
 
             // ─── CONFIGURACIÓN MODULAR DE GESTOS Y ENFRIAMIENTO ───
             this.config = {
-                // 1. Pellizco (Pinch Clic): Tiempo de enfriamiento entre volteos sucesivos (ms)
-                pinchCooldownMs: 800,
-                // Umbral relativo: distancia pulgar-índice dividida entre escala de la palma
-                pinchThreshold: 0.32,
-                // Umbral previo al pellizco para congelar cursor y evitar salto de dedo
-                pinchLockThreshold: 0.44,
-                // 2. Palma Abierta (Pausa / Reanudación): Tiempo sosteniendo la palma para activar (ms)
-                palmHoldMs: 650,
-                // Tiempo de enfriamiento obligatorio entre alternancias de menú (ms)
-                palmToggleCooldownMs: 1500,
-                // 3. Volteo por Mantenimiento (Dwell Click): Tiempo apuntando a la carta para voltear (ms)
-                hoverDwellMs: 750,
-                // 4. Período de gracia inicial: Tiempo tras detectar la mano antes de aceptar acciones (ms)
-                handGraceMs: 400
+                // 1. Pellizco (Pinch Clic): Enfriamiento y umbral súper tolerante
+                pinchCooldownMs: 550,
+                pinchThreshold: 0.38,
+                // 2. Palma Abierta (Pausa / Reanudación): Tiempo sosteniendo la palma (ms)
+                palmHoldMs: 500,
+                palmToggleCooldownMs: 1200,
+                // 3. Volteo por Mantenimiento (Dwell Click): Súper ágil e infalible (0.45s)
+                hoverDwellMs: 450,
+                // 4. Período de gracia inicial tras detectar mano (ms)
+                handGraceMs: 250
             };
 
             // Estados temporales de control y cinemática
@@ -2425,55 +2428,18 @@
                 const indexTip = landmarks[8];
                 const thumbTip = landmarks[4];
 
-                // ─── 1. CALIBRACIÓN CINEMÁTICA Y EXPANSIÓN DE ZONA MUERTA ───
-                // Mapea la región central [0.12, 0.88] de la cámara al 100% de la pantalla
+                // ─── 1. MAPEO CINEMÁTICO SUAVE A PANTALLA ───
                 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
-                const normX = clamp(((1 - indexTip.x) - 0.12) / 0.76, 0, 1);
-                const normY = clamp((indexTip.y - 0.12) / 0.76, 0, 1);
+                const normX = clamp(((1 - indexTip.x) - 0.08) / 0.84, 0, 1);
+                const normY = clamp((indexTip.y - 0.08) / 0.84, 0, 1);
 
-                const targetX = normX * window.innerWidth;
-                const targetY = normY * window.innerHeight;
+                const fingerX = normX * window.innerWidth;
+                const fingerY = normY * window.innerHeight;
 
-                // ─── 3. CÁLCULO DE PELLIZCO (PINCH) INVARIANTE A ESCALA ───
-                const dx = thumbTip.x - indexTip.x;
-                const dy = thumbTip.y - indexTip.y;
-                const dz = (thumbTip.z || 0) - (indexTip.z || 0);
-                const pinchDist = Math.hypot(dx, dy, dz);
-                const palmScale = Math.hypot(landmarks[9].x - landmarks[0].x, landmarks[9].y - landmarks[0].y) || 0.25;
-                const relativePinch = pinchDist / palmScale;
-                const isPinchingNow = (relativePinch < this.config.pinchThreshold) || (pinchDist < 0.088);
-                const isClosingPinch = relativePinch < this.config.pinchLockThreshold;
-
-                // ─── 4. ANCLAJE INTELIGENTE ANTIDESLIZAMIENTO PARA TELÉFONOS ───
-                // Si el usuario está cerrando los dedos para pellizcar y ya apuntaba a una carta,
-                // CONGELAMOS la posición en el centro de esa carta para que la flexión natural
-                // del dedo no desvíe el puntero hacia cartas vecinas.
-                if (isClosingPinch && this.hoveredCard) {
-                    this.lockedTargetCard = this.hoveredCard;
-                    const rect = this.hoveredCard.getBoundingClientRect();
-                    this.cursorX = rect.left + rect.width / 2;
-                    this.cursorY = rect.top + rect.height / 2;
-                } else if (!isClosingPinch) {
-                    this.lockedTargetCard = null;
-                    // Suavizado Lerp anti-jitter cuando la mano está abierta y apuntando libremente
-                    this.cursorX += (targetX - this.cursorX) * 0.44;
-                    this.cursorY += (targetY - this.cursorY) * 0.44;
-                }
-
-                if (this.cursorEl) {
-                    this.cursorEl.style.left = `${this.cursorX}px`;
-                    this.cursorEl.style.top = `${this.cursorY}px`;
-                }
-
-                // Período de gracia inicial: estabilizar antes de ejecutar acciones
-                if (handActiveTime < this.config.handGraceMs) {
-                    this.ctx.restore();
-                    return;
-                }
-
-                // ─── 5. GESTO DE PAUSA / REANUDACIÓN CON PALMA ABIERTA ───
+                // ─── 2. GESTO DE PAUSA / REANUDACIÓN CON PALMA ABIERTA ───
                 const isPalm = this.checkPalmOpen(landmarks);
                 if (isPalm) {
+                    this.resetHover();
                     if (now - this.lastPalmToggleTime > this.config.palmToggleCooldownMs) {
                         if (!this.palmStartTime) this.palmStartTime = now;
                         else if (now - this.palmStartTime >= this.config.palmHoldMs) {
@@ -2482,41 +2448,120 @@
                             this.toggleGamePause();
                         }
                     }
+                    this.ctx.restore();
+                    return;
                 } else {
                     this.palmStartTime = 0;
                 }
 
-                // ─── 6. DISPARO DEL PELLIZCO ───
-                if (isPinchingNow && !isPalm) {
-                    if (this.cursorEl) this.cursorEl.classList.add('pinching');
+                // ─── 3. CÁLCULO DE PELLIZCO ULTRA-TOLERANTE ───
+                const dx = thumbTip.x - indexTip.x;
+                const dy = thumbTip.y - indexTip.y;
+                const dz = (thumbTip.z || 0) - (indexTip.z || 0);
+                const pinchDist = Math.hypot(dx, dy, dz);
+                const palmScale = Math.hypot(landmarks[9].x - landmarks[0].x, landmarks[9].y - landmarks[0].y) || 0.25;
+                const relativePinch = pinchDist / palmScale;
+                const isPinchingNow = (relativePinch < this.config.pinchThreshold) || (pinchDist < 0.095);
 
-                    if (!this.isPinching && (now - this.lastPinchTime > this.config.pinchCooldownMs)) {
-                        this.lastPinchTime = now;
-                        // Si teníamos la carta fijada, hacemos clic seguro en esa carta
-                        if (this.lockedTargetCard) {
-                            if (!isLocked && !isFlipInProgress) {
-                                this.lockedTargetCard.click();
-                                this.resetHover();
-                            }
-                        } else {
-                            this.triggerClickAt(this.cursorX, this.cursorY);
+                // ─── 4. ASISTENTE MAGNÉTICO INTELIGENTE (STICKY SNAP A LA CARTA) ───
+                let targetCard = null;
+                const cards = Array.from(document.querySelectorAll('.card-slot:not(.flipped):not(.matched)'));
+
+                if (cards.length > 0) {
+                    // Histéresis: si ya estamos enfocando una carta, mantenerla fija mientras el dedo no se aleje más de 90px
+                    if (this.hoveredCard && cards.includes(this.hoveredCard)) {
+                        const r = this.hoveredCard.getBoundingClientRect();
+                        const cx = r.left + r.width / 2;
+                        const cy = r.top + r.height / 2;
+                        if (Math.hypot(fingerX - cx, fingerY - cy) < 90) {
+                            targetCard = this.hoveredCard;
                         }
                     }
-                    this.isPinching = true;
-                } else {
-                    if (this.cursorEl) this.cursorEl.classList.remove('pinching');
-                    this.isPinching = false;
 
-                    // ─── 7. VOLTEO POR MANTENIMIENTO (DWELL CLICK) ───
-                    if (!isPalm && !isClosingPinch) {
-                        this.checkCardHover(this.cursorX, this.cursorY);
+                    // Si no mantuvimos la anterior, buscar la carta más cercana dentro de un radio magnético de 75px
+                    if (!targetCard) {
+                        let closestDist = 75;
+                        for (const cand of cards) {
+                            const r = cand.getBoundingClientRect();
+                            const cx = r.left + r.width / 2;
+                            const cy = r.top + r.height / 2;
+                            const inside = fingerX >= r.left - 12 && fingerX <= r.right + 12 &&
+                                           fingerY >= r.top - 12 && fingerY <= r.bottom + 12;
+                            const d = Math.hypot(fingerX - cx, fingerY - cy);
+                            if (inside || d < closestDist) {
+                                closestDist = d;
+                                targetCard = cand;
+                            }
+                        }
                     }
+                }
+
+                // ─── 5. POSICIONAMIENTO DEL PUNTERO (ANCLAJE SIN TEMBLOR) ───
+                if (targetCard) {
+                    const r = targetCard.getBoundingClientRect();
+                    const cardCenterX = r.left + r.width / 2;
+                    const cardCenterY = r.top + r.height / 2;
+                    // El cursor viaja directo y se queda quieto en el centro exacto de la carta
+                    this.cursorX += (cardCenterX - this.cursorX) * 0.60;
+                    this.cursorY += (cardCenterY - this.cursorY) * 0.60;
+                    if (this.cursorEl) this.cursorEl.classList.add('snapped');
+                } else {
+                    // Si la mano está en el aire fuera de cartas, sigue suavemente al dedo
+                    this.cursorX += (fingerX - this.cursorX) * 0.38;
+                    this.cursorY += (fingerY - this.cursorY) * 0.38;
+                    if (this.cursorEl) this.cursorEl.classList.remove('snapped');
+                }
+
+                if (this.cursorEl) {
+                    this.cursorEl.style.left = `${this.cursorX}px`;
+                    this.cursorEl.style.top = `${this.cursorY}px`;
+                }
+
+                if (handActiveTime < this.config.handGraceMs) {
+                    this.ctx.restore();
+                    return;
+                }
+
+                // ─── 6. EJECUCIÓN DEL CLIC: PELLIZCO INSTANTÁNEO O MANTENIMIENTO DE 0.45s ───
+                if (targetCard && !isLocked && !isFlipInProgress) {
+                    document.querySelectorAll('.card-slot.gesture-aimed').forEach(c => {
+                        if (c !== targetCard) c.classList.remove('gesture-aimed');
+                    });
+                    targetCard.classList.add('gesture-aimed');
+
+                    if (this.hoveredCard === targetCard) {
+                        const elapsed = now - this.hoverStart;
+                        const progress = Math.min(100, (elapsed / this.config.hoverDwellMs) * 100);
+                        if (this.cursorFill) this.cursorFill.style.width = `${progress}%`;
+
+                        const canClick = (now - this.lastPinchTime > this.config.pinchCooldownMs);
+
+                        // Disparo doble infalible:
+                        // Opción A: Pellizco de dedos detectado en el aire (clic en 0 ms)
+                        // Opción B: Mantenimiento sostenido (0.45 s cumplidos, clic automático sin mover dedos)
+                        if (canClick && (isPinchingNow || elapsed >= this.config.hoverDwellMs)) {
+                            this.lastPinchTime = now;
+                            if (this.cursorEl) this.cursorEl.classList.add('pinching');
+                            targetCard.click();
+                            audio.playFlip();
+                            this.resetHover();
+                            setTimeout(() => {
+                                if (this.cursorEl) this.cursorEl.classList.remove('pinching');
+                            }, 250);
+                        }
+                    } else {
+                        this.hoveredCard = targetCard;
+                        this.hoverStart = now;
+                        if (this.cursorFill) this.cursorFill.style.width = '0%';
+                    }
+                } else {
+                    this.resetHover();
                 }
             } else {
                 this.handDetectedSince = 0;
                 this.palmStartTime = 0;
-                this.lockedTargetCard = null;
                 this.resetHover();
+                if (this.cursorEl) this.cursorEl.classList.remove('snapped');
             }
             this.ctx.restore();
         }
@@ -2600,74 +2645,6 @@
                 if (tipDist < mcpDist * 1.25) return false;
             }
             return true;
-        }
-
-        triggerClickAt(x, y) {
-            if (isLocked || isFlipInProgress) return;
-            const el = document.elementFromPoint(x, y);
-            const slot = el ? el.closest('.card-slot:not(.flipped):not(.matched)') : null;
-            if (slot) {
-                slot.click();
-                this.resetHover();
-            }
-        }
-
-        checkCardHover(x, y) {
-            if (isLocked || isFlipInProgress) {
-                this.resetHover();
-                return;
-            }
-
-            let slot = null;
-            const el = document.elementFromPoint(x, y);
-            if (el) {
-                slot = el.closest('.card-slot:not(.flipped):not(.matched)');
-            }
-
-            // Asistente magnético para teléfonos (Magnetic Snap Radius):
-            // Si el puntero cae en el espacio intermedio (gap), atrae a la carta más cercana
-            if (!slot) {
-                const candidates = Array.from(document.querySelectorAll('.card-slot:not(.flipped):not(.matched)'));
-                let minD = 42; // radio de atracción magnética en px
-                for (const cand of candidates) {
-                    const r = cand.getBoundingClientRect();
-                    const cx = r.left + r.width / 2;
-                    const cy = r.top + r.height / 2;
-                    const d = Math.hypot(x - cx, y - cy);
-                    if (d < minD) {
-                        minD = d;
-                        slot = cand;
-                    }
-                }
-            }
-
-            // Iluminar la carta a la que se apunta
-            document.querySelectorAll('.card-slot.gesture-aimed').forEach(c => {
-                if (c !== slot) c.classList.remove('gesture-aimed');
-            });
-
-            if (slot && slot === this.hoveredCard) {
-                slot.classList.add('gesture-aimed');
-                const elapsed = Date.now() - this.hoverStart;
-                const progress = Math.min(100, (elapsed / this.config.hoverDwellMs) * 100);
-                if (this.cursorFill) this.cursorFill.style.width = `${progress}%`;
-
-                if (elapsed >= this.config.hoverDwellMs) {
-                    if (this.cursorEl) this.cursorEl.classList.add('pinching');
-                    slot.click();
-                    this.resetHover();
-                    setTimeout(() => {
-                        if (this.cursorEl) this.cursorEl.classList.remove('pinching');
-                    }, 300);
-                }
-            } else if (slot) {
-                this.hoveredCard = slot;
-                this.hoverStart = Date.now();
-                slot.classList.add('gesture-aimed');
-                if (this.cursorFill) this.cursorFill.style.width = '0%';
-            } else {
-                this.resetHover();
-            }
         }
 
         resetHover() {
